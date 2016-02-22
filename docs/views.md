@@ -6,17 +6,21 @@
 ## New Session
 ![new-session]
 
-## NotesIndex / NoteIndexItem / NoteForm
-![notes]
+## PhotosIndex / PhotoIndexItem
+![Photos]
 
-## NotebooksIndex / NotebookIndexItem
-![notebooks]
+## PhotoForm
+![photo-form]
 
-## NotebookForm
-![notebook-form]
+## CollectionsIndex / CollectionIndexItem
+![Collections]
+
+## CollectionsForm
+![collections-form]
 
 [new-user]: ./wireframes/new_user.png
 [new-session]: ./wireframes/new_session.png
-[notes]: ./wireframes/root_notes.png
-[notebooks]: ./wireframes/root_notebooks.png
-[notebook-form]: ./wireframes/notebook_form.png
+[Photos]: ./wireframes/photo_index.png
+[photo-form]: ./wireframes/photo_form.png
+[Collections]: ./wireframes/collection_index.png
+[collections-form]: ./wireframes/collection_form.png

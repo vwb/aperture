@@ -116,6 +116,7 @@ user interface.
 ### Bonus Features (TBD)
 
 - [ ] Enable purchasing of full quality photos
+- [ ] Users can comment and like on photos and collections
 - [ ] Add a watermark to uploaded photos if users choose to.
 - [ ] Images belong to categories as well as
 - [ ] Pagination / infinite scroll for Photos Index
