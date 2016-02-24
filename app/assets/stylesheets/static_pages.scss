@@ -1,0 +1,27 @@
+// Place all the styles related to the StaticPages controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+
+.photo-index-item {
+	position: relative;
+	width: 300px;
+	height: 200px;
+	cursor: pointer;
+}
+
+.photo-index-item img {
+	width: 100%;
+	height: auto;
+}
+
+.photo-detail-container {
+	position: relative;
+	width: 500px;
+	height: auto;
+}
+
+.photo-detail-container img{
+	width: 100%;
+	height: auto;
+}

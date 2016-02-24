@@ -1,0 +1,7 @@
+-> Change to upload form to be a full form that just features the upload widget.
+
+-> STYLING
+
+-> Logo
+
+-> Change auth to be react based!
