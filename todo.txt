@@ -5,3 +5,5 @@
 -> Logo
 
 -> Change auth to be react based!
+
+-> Make the photo detail page a modal!
