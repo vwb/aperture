@@ -53,22 +53,20 @@ the API.
 - [X] CRUD API for photos (`PhotosController`)
 - [X] jBuilder views for photos
 - [X] setup Webpack & Flux scaffold
-- [ ] setup `APIUtil` to interact with the API
-- [ ] test out API interaction in the console.
+- [X] setup `APIUtil` to interact with the API
+- [X] test out API interaction in the console.
 
 ### Phase 3: Flux Architecture and Router (1 day)
 
 **Objective:** Images can be created, viewed, edited and destroyed with the
 user interface.
 
-- [ ] setup the flux loop with skeleton files
-- [ ] setup React Router
+- [X] setup the flux loop with skeleton files
+- [X] setup React Router
 - implement each note component, building out the flux loop as needed.
-  - [ ] `PhotosIndex` (primary landing page)
-  - [ ] `PhotoItem`
-  - [ ] `PhotoUploadform`
-- [ ] save Notes to the DB when the form loses focus or is left idle
-  after editing.
+  - [X] `PhotosIndex` (primary landing page)
+  - [X] `PhotoItem`
+  - [X] `PhotoUploadform`
 
 ### Phase 4: Start Styling (1 day)
 
