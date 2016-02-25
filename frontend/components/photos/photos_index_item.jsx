@@ -11,9 +11,9 @@ var PhotoIndexItem = React.createClass({
 
 	render: function() {
 		return (
-			<section className="photo-index-item">
+			<div className="grid-item">
 				<img onClick={this.handleClick} src={this.props.photo.url}/>
-			</section>
+			</div>
 		);
 	}
 	

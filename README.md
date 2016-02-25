@@ -77,7 +77,7 @@ user interface.
 - [X] add basic colors & styles
 - [ ] stylize photo detail page
 - [ ] Create a nice image upload form
-- [ ] implement grid layout
+- [X] implement grid layout
 
 ### Phase 5: Collections (1 day)
 

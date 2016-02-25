@@ -8,6 +8,7 @@ var IndexRoute = ReactRouter.IndexRoute;
 var PhotosIndex = require('./components/photos/photos_index');
 var PhotoDetail = require('./components/photos/photo_detail');
 var NavBar = require('./components/navigation/navbar');
+var PhotoForm = require('./components/photos/photo_form');
 
 var CreateUserForm = require('./components/sessions/create_user_form');
 var CreateSessionForm = require('./components/sessions/create_session_form');
@@ -39,6 +40,7 @@ var routes = (
 			<Route path="user/sign_up" component={CreateUserForm}/>
 		</Route>
 		<Route path="photos/:id" component={PhotoDetail}/>
+		<Route path="/upload" component={PhotoForm}/>
 	</Router>
 );
 

@@ -1,6 +1,5 @@
 var React = require('react');
 var AppBar = require('material-ui/lib/app-bar');
-var PhotoUploadForm = require('../photos/photos_form');
 var NavBarSearch = require('./navbar_search');
 var SessionStore = require('../../stores/react_session_store');
 var SessionUtil = require('../../util/sessions_util');
@@ -44,6 +43,10 @@ var NavBar = React.createClass({
 
   },
 
+  handleUpload: function(){
+    this.history.push("/upload");
+  },
+
   render: function() {
 
     var text;
@@ -67,9 +70,15 @@ var NavBar = React.createClass({
             </div>
 
             <ul className="header-ul group">
-              <li className="header-li"><a href="#">Home</a></li>
-              <li onClick={this.handleClick} className="header-li"><a>{text}</a>
+
+              <li className="header-li">
+                <i className="material-icons" onClick={this.handleUpload} >add_a_photo</i>
               </li>
+
+              <li onClick={this.handleClick} className="header-li">
+                <a >{text}</a>
+              </li>
+
             </ul>
           </div>
         </header>

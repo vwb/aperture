@@ -43,3 +43,8 @@ body {
   display: block;
   clear: both;
 }
+
+.wrapper {
+  top: 59px;
+  position: relative;
+}

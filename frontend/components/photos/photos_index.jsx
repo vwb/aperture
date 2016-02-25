@@ -2,9 +2,15 @@ var React = require('react');
 var PhotoStore = require('../../stores/photo_store');
 var ApiUtil = require('../../util/api_util');
 var PhotoIndexItem = require('./photos_index_item');
-var PhotoForm = require('./photos_form');
+var Masonry = require('react-masonry-component');
+
+var masonryOptions = {
+	transitionDuration: 0,
+	itemSelector: ".grid-item"
+};
 
 var PhotoIndex = React.createClass({
+
 	getInitialState: function(){
 		return {
 			photos: PhotoStore.all()
@@ -12,7 +18,6 @@ var PhotoIndex = React.createClass({
 	},
 
 	componentDidMount: function(){
-		debugger;
 		this.toke = PhotoStore.addListener(this._onChange);
 		ApiUtil.fetchAllPhotos();
 	},
@@ -31,7 +36,7 @@ var PhotoIndex = React.createClass({
 				cName = "grid-item"
 			}
 
-			return <PhotoIndexItem className={cName} key={key} photo={photo} />
+			return <PhotoIndexItem key={key} photo={photo} className="photo-index-item" />
 		});
 	},
 
@@ -41,9 +46,16 @@ var PhotoIndex = React.createClass({
 
 	render: function() {
 		return (
-			<div className="photo-index grid">
-				<PhotoForm/>
-				{this.generatePhotoItems()}
+			<div className="photo-index">
+				<Masonry
+					className={'grid'}
+					elementType={'div'}
+					options={masonryOptions}
+					disableImagesLoaded={false}>
+
+					{this.generatePhotoItems()}
+
+				</Masonry>
 			</div>
 		);
 	}

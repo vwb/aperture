@@ -34,22 +34,24 @@ var PhotoDetail = React.createClass({
 
 	render: function() {
 
+		var check = <PhotoEditForm photo={this.state.photo}/>
+
+
 		this._photoPresenceCheck()
 
 		if (this.havePhoto){
 			return (
-				<div className="photo-detail">
+				<div className="photo-detail-cotainer group">
 
-					<section className="photo-detail-container">
+					<section className="photo-detail">
 						<img src={this.state.photo.url}/>
 					</section>
 
-					<section className="photo-information">
+					<section className="photo-info">
 						<p>Title: {this.state.photo.title}</p>
 						<p>Price: {this.state.photo.price}</p>
 					</section>
 
-					<PhotoEditForm photo={this.state.photo}/>
 
 				</div>
 			);
