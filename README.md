@@ -72,10 +72,12 @@ user interface.
 
 **Objective:** Existing pages (including singup/signin) will look good.
 
-- [ ] create a basic style guide
-- [ ] position elements on the page
-- [ ] add basic colors & styles
-- [ ] implement material design lite
+- [X] create a basic style guide
+- [X] position elements on the page
+- [X] add basic colors & styles
+- [ ] stylize photo detail page
+- [ ] Create a nice image upload form
+- [ ] implement grid layout
 
 ### Phase 5: Collections (1 day)
 
@@ -84,9 +86,8 @@ user interface.
 - [ ] create `Collection` model
 - build out API, Flux loop, and components for:
   - [ ] Collection CRUD
-  - [ ] adding photos requires a notebook
-  - [ ] moving notes to a different notebook
-  - [ ] viewing notes by notebook
+  - [ ] moving photos to a different collection
+  - [ ] viewing photos by collection
 - Use CSS to style new views
 
 
@@ -94,7 +95,7 @@ user interface.
 
 **Objective:** Photos/collections can be tagged with multiple tags, and tags are searchable.
 
-- [ ] create `Tag` model and join table
+- [ ] create `Tag / Comment / Like` model and join table
 - build out API, Flux loop, and components for:
   - [ ] fetching tags for photos
   - [ ] adding tags to photos
@@ -114,7 +115,6 @@ user interface.
 ### Bonus Features (TBD)
 
 - [ ] Enable purchasing of full quality photos
-- [ ] Users can comment and like on photos and collections
 - [ ] Add a watermark to uploaded photos if users choose to.
 - [ ] Images belong to categories as well as
 - [ ] Pagination / infinite scroll for Photos Index

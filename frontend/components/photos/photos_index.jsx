@@ -1,6 +1,6 @@
 var React = require('react');
-var PhotoStore = require('../stores/photo_store');
-var ApiUtil = require('../util/api_util');
+var PhotoStore = require('../../stores/photo_store');
+var ApiUtil = require('../../util/api_util');
 var PhotoIndexItem = require('./photos_index_item');
 var PhotoForm = require('./photos_form');
 
@@ -12,6 +12,7 @@ var PhotoIndex = React.createClass({
 	},
 
 	componentDidMount: function(){
+		debugger;
 		this.toke = PhotoStore.addListener(this._onChange);
 		ApiUtil.fetchAllPhotos();
 	},
@@ -22,7 +23,15 @@ var PhotoIndex = React.createClass({
 
 	generatePhotoItems: function(){
 		return this.state.photos.map(function(photo, key){
-			return <PhotoIndexItem key={key} photo={photo} />
+
+			var cName;
+			if (key % 3 === 0){
+				cName = "grid-item--width-2"
+			} else {
+				cName = "grid-item"
+			}
+
+			return <PhotoIndexItem className={cName} key={key} photo={photo} />
 		});
 	},
 
@@ -32,7 +41,7 @@ var PhotoIndex = React.createClass({
 
 	render: function() {
 		return (
-			<div className="PhotoIndex">
+			<div className="photo-index grid">
 				<PhotoForm/>
 				{this.generatePhotoItems()}
 			</div>

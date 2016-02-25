@@ -41,6 +41,7 @@ group :development, :test do
   gem 'pry-rails'
   gem 'binding_of_caller'
   gem 'annotate'
+  gem 'faker'
 end
 
 group :development do

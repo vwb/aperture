@@ -1,7 +1,7 @@
 var React = require('react');
-var PhotoStore = require('../stores/photo_store');
+var PhotoStore = require('../../stores/photo_store');
 var PhotoEditForm = require('./photo_edit_form');
-var ApiUtil = require('../util/api_util');
+var ApiUtil = require('../../util/api_util');
 
 var PhotoDetail = React.createClass({
 

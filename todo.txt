@@ -1,4 +1,8 @@
--> Change to upload form to be a full form that just features the upload widget.
+-> Change to upload form to be a full form that features the upload widget.
+	> the style options will be my best friend for this
+	> http://cloudinary.com/documentation/upload_widget#setup
+
+-> Uploading multiple images at once seems to be finnicky.
 
 -> STYLING
 
@@ -7,3 +11,14 @@
 -> Change auth to be react based!
 
 -> Make the photo detail page a modal!
+
+
+TASKS FOR TODAY:
+	> STYLING
+		- remake the photo upload form to something more similar 
+			to my wireframe.
+		- grid layout using masonry
+		- "modal" the photo detail page
+		- actual edit menu should only appear if choose to (and current user owns it)
+	
+	> make it pretty!

@@ -8,11 +8,10 @@
 #             PATCH  /api/photos/:id(.:format) api/photos#update {:format=>:json}
 #             PUT    /api/photos/:id(.:format) api/photos#update {:format=>:json}
 #             DELETE /api/photos/:id(.:format) api/photos#destroy {:format=>:json}
-#       users POST   /users(.:format)          users#create
-#    new_user GET    /users/new(.:format)      users#new
-#     session POST   /session(.:format)        sessions#create
-# new_session GET    /session/new(.:format)    sessions#new
-#             DELETE /session(.:format)        sessions#destroy
+#   api_users POST   /api/users(.:format)      api/users#create {:format=>:json}
+# api_session POST   /api/session(.:format)    api/sessions#create {:format=>:json}
+#             GET    /api/session(.:format)    api/sessions#show {:format=>:json}
+#             DELETE /api/session(.:format)    api/sessions#destroy {:format=>:json}
 #
 
 Rails.application.routes.draw do
@@ -21,10 +20,7 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: {format: :json} do
     resources :photos, only: [:show, :index, :create, :update, :destroy]
-  end
-
-  resources :users, only: [:new, :create]
-  resource :session, only: [:new, :create, :destroy]
-
-  
+    resources :users, only: [:create]
+    resource :session, only: [:create, :destroy, :show]
+  end  
 end

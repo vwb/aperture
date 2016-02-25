@@ -1,6 +1,6 @@
 var React = require('react');
 var LinkedStateMixin = require('react-addons-linked-state-mixin');
-var ApiUtil = require('../util/api_util');
+var ApiUtil = require('../../util/api_util');
 var History = require('react-router').History;
 
 var PhotoEditForm = React.createClass({

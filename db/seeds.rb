@@ -5,3 +5,26 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+
+User.create!(email: "test@email.com", password: "password");
+User.create!(email: "test2@email.com", password: "password");
+
+imageURLs = [
+  "http://proof.nationalgeographic.com/files/2015/07/NationalGeographic_1203310.jpg",
+  "http://proof.nationalgeographic.com/files/2015/04/150501-bestpod-volcANO.jpg",
+  "https://farm1.staticflickr.com/691/20664938416_4e4b224684_h.jpg",
+  "http://i.imgur.com/bcvSSgM.jpg",
+  "http://i.imgur.com/1SHZTmz.jpg",
+  "http://i.imgur.com/yK3VDgP.jpg",
+  "http://i.imgur.com/aszTgRJ.jpg",
+  "https://c1.staticflickr.com/9/8668/16493978338_14fd41834b_k.jpg",
+  "http://i.imgur.com/KuuXhnf.jpg",
+  "http://i.imgur.com/mUahqUu.jpg"
+]
+
+imageURLs.shuffle
+
+10.times do |i|
+  user_id = (1..2).to_a.sample
+  Photo.create(url: imageURLs[i], user_id: user_id, title: Faker::Hipster.word)
+end
