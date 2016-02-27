@@ -9,45 +9,68 @@ var PhotosIndex = require('./components/photos/photos_index');
 var PhotoDetail = require('./components/photos/photo_detail');
 var NavBar = require('./components/navigation/navbar');
 var PhotoForm = require('./components/photos/photo_form');
+var UserProfile = require('./components/user/user_profile');
+var SessionStore = require('./stores/react_session_store');
+var SessionUtil = require('./util/sessions_util');
 
 var CreateUserForm = require('./components/sessions/create_user_form');
 var CreateSessionForm = require('./components/sessions/create_session_form');
 
-window.SessionStore = require('./stores/react_session_store');
-
-	       
+require('./util/api_util');
 
 
 var App = React.createClass({
+
+	getInitialState: function(){
+		return {
+			current: SessionStore.currentUser()
+		};
+	},
+
+	componentDidMount: function(){
+		this.toke = SessionStore.addListener(this._onChange);
+		SessionUtil.fetchCurrent();
+	},
+
+	_onChange: function(){
+		this.setState({current: SessionStore.currentUser()});
+	},
+
+	componentWillUnmount: function(){
+		this.toke.remove();
+	},
+
   render: function(){
 
 	  return (
 	      <div>
-	      	<NavBar/>
-	        {this.props.children}
+	      	<NavBar current={this.state.current}/>
+	        {this.props.children && React.cloneElement(this.props.children, {current: this.state.current})}
 	      </div>
 	  );
 	}
 });
 
-
-
 var routes = (
 	<Router>
 		<Route path="/" component={App}>
 			<IndexRoute component={PhotosIndex}/>
+			
 			<Route path="user/sign_in" component={CreateSessionForm}/>
 			<Route path="user/sign_up" component={CreateUserForm}/>
+			<Route path="users/:id" component={UserProfile}/>
+
+			<Route path="photos" component={PhotosIndex}>
+			 </Route>
+
 		</Route>
-		<Route path="photos/:id" component={PhotoDetail}/>
+		<Route path="/photos/:id" component={PhotoDetail}/>
 		<Route path="/upload" component={PhotoForm}/>
 	</Router>
 );
 
-// $('.grid').masonry({
-// 	itemSelector: '.grid-item'
-// });
-
 document.addEventListener("DOMContentLoaded", function () {
   ReactDOM.render(routes, document.getElementById('content'));
 });
+
+

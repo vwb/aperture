@@ -8,6 +8,7 @@
 .photo-index {
 	top: 59px;
 	position: relative;
+	max-width: 100%;
 }
 
 .photo-index-item {
@@ -30,45 +31,51 @@
 	height: auto;
 }
 
+.grid {
+	margin: 0 auto;
+	position: relative;
+	max-width: 100%;
+	padding-right: 5px;
+	padding-top: 5px;
+}
+
 .grid-item img {
 	width: 100%;
 	height: auto;
 	cursor: pointer;
 
 }
-
-
+//would prefer to do media query and change the percentages as the size changes~?
 //mediaquery?
 .grid-item { 
-	width: 33.33%; 
-	height: auto;
-	padding: 5px;
+	width: 33.2%;
+	max-height: auto;
+	padding-left: 5px;
+	padding-bottom: 5px;
 }
-
-
-
 
 //PHOTO DETAIL STYLING
 
 .photo-detail {
-	position: relative;
-	width: 60%;
+	position: absolute;
+	width: 70%;
 	height: auto;
 	padding: 10px;
 	float: left;
 }
 
 .photo-detail img{
-	width: 100%;
-	height: auto;
+	max-width: 100%;
+	max-height: auto;
 }
 
 .photo-info {
-	float: right;
-	position: static;
+	position: relative;
 	padding: 10px;
 	border: 2px solid red;
 	height: 100%;
+	left: 70%;
+	width: 30%;
 }
 
 .photo-detail-container {
@@ -205,3 +212,42 @@ header .header-li > i {
   border-color: black;
 }
 
+//PHOTO FORM
+
+.photo-thumb-container {
+	position: relative;
+	width: 200px;
+	height: auto;
+	padding: 10px;
+	display: inline-block;
+}
+
+.selected {
+	border: 1px solid red;
+}
+
+.photo-thumb-container img {
+	width: 100%;
+	height: auto;
+}
+
+//USER PROFILE PAGE
+
+.user-photos {
+	position: relative;
+	width: 600px;
+	margin: 0 auto;
+}
+
+
+//COLLECTIONS
+
+//adding-collections
+
+.collection-list {
+	display: none;
+}
+
+.visible {
+	display: block;
+}

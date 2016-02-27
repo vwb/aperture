@@ -34,8 +34,16 @@ SessionStore.__onDispatch = function(payload){
 	}
 };
 
-SessionStore.current_user = function(){
+SessionStore.currentUser = function(){
 	return _session["current"];
+};
+
+SessionStore.isLoggedIn = function(){
+	if (_session["current"]){
+		return true
+	} else {
+		return false
+	}
 };
 
 function makeNewSession(user){

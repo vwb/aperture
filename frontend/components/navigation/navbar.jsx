@@ -1,43 +1,19 @@
 var React = require('react');
-var AppBar = require('material-ui/lib/app-bar');
 var NavBarSearch = require('./navbar_search');
-var SessionStore = require('../../stores/react_session_store');
-var SessionUtil = require('../../util/sessions_util');
 var History = require('react-router').History;
+var SessionUtil = require('../../util/sessions_util');
 
 var NavBar = React.createClass({
 
   mixins: [History],
 
-  getInitialState: function(){
-    return {
-      current_user: SessionStore.current_user()
-    };
-  },
-
-  //can maybe do this in will mount?
-  componentDidMount: function(){
-
-    this.toke = SessionStore.addListener(this._onChange);
-
-    if (!this.state.current_user){
-      SessionUtil.fetchCurrent();
-    };
-  },
-
-  _onChange: function(){
-    this.setState({current_user: SessionStore.current_user()});
-  },
-
-  componentWillUnmount: function(){
-    this.toke.remove();
-  },
-
   handleClick: function(){
 
-    if (this.state.current_user){
+    if (this.props.current){
       SessionUtil.destroySession();
     } else {
+      
+      //have the component for signing in inside here, and just change the class! Boom modal!
       this.history.push("/user/sign_in");
     }
 
@@ -47,15 +23,22 @@ var NavBar = React.createClass({
     this.history.push("/upload");
   },
 
+  profileLink: function(){
+    this.history.push("/users/"+this.state.currentUser.id);
+  },
+
   render: function() {
 
     var text;
-    if (this.state.current_user){
-      text = "Log Out"
+    var profile;
+    if (this.props.current){
+      text = "Log Out";
+      profile = (
+        <li className="header-li" onClick={this.profileLink}> <a>Profile</a> </li>
+      );
     } else {
-      text = "Sign In"
+      text = "Sign In";
     }
-
 
     return (
       <div>
@@ -78,6 +61,8 @@ var NavBar = React.createClass({
               <li onClick={this.handleClick} className="header-li">
                 <a >{text}</a>
               </li>
+
+              {profile}
 
             </ul>
           </div>

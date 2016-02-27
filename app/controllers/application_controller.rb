@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_user, :signed_in?
 
   def current_user
-    @current_user ||= User.find_by(session_token: session[:token])
+    @current_user ||= User.includes(:collections).find_by(session_token: session[:token])
   end
 
   def login_user!(user)

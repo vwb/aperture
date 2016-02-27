@@ -13,10 +13,6 @@ var SignInForm = React.createClass({
 		};
 	},
 
-	componentDidMount: function(){
-		debugger;
-	},
-
 	handleSubmit: function(e){
 		e.preventDefault();
 
@@ -25,11 +21,21 @@ var SignInForm = React.createClass({
 			password: this.state.password
 		};
 
-		SessionUtil.createSession(params)
+		SessionUtil.createSession(params, this.successRedirect)
+	},
+
+	handleSignUp: function(e){
+		e.preventDefault();
+
+		this.props.history.push("user/sign_up");
+	},
+
+	//any way to push "back" to where the use was before they logged in?
+	successRedirect: function(){
+		this.props.history.push("/");
 	},
 
 	render: function() {
-			debugger;
 		
 		return (
 			<div className="wrapper">
@@ -58,6 +64,8 @@ var SignInForm = React.createClass({
 					<input type="submit" value="Sign In"/>
 
 				</form>
+
+				<button onClick={this.handleSignUp}> Sign Up! </button>
 
 			</div>
 		);

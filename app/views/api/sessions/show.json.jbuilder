@@ -1,4 +1,4 @@
 
 unless @user.nil?
-	json.extract! @user, :id, :email, :session_token
+	json.extract! @user, :id, :email, :session_token, :collections
 end

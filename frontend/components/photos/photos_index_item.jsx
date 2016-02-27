@@ -6,12 +6,12 @@ var PhotoIndexItem = React.createClass({
 	mixins: [History],
 
 	handleClick: function(){
-		this.history.push("/photos/"+this.props.photo.id);
+		this.history.push("photos/"+this.props.photo.id);
 	},
 
 	render: function() {
 		return (
-			<div className="grid-item">
+			<div className={this.props.cName}>
 				<img onClick={this.handleClick} src={this.props.photo.url}/>
 			</div>
 		);

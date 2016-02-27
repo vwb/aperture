@@ -9,6 +9,9 @@
 User.create!(email: "test@email.com", password: "password");
 User.create!(email: "test2@email.com", password: "password");
 
+Collection.create!(title: Faker::Book.genre, user_id: 1)
+Collection.create!(title: Faker::Book.genre, user_id: 2)
+
 imageURLs = [
   "http://proof.nationalgeographic.com/files/2015/07/NationalGeographic_1203310.jpg",
   "http://proof.nationalgeographic.com/files/2015/04/150501-bestpod-volcANO.jpg",
@@ -21,8 +24,6 @@ imageURLs = [
   "http://i.imgur.com/KuuXhnf.jpg",
   "http://i.imgur.com/mUahqUu.jpg"
 ]
-
-imageURLs.shuffle
 
 10.times do |i|
   user_id = (1..2).to_a.sample

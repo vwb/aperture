@@ -76,8 +76,18 @@ user interface.
 - [X] position elements on the page
 - [X] add basic colors & styles
 - [ ] stylize photo detail page
-- [ ] Create a nice image upload form
+- [X] Create a nice image upload form
 - [X] implement grid layout
+
+### Phase 4.5: Users Views (1 day)
+
+**Objective:** Create User API, react loop, and User views
+
+- build out API, Flux loop, and components for:
+  - [ ] User
+  - [ ] User profile page
+  - [ ] viewing all the users photos / collections
+- Use CSS to style new views
 
 ### Phase 5: Collections (1 day)
 

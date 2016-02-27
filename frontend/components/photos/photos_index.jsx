@@ -31,12 +31,12 @@ var PhotoIndex = React.createClass({
 
 			var cName;
 			if (key % 3 === 0){
-				cName = "grid-item--width-2"
+				cName = "grid-item w2"
 			} else {
 				cName = "grid-item"
 			}
 
-			return <PhotoIndexItem key={key} photo={photo} className="photo-index-item" />
+			return <PhotoIndexItem key={key} photo={photo} className="photo-index-item" cName={cName}/>
 		});
 	},
 
@@ -48,14 +48,16 @@ var PhotoIndex = React.createClass({
 		return (
 			<div className="photo-index">
 				<Masonry
-					className={'grid'}
+					className={'grid group'}
 					elementType={'div'}
 					options={masonryOptions}
-					disableImagesLoaded={false}>
+					disableImagesLoaded={false} >
 
 					{this.generatePhotoItems()}
 
 				</Masonry>
+
+				{this.props.children}
 			</div>
 		);
 	}

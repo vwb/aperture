@@ -1,3 +1,61 @@
+UserProfile broken
+Finish the flux loop for adding photos to collections.
+	-- currently writing the callback action for the collection
+	-- need to write collection constants, and collection store(?)
+
+
+Questions:	
+	- many to many relationship, how to handle the creation of new rows/etc. (Blanking super hard here...)
+		> do I send through the API, to where? Make multiple calls? Kinda lost... 
+
+		ANSWER: send params IDs and assign them on backend. Rails will handle it, and using associations for controllers will send back correct information.
+
+	- router
+		> is the route looking good? any suggestions for how to possibly restructure/etc.
+		> entry hook for the router? if I am planning on using the sign in page etc as a modal changes that may be needed?
+
+
+
+QUESTION:
+	- How to handle redirect upon successful callback of the ajax request for login/upload/etc.
+			ANSWER: pass a callback to the ajax call from the handle submit, invoke it in the success callback.
+								- multiple images:
+									> only invoke the callback if the length === the index passed along (and there is a callback) that 
+										way the redirect will only occur when all of the photos have been uploaded.
+
+
+COLLECTION FUNCTIONS
+	- add photos to collections
+	
+		> from photo detail (for now)
+		> adding to a collection means updating the PHOTO with the chosen collection ID
+
+		> click on add to collection should cause the current users collections to appear.
+			- they select which collections
+			- submit
+			- patch sent
+
+
+			photos can be in many collections
+			collections can have many photos
+			many to many relationship
+			join table!
+			damnit.
+
+	- view photos within a collection
+	- delete a collection
+	- edit a collection
+
+
+
+
+
+
+
+
+
+
+
 > STYLING
 	- remake the photo upload form to something more similar 
 		to my wireframe.
@@ -5,22 +63,18 @@
 	- actual edit menu should only appear if choose to (and current user owns it)
 	- when click on search bar placeholder text disappear (even before the user starts typing)
 	
+	Nice little menu once users are logged in for navbar
+	http://codepen.io/alexcican/pen/gsFpd
+
 > Collection Notes
-	
-	BACKEND
-		- upon creation of a user automatically create a "Favorites" collection for the user.
-		- belongs to a user
-		- has many photos
-			> photos belong to a collection (not necessarily)
-		- title
-		- description
 
 		API
 			- show: returns the collection including referenced photos, the user, etc.
+			- user can add a collectiond
+			- be able to add a photo to a collection
+			- view collections?
 
 	FRONTEND
-
-	**make a super basic user profile page to test this.**
 
 		- some pretty tab/something way to view collections or images
 		- viewing a collection should look the same as when viewing the photo index, just images are only from collection
@@ -34,4 +88,14 @@ Other Random Notes:
 	User
 		> add uniqueness validation for email on database side
 		> add a required username for users
+
+	Photo
+		> for handling multiple image upload
+			- form needs title/description to apply only to the currently clicked on photo
+
+	Masonry
+		> look up media queries to size the images correctly as the page resizes (change the width value of the grid elements to window size/3 up to a certain size, then size/2, then size. Seems to me to be the cleanest way to go about this).
+
+
+
 

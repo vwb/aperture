@@ -3,7 +3,7 @@ var SessionActions = require('../actions/session_actions');
 
 var SessionsUtil = {
 
-	createUser: function(params){
+	createUser: function(params, callback){
 		$.ajax({
 			type: "POST",
 			url: "/api/users",
@@ -11,11 +11,13 @@ var SessionsUtil = {
 			datatype: "json",
 			success: function(data){
 				SessionActions.newUser(data);
+				callback();
 			}
 		});
 	},
 
-	createSession: function(params){
+	createSession: function(params, callback){
+
 		$.ajax({
 			type: "POST",
 			url: "/api/session",
@@ -23,7 +25,8 @@ var SessionsUtil = {
 			datatype: "json",
 			success: function(data){
 				SessionActions.newSession(data);
-			}
+				callback();
+			}.bind(this)
 		});
 	},
 
