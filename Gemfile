@@ -8,6 +8,8 @@ gem 'pg', '~> 0.15'
 gem 'figaro'
 gem 'newrelic_rpm'
 gem 'rails_12factor'
+gem 'faker'
+
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
@@ -43,7 +45,6 @@ group :development, :test do
   gem 'pry-rails'
   gem 'binding_of_caller'
   gem 'annotate'
-  gem 'faker'
 end
 
 group :development do
