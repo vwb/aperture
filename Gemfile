@@ -6,6 +6,8 @@ gem 'rails', '4.2.5'
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 0.15'
 gem 'figaro'
+gem 'newrelic_rpm'
+gem 'rails_12factor'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'

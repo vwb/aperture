@@ -72,6 +72,7 @@ var CollectionDetail = React.createClass({
 						<section className="collection-header">
 							{/*<CollectionDetailHeader collection={this.state.collection}/>*/}
 							<h3> {title} </h3>
+							<
 						</section>
 
 						<section className="collection-body">

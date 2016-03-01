@@ -57,7 +57,7 @@
 	var NavBar = __webpack_require__(474);
 	var PhotoForm = __webpack_require__(476);
 	var CollectionForm = __webpack_require__(487);
-	var CollectionDetail = __webpack_require__(489);
+	var CollectionDetail = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./components/collections/collection_detail\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 	
 	var UserProfile = __webpack_require__(479);
 	var SessionStore = __webpack_require__(256);
@@ -69760,118 +69760,7 @@
 	module.exports = PhotoSelector;
 
 /***/ },
-/* 489 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var CollectionStore = __webpack_require__(485);
-	var CollectionActions = __webpack_require__(483);
-	var Masonry = __webpack_require__(237);
-	var PhotoIndexItem = __webpack_require__(236);
-	
-	var masonryOptions = {
-		transitionDuration: 0,
-		itemSelector: ".grid-item"
-	};
-	
-	var CollectionDetail = React.createClass({
-		displayName: 'CollectionDetail',
-	
-	
-		getInitialState: function () {
-			return {
-				collection: CollectionStore.collection()
-			};
-		},
-	
-		componentDidMount: function () {
-			this.toke = CollectionStore.addListener(this._onChange);
-			CollectionActions.fetchCollection(parseInt(this.props.params.id));
-		},
-	
-		componentWillUnmount: function () {
-			this.toke.remove();
-		},
-	
-		_onChange: function () {
-			this.setState({ collection: CollectionStore.collection() });
-		},
-	
-		generatePhotoItems: function () {
-			if (this.state.collection) {
-	
-				var cName = "grid-item";
-	
-				return this.state.collection.photos.map(function (photo, ind) {
-					return React.createElement(PhotoIndexItem, {
-						key: ind,
-						photo: photo,
-						cName: cName });
-				});
-			}
-		},
-	
-		handleBackgroundImage: function () {
-			if (this.state.collection) {
-				if (this.state.collection.photos) {
-					return this.state.collection.photos[0].url;
-				}
-			};
-		},
-	
-		render: function () {
-			var title;
-			if (this.state.collection) {
-				title = this.state.collection.title;
-			}
-	
-			return React.createElement(
-				'div',
-				{ className: 'parallax' },
-				React.createElement(
-					'div',
-					{ className: 'parallax__layer parallax__layer--back background' },
-					React.createElement('img', { src: this.handleBackgroundImage() })
-				),
-				React.createElement(
-					'div',
-					{ className: 'parallax__layer parallax__layer--base group' },
-					React.createElement(
-						'div',
-						{ className: 'collection-container' },
-						React.createElement(
-							'section',
-							{ className: 'collection-header' },
-							React.createElement(
-								'h3',
-								null,
-								' ',
-								title,
-								' '
-							)
-						),
-						React.createElement(
-							'section',
-							{ className: 'collection-body' },
-							React.createElement(
-								Masonry,
-								{
-									className: 'grid',
-									elementType: 'div',
-									options: masonryOptions,
-									disableImagesLoaded: false },
-								this.generatePhotoItems()
-							)
-						)
-					)
-				)
-			);
-		}
-	});
-	
-	module.exports = CollectionDetail;
-
-/***/ },
+/* 489 */,
 /* 490 */,
 /* 491 */
 /***/ function(module, exports, __webpack_require__) {

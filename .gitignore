@@ -16,7 +16,6 @@
 #Ignore node modules
 node_modules
 
-
 */bundle.js
 
 # Ignore application configuration
