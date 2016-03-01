@@ -18,6 +18,8 @@ class Photo < ActiveRecord::Base
   belongs_to :user
 
   has_many :comments
+
+  has_many :tags, as: :taggable
   
   has_many :photo_connections
   has_many :collections, through: :photo_connections

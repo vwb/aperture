@@ -9,6 +9,6 @@ class CreateTags < ActiveRecord::Migration
       t.timestamps null: false
     end
 
-    add_index :pictures, :taggable_id
+    add_index :tags, :taggable_id
   end
 end

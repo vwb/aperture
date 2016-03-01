@@ -2,6 +2,8 @@ TAGS
 	- photo upload form / collection upload form should support input of tags
 	- tag store, constants, etc.
 
+	- How to instantiate new tags, what to assign the taggable/elements. ...
+
 COMMENTS
 	- photo detail
 

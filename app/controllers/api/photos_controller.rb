@@ -1,7 +1,7 @@
 class Api::PhotosController < ApplicationController
 
   def index
-    @photos = Photo.all.order('random()')
+    @photos = Photo.includes(:comments).all.order('random()')
     render :index
   end
 
