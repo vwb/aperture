@@ -1,7 +1,7 @@
 class Api::CollectionsController < ApplicationController
 
   def show
-    @collections = Collection.includes(:photos).find(params[:id])
+    @collections = Collection.includes(:photos, :tags).find(params[:id])
     render :show
   end
 
@@ -16,8 +16,15 @@ class Api::CollectionsController < ApplicationController
     @collections.user = current_user
     @collections.save!
 
-    @collections.photo_ids = params[:collection][:photos].map { |id| id.to_i }
+    if params[:collection][:tags]
+      tag_ids = Tag.find_ids(params[:collection][:tags])
+      @collections.tag_ids = tag_ids
+    end
 
+    if params[:collection][:photos]
+      @collections.photo_ids = params[:collection][:photos].map { |id| id.to_i }
+    end
+    
     render :show
     
   end
@@ -25,7 +32,7 @@ class Api::CollectionsController < ApplicationController
   def index
 
     if params[:user_id]
-      @collections = Collection.includes(:photos).where(user_id: params[:user_id])
+      @collections = Collection.includes(:photos, :tags).where(user_id: params[:user_id])
 
       if @collections.is_a?(Collection)
         render :show
@@ -35,7 +42,7 @@ class Api::CollectionsController < ApplicationController
 
     else
 
-      @collections = Collection.all
+      @collections = Collection.includes(:photos, :tags).all
       render :index
 
     end
@@ -63,6 +70,6 @@ class Api::CollectionsController < ApplicationController
   private
 
   def collection_params
-    params.require(:collection).permit(:photos, :user_id, :title, :description)
+    params.require(:collection).permit(:photos, :user_id, :title, :description, :tags)
   end
 end

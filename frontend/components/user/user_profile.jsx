@@ -11,7 +11,7 @@ var Link = require('react-router').Link
 var masonryOptions = {
 	transitionDuration: 0,
 	itemSelector: ".grid-item",
-	fitWidth: true
+	// fitWidth: true
 };
 
 var UserProfile = React.createClass({
@@ -99,7 +99,7 @@ var UserProfile = React.createClass({
 					<div> {current} </div>
 				</div>
 
-				<section className="collection-container">
+				<section className="user-prof-collection">
 					<h3> Collections </h3>
 					{this.generateUserCollections()}
 

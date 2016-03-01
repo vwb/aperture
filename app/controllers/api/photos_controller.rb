@@ -1,7 +1,7 @@
 class Api::PhotosController < ApplicationController
 
   def index
-    @photos = Photo.includes(:comments).all.order('random()')
+    @photos = Photo.includes(:comments, :tags).all.order('random()')
     render :index
   end
 
@@ -11,9 +11,21 @@ class Api::PhotosController < ApplicationController
   end
 
   def create
-    @photo = Photo.new(photo_params)
+    @photo = Photo.new()
+    @photo.url = photo_params[:url]
+    @photo.title = photo_params[:title]
+    @photo.price = photo_params[:price]
+    @photo.description = photo_params[:description]
+
     @photo.user = current_user
     @photo.save!
+
+    if params[:photo][:tags]
+      tag_ids = Tag.find_ids(params[:photo][:tags])
+      @photo.tag_ids = tag_ids
+    end
+
+
     render :show
   end
 
@@ -32,7 +44,7 @@ class Api::PhotosController < ApplicationController
   private
 
   def photo_params
-    params.require(:photo).permit(:url, :title, :price, :description)
+    params.require(:photo).permit(:url, :title, :price, :description, :tags)
   end
 
 end

@@ -33,6 +33,8 @@ Rails.application.routes.draw do
     resource :session, only: [:create, :destroy, :show]
     resources :collections, only: [:show, :create, :destroy, :index]
     resources :comments, only: [:create, :destroy]
+    resources :tags, only: [:index, :create, :destroy]
+
     get 'collections/:id/add_photo', to: 'collections#add_photo'
     get 'collections/:id/remove_photo', to: 'collections#remove_photo'
   end  

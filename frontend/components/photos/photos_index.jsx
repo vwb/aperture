@@ -5,8 +5,9 @@ var PhotoIndexItem = require('./photos_index_item');
 var Masonry = require('react-masonry-component');
 
 var masonryOptions = {
-	transitionDuration: 0,
+	transitionDuration: 1000,
 	itemSelector: ".grid-item"
+	// fitWidth: true
 };
 
 var PhotoIndex = React.createClass({
@@ -29,13 +30,7 @@ var PhotoIndex = React.createClass({
 	generatePhotoItems: function(){
 		return this.state.photos.map(function(photo, key){
 
-			var cName;
-			if (key % 3 === 0){
-				cName = "grid-item w2"
-			} else {
-				cName = "grid-item"
-			}
-
+			var	cName = "grid-item";
 			return <PhotoIndexItem key={key} photo={photo} className="photo-index-item" cName={cName}/>
 		});
 	},
@@ -47,18 +42,19 @@ var PhotoIndex = React.createClass({
 	render: function() {
 
 		return (
-			<div className="wrapper photo-index">
-				<Masonry
-					className={'grid group'}
-					elementType={'div'}
-					options={masonryOptions}
-					disableImagesLoaded={false} >
+			<div className="wrapper group photo-index">
+				<section>
+					<Masonry
+						className={'grid'}
+						elementType={'div'}
+						options={masonryOptions}
+						disableImagesLoaded={false} >
 
-					{this.generatePhotoItems()}
+						{this.generatePhotoItems()}
 
-				</Masonry>
-
-				{this.props.children}
+					</Masonry>
+				</section>
+			{this.props.children}
 			</div>
 		);
 	}

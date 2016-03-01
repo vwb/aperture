@@ -24197,8 +24197,9 @@
 	var Masonry = __webpack_require__(237);
 	
 	var masonryOptions = {
-		transitionDuration: 0,
+		transitionDuration: 1000,
 		itemSelector: ".grid-item"
+		// fitWidth: true
 	};
 	
 	var PhotoIndex = React.createClass({
@@ -24223,13 +24224,7 @@
 		generatePhotoItems: function () {
 			return this.state.photos.map(function (photo, key) {
 	
-				var cName;
-				if (key % 3 === 0) {
-					cName = "grid-item w2";
-				} else {
-					cName = "grid-item";
-				}
-	
+				var cName = "grid-item";
 				return React.createElement(PhotoIndexItem, { key: key, photo: photo, className: 'photo-index-item', cName: cName });
 			});
 		},
@@ -24242,15 +24237,19 @@
 	
 			return React.createElement(
 				'div',
-				{ className: 'wrapper photo-index' },
+				{ className: 'wrapper group photo-index' },
 				React.createElement(
-					Masonry,
-					{
-						className: 'grid group',
-						elementType: 'div',
-						options: masonryOptions,
-						disableImagesLoaded: false },
-					this.generatePhotoItems()
+					'section',
+					null,
+					React.createElement(
+						Masonry,
+						{
+							className: 'grid',
+							elementType: 'div',
+							options: masonryOptions,
+							disableImagesLoaded: false },
+						this.generatePhotoItems()
+					)
 				),
 				this.props.children
 			);
@@ -31234,6 +31233,16 @@
 					PhotoActions.updatePhoto(photo);
 				}
 			});
+		},
+	
+		fetchAllTags: function (callback) {
+			$.ajax({
+				url: "/api/tags",
+				datatype: "json",
+				success: function (tags) {
+					callback(tags);
+				}
+			});
 		}
 	
 	};
@@ -34382,6 +34391,7 @@
 	var CollectionToggle = __webpack_require__(486);
 	var Link = __webpack_require__(159).Link;
 	var Comments = __webpack_require__(491);
+	var TagItems = __webpack_require__(496);
 	
 	var PhotoDetail = React.createClass({
 		displayName: 'PhotoDetail',
@@ -34453,7 +34463,6 @@
 						);
 					}
 				}
-	
 				return React.createElement(
 					'div',
 					{ className: 'photo-detail-cotainer group' },
@@ -34483,6 +34492,13 @@
 							'Price: ',
 							this.state.photo.price
 						),
+						React.createElement(
+							'section',
+							{ className: 'tag-section' },
+							'Tags:',
+							React.createElement(TagItems, { tags: this.state.photo.tags })
+						),
+						React.createElement('br', null),
 						React.createElement(CollectionToggle, { photo: this.state.photo, currentUser: this.state.current }),
 						React.createElement('br', null),
 						check,
@@ -68748,6 +68764,7 @@
 	var LinkedStateMixin = __webpack_require__(249);
 	var PhotoThumb = __webpack_require__(478);
 	var ApiUtil = __webpack_require__(232);
+	var TagForm = __webpack_require__(498);
 	
 	var PhotoForm = React.createClass({
 		displayName: 'PhotoForm',
@@ -68761,26 +68778,31 @@
 			return {
 				title: "",
 				description: "",
-				price: "",
+				price: 0,
 				photos: [],
+				selectedTags: "",
 				highLighted: 0
 			};
 		},
 	
 		handleSubmit: function () {
+			this.saveInfo();
+	
 			var options = {
 				totalImages: this.state.photos.length - 1,
 				callBack: this.successRedirect
 			};
 	
 			this.state.photos.forEach(function (photoObject, ind) {
+	
+				debugger;
+	
 				options["currentInd"] = ind;
 				ApiUtil.createPhoto(photoObject, options);
 			});
 		},
 	
 		successRedirect: function () {
-			debugger;
 			this.props.history.push("/");
 		},
 	
@@ -68819,7 +68841,12 @@
 	
 			if (this.currentPhoto.url !== photo.url) {
 				this.saveInfo();
-				this.setState({ title: photo.title, description: photo.description, price: photo.price });
+				this.setState({
+					title: photo.title,
+					description: photo.description,
+					price: photo.price,
+					selectedTags: photo.tags
+				});
 			}
 	
 			this.currentPhoto = photo;
@@ -68832,6 +68859,7 @@
 				this.currentPhoto["title"] = this.state.title;
 				this.currentPhoto["description"] = this.state.description;
 				this.currentPhoto["price"] = this.state.price;
+				this.currentPhoto["tags"] = this.state.selectedTags;
 			}
 		},
 	
@@ -68841,6 +68869,10 @@
 					return this.state.photos[i];
 				}
 			}
+		},
+	
+		handleTags: function (tags) {
+			this.setState({ selectedTags: tags });
 		},
 	
 		render: function () {
@@ -68881,8 +68913,10 @@
 						React.createElement('input', {
 							type: 'text',
 							valueLink: this.linkState("price"),
-							placeholder: '0' })
+							placeholder: '0' }),
+						React.createElement('br', null)
 					),
+					React.createElement(TagForm, { formCallback: this.handleTags, tags: this.state.selectedTags }),
 					React.createElement(PhotoButton, { handleUpload: this.handleImages }),
 					React.createElement(
 						'div',
@@ -68896,7 +68930,7 @@
 			);
 		}
 	});
-	
+	//want tags on tab/enter to add tag to selected tag list and clear state
 	module.exports = PhotoForm;
 
 /***/ },
@@ -68983,10 +69017,10 @@
 	
 	var masonryOptions = {
 		transitionDuration: 0,
-		itemSelector: ".grid-item",
-		fitWidth: true
+		itemSelector: ".grid-item"
 	};
 	
+	// fitWidth: true
 	var UserProfile = React.createClass({
 		displayName: 'UserProfile',
 	
@@ -69111,7 +69145,7 @@
 				),
 				React.createElement(
 					'section',
-					{ className: 'collection-container' },
+					{ className: 'user-prof-collection' },
 					React.createElement(
 						'h3',
 						null,
@@ -69546,6 +69580,7 @@
 	var LinkedStateMixin = __webpack_require__(249);
 	var PhotoSelector = __webpack_require__(488);
 	var CollectionActions = __webpack_require__(483);
+	var TagForm = __webpack_require__(498);
 	
 	var CollectionForm = React.createClass({
 		displayName: 'CollectionForm',
@@ -69558,17 +69593,19 @@
 			return {
 				title: "",
 				description: "",
-				photoIds: []
+				photoIds: [],
+				selectedTags: []
 			};
 		},
 	
 		handleSubmit: function (e) {
 			e.preventDefault();
-	
+			debugger;
 			var params = {
 				title: this.state.title,
 				description: this.state.description,
-				photos: this.state.photoIds
+				photos: this.state.photoIds,
+				tags: selectedTags
 			};
 			CollectionActions.createCollection(params, this.successRedirect);
 		},
@@ -69579,6 +69616,10 @@
 	
 		updateForm: function (selectedPhotos) {
 			this.setState({ photoIds: selectedPhotos });
+		},
+	
+		handleTags: function (tags) {
+			this.setState({ selectedTags: tags });
 		},
 	
 		render: function () {
@@ -69611,6 +69652,7 @@
 						),
 						React.createElement('br', null)
 					),
+					React.createElement(TagForm, { formCallback: this.handleTags, tags: this.state.selectedTags }),
 					React.createElement(
 						'div',
 						{ className: 'photo-selector' },
@@ -69769,6 +69811,14 @@
 			}
 		},
 	
+		handleBackgroundImage: function () {
+			if (this.state.collection) {
+				if (this.state.collection.photos) {
+					return this.state.collection.photos[0].url;
+				}
+			};
+		},
+	
 		render: function () {
 			var title;
 			if (this.state.collection) {
@@ -69777,29 +69827,42 @@
 	
 			return React.createElement(
 				'div',
-				{ className: 'wrapper' },
+				{ className: 'parallax' },
 				React.createElement(
-					'section',
-					{ className: 'collection-header' },
-					React.createElement(
-						'h1',
-						null,
-						' ',
-						title,
-						' '
-					)
+					'div',
+					{ className: 'parallax__layer parallax__layer--back background' },
+					React.createElement('img', { src: this.handleBackgroundImage() })
 				),
 				React.createElement(
-					'section',
-					{ className: 'collection-body' },
+					'div',
+					{ className: 'parallax__layer parallax__layer--base group' },
 					React.createElement(
-						Masonry,
-						{
-							className: 'grid',
-							elementType: 'div',
-							options: masonryOptions,
-							disableImagesLoaded: false },
-						this.generatePhotoItems()
+						'div',
+						{ className: 'collection-container' },
+						React.createElement(
+							'section',
+							{ className: 'collection-header' },
+							React.createElement(
+								'h3',
+								null,
+								' ',
+								title,
+								' '
+							)
+						),
+						React.createElement(
+							'section',
+							{ className: 'collection-body' },
+							React.createElement(
+								Masonry,
+								{
+									className: 'grid',
+									elementType: 'div',
+									options: masonryOptions,
+									disableImagesLoaded: false },
+								this.generatePhotoItems()
+							)
+						)
 					)
 				)
 			);
@@ -69984,6 +70047,211 @@
 	};
 	
 	module.exports = CommentActions;
+
+/***/ },
+/* 496 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var TagItem = __webpack_require__(497);
+	
+	var TagItems = React.createClass({
+		displayName: 'TagItems',
+	
+	
+		generateTagItems: function () {
+			if (this.props.tags) {
+				return this.props.tags.map(function (tag, ind) {
+					return React.createElement(TagItem, { tag: tag, key: ind });
+				});
+			}
+		},
+	
+		render: function () {
+			return React.createElement(
+				'div',
+				{ className: 'tag-items' },
+				React.createElement(
+					'span',
+					null,
+					' ',
+					this.generateTagItems(),
+					' '
+				)
+			);
+		}
+	});
+	
+	module.exports = TagItems;
+
+/***/ },
+/* 497 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	
+	var TagItem = React.createClass({
+		displayName: "TagItem",
+	
+	
+		renderTags: function () {
+			if (typeof this.props.tag === "string") {
+				return this.props.tag;
+			} else {
+				return this.props.tag.title;
+			}
+		},
+	
+		render: function () {
+			return React.createElement(
+				"span",
+				{ className: "tag-item" },
+				this.renderTags()
+			);
+		}
+	});
+	
+	module.exports = TagItem;
+
+/***/ },
+/* 498 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var TagItems = __webpack_require__(496);
+	var LinkedStateMixin = __webpack_require__(249);
+	var TagStore = __webpack_require__(499);
+	var TagActions = __webpack_require__(500);
+	
+	var TagForm = React.createClass({
+		displayName: 'TagForm',
+	
+	
+		mixins: [LinkedStateMixin],
+	
+		getInitialState: function () {
+			return {
+				tag: "",
+				selectedTags: [],
+				existingTags: TagStore.allTags()
+			};
+		},
+	
+		componentDidMount: function () {
+			this.toke = TagStore.addListener(this._onChange);
+	
+			if (this.props.tags) {
+				this.setState({ selectedTags: this.props.tags });
+			}
+	
+			if (this.state.existingTags.length === 0) {
+				TagActions.fetchAllTags();
+			}
+		},
+	
+		componentWillUnmount: function () {
+			this.toke.remove();
+		},
+	
+		_onChange: function () {
+			this.setState({ existingTags: TagStore.allTags() });
+		},
+	
+		handleTab: function (e) {
+			if (e.which === 9) {
+				e.preventDefault();
+				var newTags = this.state.selectedTags.concat(this.state.tag);
+				this.setState({
+					selectedTags: newTags,
+					tag: ""
+				});
+				this.props.formCallback(newTags);
+			}
+		},
+	
+		render: function () {
+			return React.createElement(
+				'div',
+				{ className: 'tag-input' },
+				React.createElement(
+					'label',
+					null,
+					'Tags',
+					React.createElement('input', {
+						type: 'text',
+						valueLink: this.linkState("tag"),
+						onKeyDown: this.handleTab })
+				),
+				React.createElement(TagItems, { tags: this.state.selectedTags })
+			);
+		}
+	});
+	
+	module.exports = TagForm;
+
+/***/ },
+/* 499 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(210);
+	var Store = __webpack_require__(214).Store;
+	var TagConstants = __webpack_require__(501);
+	
+	_tags = {};
+	
+	var TagStore = new Store(AppDispatcher);
+	
+	TagStore.allTags = function () {
+		return Object.keys(_tags);
+	};
+	
+	TagStore.__onDispatch = function (payload) {
+		switch (payload.actionType) {
+			case TagConstants.RECEIVE_ALL_TAGS:
+				resetTags(payload.tags);
+				TagStore.__emitChange();
+				break;
+		}
+	};
+	
+	function resetTags(tags) {
+		for (var i = 0; i < tags.length; i++) {
+			_tags[tags[i].title] = tags[i];
+		}
+	};
+	
+	module.exports = TagStore;
+
+/***/ },
+/* 500 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(210);
+	var TagConstants = __webpack_require__(501);
+	var ApiUtil = __webpack_require__(232);
+	
+	var TagActions = {
+		fetchAllTags: function () {
+			ApiUtil.fetchAllTags(this.receiveAllTags);
+		},
+	
+		receiveAllTags: function (tags) {
+			AppDispatcher.dispatch({
+				actionType: TagConstants.RECEIVE_ALL_TAGS,
+				tags: tags
+			});
+		}
+	};
+	
+	module.exports = TagActions;
+
+/***/ },
+/* 501 */
+/***/ function(module, exports) {
+
+	module.exports = {
+		RECEIVE_ALL_TAGS: "RECEIVE_ALL_TAGS"
+	};
 
 /***/ }
 /******/ ]);

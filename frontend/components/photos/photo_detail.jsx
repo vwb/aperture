@@ -7,6 +7,7 @@ var SessionStore = require('../../stores/react_session_store');
 var CollectionToggle = require('../collections/collection_toggle');
 var Link = require('react-router').Link
 var Comments = require('../comments/comments');
+var TagItems = require('../tags/tag_items');
 
 var PhotoDetail = React.createClass({
 
@@ -75,7 +76,6 @@ var PhotoDetail = React.createClass({
 						</button>);
 				} 
 			}
-
 			return (
 				<div className="photo-detail-cotainer group">
 
@@ -92,6 +92,13 @@ var PhotoDetail = React.createClass({
 						<p>Title: {this.state.photo.title}</p>
 						<p>Description: {this.state.photo.description}</p>
 						<p>Price: {this.state.photo.price}</p>
+
+						<section className="tag-section">
+							Tags:
+							<TagItems tags={this.state.photo.tags}/>
+						</section>
+
+						<br/>
 
 						<CollectionToggle photo={this.state.photo} currentUser={this.state.current} />
 

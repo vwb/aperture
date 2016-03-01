@@ -127,6 +127,16 @@ var ApiUtil = {
 				PhotoActions.updatePhoto(photo);
 			}
 		})
+	},
+
+	fetchAllTags: function(callback){
+		$.ajax({
+			url: "/api/tags",
+			datatype: "json",
+			success: function(tags){
+				callback(tags);
+			}
+		})
 	}
 
 

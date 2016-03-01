@@ -44,6 +44,14 @@ var CollectionDetail = React.createClass({
 		}
 	},
 
+	handleBackgroundImage: function(){
+		if (this.state.collection){
+			if (this.state.collection.photos){
+				return this.state.collection.photos[0].url
+			}
+		};
+	},
+
 
 	render: function() {
 		var title;
@@ -52,27 +60,36 @@ var CollectionDetail = React.createClass({
 		}
 
 		return (
-			<div className="wrapper">
+			<div className="parallax">
 
-				<section className="collection-header">
-					{/*<CollectionDetailHeader collection={this.state.collection}/>*/}
-					<h1> {title} </h1>
-				</section>
+				<div className="parallax__layer parallax__layer--back background">
+					<img src={this.handleBackgroundImage()}/>
+				</div>
 
-				<section className="collection-body">
-					{/*<CollectionDetailBody collection={this.state.collection}/>*/}
+				<div className="parallax__layer parallax__layer--base group">
+					<div className="collection-container">
 
-					<Masonry
-						className={'grid'}
-						elementType={'div'}
-						options={masonryOptions}
-						disableImagesLoaded={false}>
+						<section className="collection-header">
+							{/*<CollectionDetailHeader collection={this.state.collection}/>*/}
+							<h3> {title} </h3>
+						</section>
 
-						{this.generatePhotoItems()}
+						<section className="collection-body">
 
-					</Masonry>
-				</section>
+							{/*<CollectionDetailBody collection={this.state.collection}/>*/}
 
+							<Masonry
+								className={'grid'}
+								elementType={'div'}
+								options={masonryOptions}
+								disableImagesLoaded={false}>
+
+								{this.generatePhotoItems()}
+
+							</Masonry>
+						</section>
+					</div>
+				</div>
 			</div>
 		);
 	}

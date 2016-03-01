@@ -5,17 +5,15 @@
 
 //PHOTO STYLING
 
+
+
 .photo-index {
-	top: 59px;
 	position: relative;
 	max-width: 100%;
+	padding: 5px 5px 0 0;
 }
 
 .photo-index-item {
-	// padding: 0px;
-	// display: block;
-	// position: relative;
-	// max-width: 300px;
 	height: auto;
 	cursor: pointer;
 }
@@ -30,8 +28,6 @@
 	margin: 0 auto;
 	position: relative;
 	max-width: 100%;
-	// padding-right: 5px;
-	// padding-top: 5px;
 }
 
 .grid-item img {
@@ -41,24 +37,22 @@
 }
 
 .grid-item { 
+	// min-width: 400px;
 	width: 33.3%;
 	max-height: auto;
 	padding-left: 5px;
 	padding-bottom: 5px;
 }
 
-.w3 {
-	width: 25%;
-}
-
 //PHOTO DETAIL STYLING
 
 .photo-detail {
 	position: absolute;
-	width: 75%;
 	height: 100%;
 	padding: 10px;
 	float: left;
+	right: 300px;
+	left: 0;
 	background-color: #202020;
 }
 
@@ -80,10 +74,9 @@
 	position: absolute;
 	padding: 10px;
 	height: 100%;
-	left: 75%;
-	width: 25%;
+	right: 0;
+	width: 300px;
 	display: block;
-	min-width: 200px;
 	background-color: #D9D9D9;
 }
 
@@ -246,26 +239,4 @@ header .header-li > i {
 
 //adding-collections
 
-.photo-selector {
-	position: relative;
-	width: 800px;
-	margin: 0 auto;
-	padding-left: 5px;
-	padding-top: 5px;
-}
 
-.collection-list {
-	display: none;
-}
-
-.collection-header { 
-}
-
-.collection-body {
-	width: 800px;
-	margin: 0 auto;
-}
-
-.visible {
-	display: block;
-}

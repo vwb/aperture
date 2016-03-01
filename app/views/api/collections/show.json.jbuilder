@@ -1,1 +1,1 @@
-json.extract! @collections, :id, :user_id, :photos, :title, :description
+json.extract! @collections, :id, :user_id, :photos, :title, :description, :tags

@@ -2,7 +2,7 @@ var React = require('react');
 var LinkedStateMixin = require('react-addons-linked-state-mixin');
 var PhotoSelector = require('../photos/photo_selector');
 var CollectionActions = require('../../actions/collection_actions');
-
+var TagForm = require('../tags/tag_form');
 
 var CollectionForm = React.createClass({
 
@@ -13,17 +13,19 @@ var CollectionForm = React.createClass({
 		return {
 			title: "",
 			description: "",
-			photoIds: []
+			photoIds: [],
+			selectedTags: []
 		};
 	},
 
 	handleSubmit: function(e){
 		e.preventDefault();
-
+		debugger;
 		var params = {
 			title: this.state.title,
 			description: this.state.description,
-			photos: this.state.photoIds
+			photos: this.state.photoIds,
+			tags: selectedTags
 		}
 		CollectionActions.createCollection(params, this.successRedirect);
 	},
@@ -34,6 +36,10 @@ var CollectionForm = React.createClass({
 
 	updateForm: function(selectedPhotos){
 		this.setState({photoIds: selectedPhotos});
+	},
+
+	handleTags: function(tags){
+		this.setState({selectedTags: tags})
 	},
 
 	render: function() {
@@ -60,6 +66,8 @@ var CollectionForm = React.createClass({
 						<br/>
 					</section>
 
+					<TagForm formCallback={this.handleTags} tags={this.state.selectedTags}/>
+ 
 					<div className="photo-selector">
 						<PhotoSelector colTitle={this.state.title} updateForm={this.updateForm}/>
 					</div>
