@@ -21,6 +21,7 @@ class User < ActiveRecord::Base
 
   has_many :photos
   has_many :collections
+  has_many :comments
 
   def self.find_by_credentials(email, password)
     user = User.find_by(email: email)

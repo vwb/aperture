@@ -1,7 +1,7 @@
 class Api::CollectionsController < ApplicationController
 
   def show
-    @collection = Collection.includes(:photos).find(params[:id])
+    @collections = Collection.includes(:photos).find(params[:id])
     render :show
   end
 
@@ -11,21 +11,58 @@ class Api::CollectionsController < ApplicationController
   end
 
   def create
-    @collection = new Collection(collection_params)
-    @collection.save!
+
+    @collections = Collection.new(collection_params)
+    @collections.user = current_user
+    @collections.save!
+
+    @collections.photo_ids = params[:collection][:photos].map { |id| id.to_i }
+
     render :show
+    
+  end
+
+  def index
+
+    if params[:user_id]
+      @collections = Collection.includes(:photos).where(user_id: params[:user_id])
+
+      if @collections.is_a?(Collection)
+        render :show
+      else
+        render :index
+      end
+
+    else
+
+      @collections = Collection.all
+      render :index
+
+    end
+
   end
 
   def add_photo
     @collection = Collection.find(params[:id])
-    @collection.photo_ids = [params[:photo_id]]
+    @collection.photo_ids += [params[:photo_id].to_i]
 
-    render :show
+    @collections = Collection.includes(:photos).where(user_id: current_user.id)
+
+    render :index
+  end
+
+  def remove_photo
+    @collection = Collection.find(params[:id])
+    @collection.photo_ids -= [params[:photo_id].to_i]
+
+    @collections = Collection.includes(:photos).where(user_id: current_user.id)
+
+    render :index
   end
 
   private
 
   def collection_params
-    params.require(:collection).permit(:user_id, :title, :description)
+    params.require(:collection).permit(:photos, :user_id, :title, :description)
   end
 end

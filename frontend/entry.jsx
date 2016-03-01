@@ -7,12 +7,15 @@ var IndexRoute = ReactRouter.IndexRoute;
 
 var PhotosIndex = require('./components/photos/photos_index');
 var PhotoDetail = require('./components/photos/photo_detail');
+var PhotoEditForm = require('./components/photos/photo_edit_form');
 var NavBar = require('./components/navigation/navbar');
 var PhotoForm = require('./components/photos/photo_form');
+var CollectionForm = require('./components/collections/collection_form');
+var CollectionDetail = require('./components/collections/collection_detail');
+
 var UserProfile = require('./components/user/user_profile');
 var SessionStore = require('./stores/react_session_store');
 var SessionUtil = require('./util/sessions_util');
-
 var CreateUserForm = require('./components/sessions/create_user_form');
 var CreateSessionForm = require('./components/sessions/create_session_form');
 
@@ -53,19 +56,29 @@ var App = React.createClass({
 
 var routes = (
 	<Router>
+
 		<Route path="/" component={App}>
+
 			<IndexRoute component={PhotosIndex}/>
 			
 			<Route path="user/sign_in" component={CreateSessionForm}/>
 			<Route path="user/sign_up" component={CreateUserForm}/>
 			<Route path="users/:id" component={UserProfile}/>
+			
+			<Route path="users/:id/add_collection" component={CollectionForm}/>
+			<Route path="collections/:id" component={CollectionDetail}/>
 
-			<Route path="photos" component={PhotosIndex}>
-			 </Route>
+			<Route path="photos" component={PhotosIndex}/>
 
 		</Route>
-		<Route path="/photos/:id" component={PhotoDetail}/>
+
+
+		<Route path="/photos/:id" component={PhotoDetail}>
+			<Route path="edit" component={PhotoEditForm}/>
+		</Route>
+
 		<Route path="/upload" component={PhotoForm}/>
+
 	</Router>
 );
 

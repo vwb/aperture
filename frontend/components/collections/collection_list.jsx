@@ -5,9 +5,27 @@ var CollectionList = React.createClass({
 	generateCollectionItems: function(){
 
 		if (this.props.collections){
-			debugger;
+
+			var title = "";
+
 			return this.props.collections.map(function(collection, ind){
-				return <li key={ind} onClick={this.collectionSelect} id={collection.id}> {collection.title} </li>
+				title = collection.title;
+
+				//nested for loop here... need to optimize some how. Possibly as objects?
+
+				for (var i = 0; i < collection.photos.length; i++) {
+					if (collection.photos[i].id === this.props.photo.id){
+						title += " (included)";
+					}
+				}
+
+				return (<li 
+								key={ind} 
+								onClick={this.collectionSelect} 
+								id={collection.id}> 
+									{title}
+							</li>)
+
 			}.bind(this))
 		}
 
@@ -15,8 +33,12 @@ var CollectionList = React.createClass({
 
 	collectionSelect: function(e){
 		var collectionId = parseInt(e.currentTarget.id);
-		//make a call adding current photo to this collection!
-		this.props.addPhotoCallBack(collectionId);
+
+		if (e.currentTarget.innerHTML.indexOf("included") === -1){
+			this.props.addPhotoCallBack(collectionId);
+		} else {
+			this.props.removePhotoCallBack(collectionId);
+		}
 	},
 
 	render: function() {

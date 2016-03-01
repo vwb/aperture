@@ -22,60 +22,69 @@
 
 .photo-detail-container {
 	position: relative;
-	width: 500px;
-	height: auto;
-}
-
-.photo-detail-container img{
 	width: 100%;
-	height: auto;
+	height: 100%;
 }
 
 .grid {
 	margin: 0 auto;
 	position: relative;
 	max-width: 100%;
-	padding-right: 5px;
-	padding-top: 5px;
+	// padding-right: 5px;
+	// padding-top: 5px;
 }
 
 .grid-item img {
 	width: 100%;
 	height: auto;
 	cursor: pointer;
-
 }
-//would prefer to do media query and change the percentages as the size changes~?
-//mediaquery?
+
 .grid-item { 
-	width: 33.2%;
+	width: 33.3%;
 	max-height: auto;
 	padding-left: 5px;
 	padding-bottom: 5px;
+}
+
+.w3 {
+	width: 25%;
 }
 
 //PHOTO DETAIL STYLING
 
 .photo-detail {
 	position: absolute;
-	width: 70%;
-	height: auto;
+	width: 75%;
+	height: 100%;
 	padding: 10px;
 	float: left;
+	background-color: #202020;
 }
 
 .photo-detail img{
 	max-width: 100%;
-	max-height: auto;
+	max-height: 100%;
+	display: block;
+	margin: auto;
+	position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 10px 10px 10px 10px;
 }
 
 .photo-info {
-	position: relative;
+	color: black;
+	position: absolute;
 	padding: 10px;
-	border: 2px solid red;
 	height: 100%;
-	left: 70%;
-	width: 30%;
+	left: 75%;
+	width: 25%;
+	display: block;
+	min-width: 200px;
+	background-color: #D9D9D9;
 }
 
 .photo-detail-container {
@@ -231,21 +240,30 @@ header .header-li > i {
 	height: auto;
 }
 
-//USER PROFILE PAGE
-
-.user-photos {
-	position: relative;
-	width: 600px;
-	margin: 0 auto;
-}
 
 
 //COLLECTIONS
 
 //adding-collections
 
+.photo-selector {
+	position: relative;
+	width: 800px;
+	margin: 0 auto;
+	padding-left: 5px;
+	padding-top: 5px;
+}
+
 .collection-list {
 	display: none;
+}
+
+.collection-header { 
+}
+
+.collection-body {
+	width: 800px;
+	margin: 0 auto;
 }
 
 .visible {

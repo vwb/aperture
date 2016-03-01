@@ -24,7 +24,7 @@ var NavBar = React.createClass({
   },
 
   profileLink: function(){
-    this.history.push("/users/"+this.state.currentUser.id);
+    this.history.push("/users/"+this.props.current.id);
   },
 
   render: function() {

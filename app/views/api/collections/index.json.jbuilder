@@ -1,0 +1,1 @@
+json.array! @collections, :photos, :user_id, :id, :title, :description

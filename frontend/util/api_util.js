@@ -69,8 +69,64 @@ var ApiUtil = {
 			success: function(data){
 				callback(data)
 			}
-
 		});
+	},
+
+	removePhotoFromCollection: function(id, params, callback){
+		$.ajax({
+			url: "/api/collections/"+id+"/remove_photo",
+			datatype: "json",
+			data: params, 
+			success: function(data){
+				callback(data)
+			}
+		});
+	},
+
+	fetchCollection: function(id, callback){
+		$.ajax({
+			url: "/api/collections/"+id,
+			datatype: "json",
+			success: function(data){
+				callback(data)
+			}
+		})
+	},
+
+	fetchUserCollections: function(params, callback){
+		$.ajax({
+			url: "/api/collections",
+			data: params,
+			datatype: "json",
+			success: function(collections){
+				callback(collections)
+			}
+		});
+	},
+
+	createCollection: function(params, callback, successRedirect){
+		$.ajax({
+			url: "/api/collections",
+			data: {collection: params},
+			type: "POST",
+			datatype: "json",
+			success: function(collections){
+				callback(collections)
+				successRedirect(collections.id)
+			}
+		});
+	},
+
+	createComment: function(params){
+		$.ajax({
+			url: "/api/comments",
+			data: {comment: params},
+			type: "POST",
+			datatype: "json",
+			success: function(photo){
+				PhotoActions.updatePhoto(photo);
+			}
+		})
 	}
 
 

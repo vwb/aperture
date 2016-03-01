@@ -2,6 +2,7 @@ var React = require('react');
 var LinkedStateMixin = require('react-addons-linked-state-mixin');
 var ApiUtil = require('../../util/api_util');
 var History = require('react-router').History;
+var PhotoStore = require('../../stores/photo_store');
 
 var PhotoEditForm = React.createClass({
 
@@ -9,9 +10,21 @@ var PhotoEditForm = React.createClass({
 
 	getInitialState: function(){
 		return {
-				title: this.props.photo.title,
-				price: this.props.photo.price
+				title: "",
+				price: "",
+				photo: ""
 			};
+	},
+
+	componentDidMount: function(){
+		var photo = PhotoStore.find_by_id(parseInt(this.props.params.id))
+		if (photo){
+			this.setState({
+				title: photo.title,
+				price: photo.price,
+				photo: photo
+			})
+		} 
 	},
 
 	handleSubmit: function(e){
@@ -23,19 +36,26 @@ var PhotoEditForm = React.createClass({
 			price: this.state.price
 		};
 
-		ApiUtil.updatePhoto(this.props.photo.id, params);
+		ApiUtil.updatePhoto(this.state.photo.id, params);
 	},
 
 	handleDelete: function(e){
-		ApiUtil.deletePhoto(this.props.photo.id);
+		debugger;
+		ApiUtil.deletePhoto(this.state.photo.id);
 		this.history.push("/");
+	},
+
+	successRedirect: function(){
+
 	},
 
 	render: function() {
 		return (
 
 			<div className="PhotoEditForm">
-				<h2> Edit Photo </h2>
+
+				<h3> Edit Image </h3>
+				
 				<form onSubmit={this.handleSubmit}>
 
 					<label htmlFor="title">Title</label>

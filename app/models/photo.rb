@@ -16,6 +16,8 @@ class Photo < ActiveRecord::Base
   validates :url, :user_id, presence: true
 
   belongs_to :user
+
+  has_many :comments
   
   has_many :photo_connections
   has_many :collections, through: :photo_connections

@@ -45,8 +45,9 @@ var PhotoIndex = React.createClass({
 	},
 
 	render: function() {
+
 		return (
-			<div className="photo-index">
+			<div className="wrapper photo-index">
 				<Masonry
 					className={'grid group'}
 					elementType={'div'}

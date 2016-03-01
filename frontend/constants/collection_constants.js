@@ -1,0 +1,3 @@
+module.exports = {
+	RECEIVE_COLLECTIONS: "RECEIVE_COLLECTIONS"
+}

@@ -4,7 +4,9 @@ var PhotoEditForm = require('./photo_edit_form');
 var ApiUtil = require('../../util/api_util');
 var SessionUtil = require('../../util/sessions_util');
 var SessionStore = require('../../stores/react_session_store');
-var CollectionAdd = require('../collections/add_to_collection');
+var CollectionToggle = require('../collections/collection_toggle');
+var Link = require('react-router').Link
+var Comments = require('../comments/comments');
 
 var PhotoDetail = React.createClass({
 
@@ -46,27 +48,40 @@ var PhotoDetail = React.createClass({
 		}
 	},
 
+	handleEdit: function(){
+		if (this.props.location.pathname.indexOf("edit") > -1){
+			this.props.history.push("photos/"+this.state.photo.id);
+		} else {
+			this.props.history.push("photos/"+this.state.photo.id+"/edit");
+		}
+	},
+
 	render: function() {
 
 		var check = "";
 
-		this._photoPresenceCheck()
+		this._photoPresenceCheck();
 
 		if (this.havePhoto){
 
 			if (this.state.current){
 
 				if (this.state.photo.user_id === this.state.current.id){
-					check = <PhotoEditForm photo={this.state.photo}/>
+					check = (
+						<button 
+							className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+							onClick={this.handleEdit}> 
+								Edit Image 
+						</button>);
 				} 
 			}
 
 			return (
 				<div className="photo-detail-cotainer group">
 
-					<section className="photo-detail">
-						<img src={this.state.photo.url}/>
-					</section>
+					<div className="photo-detail">
+							<img src={this.state.photo.url}/>
+					</div>
 
 					<section className="photo-info">
 
@@ -78,12 +93,19 @@ var PhotoDetail = React.createClass({
 						<p>Description: {this.state.photo.description}</p>
 						<p>Price: {this.state.photo.price}</p>
 
-						<CollectionAdd photo={this.state.photo} currentUser={this.state.current} />
+						<CollectionToggle photo={this.state.photo} currentUser={this.state.current} />
+
+						<br/>
 
 						{check}
+
+						<br/>
+
+						{this.props.children}
+
+						<Comments photo={this.state.photo}/>
 						
 					</section>
-
 
 				</div>
 			);

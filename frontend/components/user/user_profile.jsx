@@ -3,10 +3,15 @@ var UserStore = require('../../stores/user_store');
 var Masonry = require('react-masonry-component');
 var ApiUtil = require('../../util/api_util');
 var PhotoIndexItem = require('../photos/photos_index_item');
+var Link = require('react-router').Link
+
+//APP-TODO: possibly refactor the presentation of the photo index 
+//into a nested route that can then switch between the galleries and photos
 
 var masonryOptions = {
 	transitionDuration: 0,
-	itemSelector: ".grid-item"
+	itemSelector: ".grid-item",
+	fitWidth: true
 };
 
 var UserProfile = React.createClass({
@@ -32,11 +37,9 @@ var UserProfile = React.createClass({
 
 	generateUserCollections: function(){
 
-		//return collection masonry grid of collection thumbnails
-
 		if (this._userPresent()){
 			return this.state.user.collections.map(function(collection, key){
-				return (<div key={key}> {collection.title} </div>)
+				return (<div key={key}> <Link to={"collections/"+collection.id}> {collection.title} </Link> </div>)
 			});
 		}
 
@@ -45,7 +48,7 @@ var UserProfile = React.createClass({
 	generatePhotoItems: function(){
 		if (this._userPresent()){
 			return this.state.user.photos.map(function(photo, key){
-				return <PhotoIndexItem key={key} photo={photo} cName="grid-item" className="photo-index-item"/>
+				return <PhotoIndexItem key={key} photo={photo} cName="grid-item profile-image" className="photo-index-item"/>
 			})
 		}
 
@@ -65,9 +68,20 @@ var UserProfile = React.createClass({
 		if (this._userPresent() && this.props.current){
 			if (this.state.user.id === this.props.current.id) {
 				current = (
-					<div>
-						<button> Add Collection </button>
-						<button> Edit Profile </button>
+					<div className="user-options">
+
+						<span className="profile-button-container">
+							<Link to={"users/"+this.state.user.id+"/add_collection"}
+							className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"> Add Collection 
+							</Link>
+						</span>
+
+						<span className="profile-button-container">
+							<button
+							className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"> Edit Profile 
+							</button>
+						</span>
+
 					</div>
 				)
 			}
@@ -76,19 +90,23 @@ var UserProfile = React.createClass({
 		}
 
 		return (
+
 			<div className="wrapper user-profile group">
 
-				<div> {current} </div>
-				<div> {this.state.user.email} </div>
+				<div className="user-profile-header">
+					<div> {"USER AVATAR"} </div>
+					<div> {this.state.user.email} </div>
+					<div> {current} </div>
+				</div>
 
 				<section className="collection-container">
-
+					<h3> Collections </h3>
 					{this.generateUserCollections()}
 
 				</section>
 
 				<section className="user-photos">
-
+					<h3> Photos </h3>
 					<Masonry
 						className={'grid'}
 						elementType={'div'}
@@ -98,8 +116,11 @@ var UserProfile = React.createClass({
 						{this.generatePhotoItems()}
 
 					</Masonry>
+					
 				</section>
 
+				{this.props.children}
+				
 			</div>
 		);
 	}
