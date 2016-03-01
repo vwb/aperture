@@ -6,8 +6,8 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-User.create!(email: "test@email.com", password: "password");
-User.create!(email: "test2@email.com", password: "password");
+User.create!(email: "test3@email.com", password: "password");
+User.create!(email: "test4@email.com", password: "password");
 
 Collection.create!(title: Faker::Book.genre, user_id: 1)
 Collection.create!(title: Faker::Book.genre, user_id: 2)
