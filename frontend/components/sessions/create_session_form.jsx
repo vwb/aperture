@@ -26,50 +26,60 @@ var SignInForm = React.createClass({
 
 	handleSignUp: function(e){
 		e.preventDefault();
-
 		this.props.history.push("user/sign_up");
 	},
 
 	//any way to push "back" to where the use was before they logged in?
 	successRedirect: function(){
-		this.props.history.push("/");
+		this.props.closeModal();
 	},
 
 	render: function() {
 		
 		return (
-			<div className="wrapper">
 
-				<form onSubmit={this.handleSubmit}>
-					Sign In!
-					<br/>
-					
-					<label htmlFor="email">
-						Email:
-						<input
-							type="text"
-							valueLink={this.linkState("email")}
-							placeholder="sample@email.com"/>
-					</label>
-					<br/>
+				<div className="form-container center">
 
-					<label htmlFor="password">
-						Password:
-						<input
-							type="password"
-							valueLink={this.linkState("password")}/>
-					</label>
-					<br/>
+					<div className="modal-header">
+						Sign In
+					</div>
 
-					<input type="submit" value="Sign In"/>
+					<form onSubmit={this.handleSubmit} className="session-form">
+						
+						<div className="form-input-container">
+							<input
+								type="text"
+								valueLink={this.linkState("email")}
+								placeholder="sample@email.com"
+								className="form-input"
+								placeholder="Email"/>
+						</div>
 
-				</form>
+						<div className="form-input-container">
+							<input
+								type="password"
+								valueLink={this.linkState("password")}
+								className="form-input"
+								placeholder="Password"/>
+						</div>
 
-				<button onClick={this.handleSignUp}> Sign Up! </button>
+						<div className="form-button-container">
+							<input 
+								type="submit" 
+								value="Sign In"
+								className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"/>
+							<br/>
+							<button onClick={this.handleSignUp}> Sign Up! </button>
+						</div>
+
+					</form>
 
 			</div>
 		);
 	}
 });
+
+
+
 
 module.exports = SignInForm

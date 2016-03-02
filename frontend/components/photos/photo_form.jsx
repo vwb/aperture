@@ -18,7 +18,8 @@ var PhotoForm = React.createClass({
 			price: 0,
 			photos: [],
 			selectedTags: "",
-			highLighted: 0
+			highLighted: "",
+			visible: "hidden"
 		}
 	},
 
@@ -43,11 +44,6 @@ var PhotoForm = React.createClass({
 	successRedirect: function(){
 		this.props.history.push("/");
 	},
-
-	componentDidMount: function(){
-		console.log("I mounted");
-	},
-
 
 	handleImages: function(imageObjects){
 		var currentState = this.state.photos.concat(imageObjects)
@@ -76,7 +72,10 @@ var PhotoForm = React.createClass({
 
 	updateDetailForm: function(url, ind){
 
-		this.setState({highLighted: ind})
+		this.setState({
+			highLighted: ind,
+			visible: ""
+		})
 
 		var photo = this._findPhoto(url);
 
@@ -91,8 +90,6 @@ var PhotoForm = React.createClass({
 		}
 
 		this.currentPhoto = photo;
-
-		console.log(this.state.photos);
 	},
 
 
@@ -124,37 +121,41 @@ var PhotoForm = React.createClass({
 				<form onSubmit={this.handleSubmit}>
 					<h3> Upload Photos </h3>
 
-					<label>
-						Title
-						<input
-							type="text"
-							valueLink={this.linkState("title")}/>
-							<br/>
-					</label>
-
-					<label>
-						Description
-						<input
-							type="text"
-							valueLink={this.linkState("description")}/>
-							<br/>
-					</label>
-
-					<label>
-						Price
-						<input
-							type="text"
-							valueLink={this.linkState("price")}
-							placeholder="0"/>
-							<br/>
-					</label>
-
-					<TagForm formCallback={this.handleTags} tags={this.state.selectedTags}/>
-
 					<PhotoButton handleUpload={this.handleImages}/>
+
 
 					<div className="uploaded-photo-view">
 						{this.generateUploadedThumbnails()}
+					</div>
+
+					<div className={this.state.visible}>
+						<label>
+							Title
+							<input
+								type="text"
+								valueLink={this.linkState("title")}/>
+								<br/>
+						</label>
+
+						<label>
+							Description
+							<input
+								type="text"
+								valueLink={this.linkState("description")}/>
+								<br/>
+						</label>
+
+						<label>
+							Price
+							<input
+								type="text"
+								valueLink={this.linkState("price")}
+								placeholder="0"/>
+								<br/>
+						</label>
+
+						<TagForm formCallback={this.handleTags} tags={this.state.selectedTags}/>
+
 					</div>
 
 					<input

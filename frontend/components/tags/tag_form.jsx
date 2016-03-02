@@ -19,10 +19,6 @@ var TagForm = React.createClass({
 	componentDidMount: function(){
 		this.toke = TagStore.addListener(this._onChange)
 
-		if (this.props.tags){
-			this.setState({selectedTags: this.props.tags});
-		}
-
 		if (this.state.existingTags.length === 0){
 			TagActions.fetchAllTags();
 		}
@@ -30,6 +26,12 @@ var TagForm = React.createClass({
 
 	componentWillUnmount: function(){
 		this.toke.remove();
+	},
+
+	componentWillReceiveProps: function(newProps){
+		if (newProps.tags){
+			this.setState({selectedTags: newProps.tags});
+		}
 	},
 
 	_onChange: function(){
@@ -49,6 +51,8 @@ var TagForm = React.createClass({
 	},
 
 	render: function() {
+
+
 		return (
 			<div className="tag-input">
 					<label>

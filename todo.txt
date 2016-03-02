@@ -20,10 +20,6 @@ TASKS FOR TOMORROW:
 
 	BIG ITEMS:
 
-		GET TAGS WORKING!
-			> finish out backend
-			> implement front end -> in forms have a "tag" box that will append new tags as the user lists them
-
 		MODAL THE SHIT OUTTA THE SIGN IN AND SIGN UP
 
 		MAKE THE PHOTO DETAIL "LOOK" LIKE A MODAL (escape goes back, click on a little X in the corner)

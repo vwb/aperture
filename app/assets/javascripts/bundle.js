@@ -124,7 +124,9 @@
 	);
 	
 	document.addEventListener("DOMContentLoaded", function () {
-		ReactDOM.render(routes, document.getElementById('content'));
+	
+		var appElement = document.getElementById('content');
+		ReactDOM.render(routes, appElement);
 	});
 
 /***/ },
@@ -34443,6 +34445,19 @@
 			}
 		},
 	
+		handleOuterClick: function (e) {
+	
+			if (e.currentTarget.className === "photo-detail") {
+				this.props.history.goBack();
+				//check if goback empty
+			}
+		},
+	
+		handleInnerClick: function (e) {
+	
+			e.stopPropagation();
+		},
+	
 		render: function () {
 	
 			var check = "";
@@ -34468,8 +34483,8 @@
 					{ className: 'photo-detail-cotainer group' },
 					React.createElement(
 						'div',
-						{ className: 'photo-detail' },
-						React.createElement('img', { src: this.state.photo.url })
+						{ className: 'photo-detail', onClick: this.handleOuterClick },
+						React.createElement('img', { className: 'img-detail', src: this.state.photo.url, onClick: this.handleInnerClick })
 					),
 					React.createElement(
 						'section',
@@ -68617,6 +68632,9 @@
 	var NavBarSearch = __webpack_require__(475);
 	var History = __webpack_require__(159).History;
 	var SessionUtil = __webpack_require__(253);
+	var CreateSessionForm = __webpack_require__(482);
+	var Modal = __webpack_require__(531);
+	var ModalStyles = __webpack_require__(532);
 	
 	var NavBar = React.createClass({
 	  displayName: 'NavBar',
@@ -68624,14 +68642,35 @@
 	
 	  mixins: [History],
 	
+	  showModal: function () {
+	    this.refs.modal.show();
+	  },
+	
+	  hideModal: function () {
+	    this.refs.modal.hide();
+	  },
+	
+	  // getInitialState: function(){
+	  //   return {
+	  //     modalIsOpen: false
+	  //   };
+	  // },
+	
+	  // openModal: function(){
+	  //   this.setState({modalIsOpen: true})
+	  // },
+	
+	  // closeModal: function(){
+	  //   this.setState({modalIsOpen: false})
+	  // },
+	
 	  handleClick: function () {
 	
 	    if (this.props.current) {
 	      SessionUtil.destroySession();
 	    } else {
-	
-	      //have the component for signing in inside here, and just change the class! Boom modal!
-	      this.history.push("/user/sign_in");
+	      this.showModal();
+	      // this.history.push("/user/sign_in");
 	    }
 	  },
 	
@@ -68711,6 +68750,19 @@
 	            profile
 	          )
 	        )
+	      ),
+	      React.createElement(
+	        Modal,
+	        {
+	          ref: 'modal',
+	          modalStyle: ModalStyles.modalStyle,
+	          contentStyle: ModalStyles.contentStyle },
+	        React.createElement(
+	          'button',
+	          { onClick: this.hideModal, className: 'modal-close' },
+	          'Close'
+	        ),
+	        React.createElement(CreateSessionForm, { closeModal: this.hideModal })
 	      )
 	    );
 	  }
@@ -68781,7 +68833,8 @@
 				price: 0,
 				photos: [],
 				selectedTags: "",
-				highLighted: 0
+				highLighted: "",
+				visible: "hidden"
 			};
 		},
 	
@@ -68804,10 +68857,6 @@
 	
 		successRedirect: function () {
 			this.props.history.push("/");
-		},
-	
-		componentDidMount: function () {
-			console.log("I mounted");
 		},
 	
 		handleImages: function (imageObjects) {
@@ -68835,7 +68884,10 @@
 	
 		updateDetailForm: function (url, ind) {
 	
-			this.setState({ highLighted: ind });
+			this.setState({
+				highLighted: ind,
+				visible: ""
+			});
 	
 			var photo = this._findPhoto(url);
 	
@@ -68850,8 +68902,6 @@
 			}
 	
 			this.currentPhoto = photo;
-	
-			console.log(this.state.photos);
 		},
 	
 		saveInfo: function () {
@@ -68888,40 +68938,44 @@
 						null,
 						' Upload Photos '
 					),
-					React.createElement(
-						'label',
-						null,
-						'Title',
-						React.createElement('input', {
-							type: 'text',
-							valueLink: this.linkState("title") }),
-						React.createElement('br', null)
-					),
-					React.createElement(
-						'label',
-						null,
-						'Description',
-						React.createElement('input', {
-							type: 'text',
-							valueLink: this.linkState("description") }),
-						React.createElement('br', null)
-					),
-					React.createElement(
-						'label',
-						null,
-						'Price',
-						React.createElement('input', {
-							type: 'text',
-							valueLink: this.linkState("price"),
-							placeholder: '0' }),
-						React.createElement('br', null)
-					),
-					React.createElement(TagForm, { formCallback: this.handleTags, tags: this.state.selectedTags }),
 					React.createElement(PhotoButton, { handleUpload: this.handleImages }),
 					React.createElement(
 						'div',
 						{ className: 'uploaded-photo-view' },
 						this.generateUploadedThumbnails()
+					),
+					React.createElement(
+						'div',
+						{ className: this.state.visible },
+						React.createElement(
+							'label',
+							null,
+							'Title',
+							React.createElement('input', {
+								type: 'text',
+								valueLink: this.linkState("title") }),
+							React.createElement('br', null)
+						),
+						React.createElement(
+							'label',
+							null,
+							'Description',
+							React.createElement('input', {
+								type: 'text',
+								valueLink: this.linkState("description") }),
+							React.createElement('br', null)
+						),
+						React.createElement(
+							'label',
+							null,
+							'Price',
+							React.createElement('input', {
+								type: 'text',
+								valueLink: this.linkState("price"),
+								placeholder: '0' }),
+							React.createElement('br', null)
+						),
+						React.createElement(TagForm, { formCallback: this.handleTags, tags: this.state.selectedTags })
 					),
 					React.createElement('input', {
 						type: 'submit',
@@ -69315,50 +69369,60 @@
 	
 		handleSignUp: function (e) {
 			e.preventDefault();
-	
 			this.props.history.push("user/sign_up");
 		},
 	
 		//any way to push "back" to where the use was before they logged in?
 		successRedirect: function () {
-			this.props.history.push("/");
+			this.props.closeModal();
 		},
 	
 		render: function () {
 	
 			return React.createElement(
 				'div',
-				{ className: 'wrapper' },
+				{ className: 'form-container center' },
+				React.createElement(
+					'div',
+					{ className: 'modal-header' },
+					'Sign In'
+				),
 				React.createElement(
 					'form',
-					{ onSubmit: this.handleSubmit },
-					'Sign In!',
-					React.createElement('br', null),
+					{ onSubmit: this.handleSubmit, className: 'session-form' },
 					React.createElement(
-						'label',
-						{ htmlFor: 'email' },
-						'Email:',
+						'div',
+						{ className: 'form-input-container' },
 						React.createElement('input', {
 							type: 'text',
 							valueLink: this.linkState("email"),
-							placeholder: 'sample@email.com' })
+							placeholder: 'sample@email.com',
+							className: 'form-input',
+							placeholder: 'Email' })
 					),
-					React.createElement('br', null),
 					React.createElement(
-						'label',
-						{ htmlFor: 'password' },
-						'Password:',
+						'div',
+						{ className: 'form-input-container' },
 						React.createElement('input', {
 							type: 'password',
-							valueLink: this.linkState("password") })
+							valueLink: this.linkState("password"),
+							className: 'form-input',
+							placeholder: 'Password' })
 					),
-					React.createElement('br', null),
-					React.createElement('input', { type: 'submit', value: 'Sign In' })
-				),
-				React.createElement(
-					'button',
-					{ onClick: this.handleSignUp },
-					' Sign Up! '
+					React.createElement(
+						'div',
+						{ className: 'form-button-container' },
+						React.createElement('input', {
+							type: 'submit',
+							value: 'Sign In',
+							className: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored' }),
+						React.createElement('br', null),
+						React.createElement(
+							'button',
+							{ onClick: this.handleSignUp },
+							' Sign Up! '
+						)
+					)
 				)
 			);
 		}
@@ -69600,12 +69664,11 @@
 	
 		handleSubmit: function (e) {
 			e.preventDefault();
-			debugger;
 			var params = {
 				title: this.state.title,
 				description: this.state.description,
 				photos: this.state.photoIds,
-				tags: selectedTags
+				tags: this.state.selectedTags
 			};
 			CollectionActions.createCollection(params, this.successRedirect);
 		},
@@ -70140,10 +70203,6 @@
 		componentDidMount: function () {
 			this.toke = TagStore.addListener(this._onChange);
 	
-			if (this.props.tags) {
-				this.setState({ selectedTags: this.props.tags });
-			}
-	
 			if (this.state.existingTags.length === 0) {
 				TagActions.fetchAllTags();
 			}
@@ -70151,6 +70210,12 @@
 	
 		componentWillUnmount: function () {
 			this.toke.remove();
+		},
+	
+		componentWillReceiveProps: function (newProps) {
+			if (newProps.tags) {
+				this.setState({ selectedTags: newProps.tags });
+			}
 		},
 	
 		_onChange: function () {
@@ -70170,6 +70235,7 @@
 		},
 	
 		render: function () {
+	
 			return React.createElement(
 				'div',
 				{ className: 'tag-input' },
@@ -70251,6 +70317,649 @@
 
 	module.exports = {
 		RECEIVE_ALL_TAGS: "RECEIVE_ALL_TAGS"
+	};
+
+/***/ },
+/* 502 */,
+/* 503 */,
+/* 504 */,
+/* 505 */,
+/* 506 */,
+/* 507 */,
+/* 508 */,
+/* 509 */,
+/* 510 */,
+/* 511 */,
+/* 512 */,
+/* 513 */,
+/* 514 */,
+/* 515 */,
+/* 516 */,
+/* 517 */,
+/* 518 */,
+/* 519 */,
+/* 520 */,
+/* 521 */,
+/* 522 */,
+/* 523 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var transitionEvents = __webpack_require__(524);
+	var appendVendorPrefix = __webpack_require__(525);
+	
+	module.exports = function(animation){
+	
+	    return React.createClass({
+	        propTypes: {
+	            className: React.PropTypes.string,
+	            // Close the modal when esc is pressed? Defaults to true.
+	            keyboard: React.PropTypes.bool,
+	            onShow: React.PropTypes.func,
+	            onHide: React.PropTypes.func,
+	            animation: React.PropTypes.object,
+	            backdrop: React.PropTypes.bool,
+	            closeOnClick: React.PropTypes.bool,
+	            modalStyle: React.PropTypes.object,
+	            backdropStyle: React.PropTypes.object,
+	            contentStyle: React.PropTypes.object,
+	        },
+	
+	        getDefaultProps: function() {
+	            return {
+	                className: "",
+	                onShow: function(){},
+	                onHide: function(){},
+	                animation: animation,
+	                keyboard: true,
+	                backdrop: true,
+	                closeOnClick: true,
+	                modalStyle: {},
+	                backdropStyle: {},
+	                contentStyle: {},
+	            };
+	        },
+	
+	        getInitialState: function(){
+	            return {
+	                willHidden: false,
+	                hidden: true
+	            }
+	        },
+	
+	        hasHidden: function(){
+	            return this.state.hidden;
+	        },
+	
+	        addTransitionListener: function(node, handle){
+	            if (node) {
+	              var endListener = function(e) {
+	                  if (e && e.target !== node) {
+	                      return;
+	                  }
+	                  transitionEvents.removeEndEventListener(node, endListener);
+	                  handle();
+	              };
+	              transitionEvents.addEndEventListener(node, endListener);
+	            }
+	        },
+	
+	        handleBackdropClick: function() {
+	            if (this.props.closeOnClick) {
+	                this.hide();
+	            }
+	        },
+	
+	        render: function() {
+	
+	            var hidden = this.hasHidden();
+	            if (hidden) return null;
+	
+	            var willHidden = this.state.willHidden;
+	            var animation = this.props.animation;
+	            var modalStyle = animation.getModalStyle(willHidden);
+	            var backdropStyle = animation.getBackdropStyle(willHidden);
+	            var contentStyle = animation.getContentStyle(willHidden);
+	            var ref = animation.getRef(willHidden);
+	            var sharp = animation.getSharp && animation.getSharp(willHidden);
+	
+	            // Apply custom style properties
+	            if (this.props.modalStyle) {
+	                var prefixedModalStyle = appendVendorPrefix(this.props.modalStyle);
+	                for (var style in prefixedModalStyle) {
+	                    modalStyle[style] = prefixedModalStyle[style];
+	                }
+	            }
+	
+	            if (this.props.backdropStyle) {
+	              var prefixedBackdropStyle = appendVendorPrefix(this.props.backdropStyle);
+	                for (var style in prefixedBackdropStyle) {
+	                    backdropStyle[style] = prefixedBackdropStyle[style];
+	                }
+	            }
+	
+	            if (this.props.contentStyle) {
+	              var prefixedContentStyle = appendVendorPrefix(this.props.contentStyle);
+	                for (var style in prefixedContentStyle) {
+	                    contentStyle[style] = prefixedContentStyle[style];
+	                }
+	            }
+	
+	            var backdrop = this.props.backdrop? React.createElement("div", {style: backdropStyle, onClick: this.props.closeOnClick? this.handleBackdropClick: null}): undefined;
+	
+	            if(willHidden) {
+	                var node = this.refs[ref];
+	                this.addTransitionListener(node, this.leave);
+	            }
+	
+	            return (React.createElement("span", null, 
+	                React.createElement("div", {ref: "modal", style: modalStyle, className: this.props.className}, 
+	                    sharp, 
+	                    React.createElement("div", {ref: "content", tabIndex: "-1", style: contentStyle}, 
+	                        this.props.children
+	                    )
+	                ), 
+	                backdrop
+	             ))
+	            ;
+	        },
+	
+	        leave: function(){
+	            this.setState({
+	                hidden: true
+	            });
+	            this.props.onHide();
+	        },
+	
+	        enter: function(){
+	            this.props.onShow();
+	        },
+	
+	        show: function(){
+	            if (!this.hasHidden()) return;
+	
+	            this.setState({
+	                willHidden: false,
+	                hidden: false
+	            });
+	
+	            setTimeout(function(){
+	              var ref = this.props.animation.getRef();
+	              var node = this.refs[ref];
+	              this.addTransitionListener(node, this.enter);
+	            }.bind(this), 0);
+	        },
+	
+	        hide: function(){
+	            if (this.hasHidden()) return;
+	
+	            this.setState({
+	                willHidden: true
+	            });
+	        },
+	
+	        toggle: function(){
+	            if (this.hasHidden())
+	                this.show();
+	            else
+	                this.hide();
+	        },
+	
+	        listenKeyboard: function(event) {
+	            if (this.props.keyboard &&
+	                    (event.key === "Escape" ||
+	                     event.keyCode === 27)) {
+	                this.hide();
+	            }
+	        },
+	
+	        componentDidMount: function(){
+	            window.addEventListener("keydown", this.listenKeyboard, true);
+	        },
+	
+	        componentWillUnmount: function() {
+	            window.removeEventListener("keydown", this.listenKeyboard, true);
+	        }
+	    });
+	}
+
+
+/***/ },
+/* 524 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	/**
+	 * EVENT_NAME_MAP is used to determine which event fired when a
+	 * transition/animation ends, based on the style property used to
+	 * define that event.
+	 */
+	var EVENT_NAME_MAP = {
+	  transitionend: {
+	    'transition': 'transitionend',
+	    'WebkitTransition': 'webkitTransitionEnd',
+	    'MozTransition': 'mozTransitionEnd',
+	    'OTransition': 'oTransitionEnd',
+	    'msTransition': 'MSTransitionEnd'
+	  },
+	
+	  animationend: {
+	    'animation': 'animationend',
+	    'WebkitAnimation': 'webkitAnimationEnd',
+	    'MozAnimation': 'mozAnimationEnd',
+	    'OAnimation': 'oAnimationEnd',
+	    'msAnimation': 'MSAnimationEnd'
+	  }
+	};
+	
+	var endEvents = [];
+	
+	function detectEvents() {
+	  var testEl = document.createElement('div');
+	  var style = testEl.style;
+	
+	  // On some platforms, in particular some releases of Android 4.x,
+	  // the un-prefixed "animation" and "transition" properties are defined on the
+	  // style object but the events that fire will still be prefixed, so we need
+	  // to check if the un-prefixed events are useable, and if not remove them
+	  // from the map
+	  if (!('AnimationEvent' in window)) {
+	    delete EVENT_NAME_MAP.animationend.animation;
+	  }
+	
+	  if (!('TransitionEvent' in window)) {
+	    delete EVENT_NAME_MAP.transitionend.transition;
+	  }
+	
+	  for (var baseEventName in EVENT_NAME_MAP) {
+	    var baseEvents = EVENT_NAME_MAP[baseEventName];
+	    for (var styleName in baseEvents) {
+	      if (styleName in style) {
+	        endEvents.push(baseEvents[styleName]);
+	        break;
+	      }
+	    }
+	  }
+	}
+	
+	if (typeof window !== 'undefined') {
+	  detectEvents();
+	}
+	
+	
+	// We use the raw {add|remove}EventListener() call because EventListener
+	// does not know how to remove event listeners and we really should
+	// clean up. Also, these events are not triggered in older browsers
+	// so we should be A-OK here.
+	
+	function addEventListener(node, eventName, eventListener) {
+	  node.addEventListener(eventName, eventListener, false);
+	}
+	
+	function removeEventListener(node, eventName, eventListener) {
+	  node.removeEventListener(eventName, eventListener, false);
+	}
+	
+	module.exports = {
+	  addEndEventListener: function(node, eventListener) {
+	    if (endEvents.length === 0) {
+	      // If CSS transitions are not supported, trigger an "end animation"
+	      // event immediately.
+	      window.setTimeout(eventListener, 0);
+	      return;
+	    }
+	    endEvents.forEach(function(endEvent) {
+	      addEventListener(node, endEvent, eventListener);
+	    });
+	  },
+	
+	  removeEndEventListener: function(node, eventListener) {
+	    if (endEvents.length === 0) {
+	      return;
+	    }
+	    endEvents.forEach(function(endEvent) {
+	      removeEventListener(node, endEvent, eventListener);
+	    });
+	  }
+	};
+
+
+/***/ },
+/* 525 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var getVendorPropertyName = __webpack_require__(526);
+	
+	module.exports = function(target, sources) {
+	  var to = Object(target);
+	  var hasOwnProperty = Object.prototype.hasOwnProperty;
+	
+	  for (var nextIndex = 1; nextIndex < arguments.length; nextIndex++) {
+	    var nextSource = arguments[nextIndex];
+	    if (nextSource == null) {
+	      continue;
+	    }
+	
+	    var from = Object(nextSource);
+	
+	    for (var key in from) {
+	      if (hasOwnProperty.call(from, key)) {
+	        to[key] = from[key];
+	      }
+	    }
+	  }
+	
+	  var prefixed = {};
+	  for (var key in to) {
+	    prefixed[getVendorPropertyName(key)] = to[key]
+	  }
+	
+	  return prefixed
+	}
+
+
+/***/ },
+/* 526 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var builtinStyle = __webpack_require__(527);
+	var prefixes = ['Moz', 'Webkit', 'O', 'ms'];
+	var domVendorPrefix;
+	
+	// Helper function to get the proper vendor property name. (transition => WebkitTransition)
+	module.exports = function(prop, isSupportTest) {
+	
+	  var vendorProp;
+	  if (prop in builtinStyle) return prop;
+	
+	  var UpperProp = prop.charAt(0).toUpperCase() + prop.substr(1);
+	
+	  if (domVendorPrefix) {
+	
+	    vendorProp = domVendorPrefix + UpperProp;
+	    if (vendorProp in builtinStyle) {
+	      return vendorProp;
+	    }
+	  } else {
+	
+	    for (var i = 0; i < prefixes.length; ++i) {
+	      vendorProp = prefixes[i] + UpperProp;
+	      if (vendorProp in builtinStyle) {
+	        domVendorPrefix = prefixes[i];
+	        return vendorProp;
+	      }
+	    }
+	  }
+	
+	  // if support test, not fallback to origin prop name
+	  if (!isSupportTest) {
+	    return prop;
+	  }
+	
+	}
+
+
+/***/ },
+/* 527 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	module.exports = document.createElement('div').style;
+
+
+/***/ },
+/* 528 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var insertRule = __webpack_require__(529);
+	var vendorPrefix = __webpack_require__(530)();
+	var index = 0;
+	
+	module.exports = function(keyframes) {
+	  // random name
+	  var name = 'anim_' + (++index) + (+new Date);
+	  var css = "@" + vendorPrefix + "keyframes " + name + " {";
+	
+	  for (var key in keyframes) {
+	    css += key + " {";
+	
+	    for (var property in keyframes[key]) {
+	      var part = ":" + keyframes[key][property] + ";";
+	      // We do vendor prefix for every property
+	      css += vendorPrefix + property + part;
+	      css += property + part;
+	    }
+	
+	    css += "}";
+	  }
+	
+	  css += "}";
+	
+	  insertRule(css);
+	
+	  return name
+	}
+
+
+/***/ },
+/* 529 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	var extraSheet;
+	
+	module.exports = function(css) {
+	
+	  if (!extraSheet) {
+	    // First time, create an extra stylesheet for adding rules
+	    extraSheet = document.createElement('style');
+	    document.getElementsByTagName('head')[0].appendChild(extraSheet);
+	    // Keep reference to actual StyleSheet object (`styleSheet` for IE < 9)
+	    extraSheet = extraSheet.sheet || extraSheet.styleSheet;
+	  }
+	
+	  var index = (extraSheet.cssRules || extraSheet.rules).length;
+	  extraSheet.insertRule(css, index);
+	
+	  return extraSheet;
+	}
+
+
+/***/ },
+/* 530 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	var cssVendorPrefix;
+	
+	module.exports = function() {
+	
+	  if (cssVendorPrefix) return cssVendorPrefix;
+	
+	  var styles = window.getComputedStyle(document.documentElement, '');
+	  var pre = (Array.prototype.slice.call(styles).join('').match(/-(moz|webkit|ms)-/) || (styles.OLink === '' && ['', 'o']))[1];
+	
+	  return cssVendorPrefix = '-' + pre + '-';
+	}
+
+
+/***/ },
+/* 531 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var modalFactory = __webpack_require__(523);
+	var insertKeyframesRule = __webpack_require__(528);
+	var appendVendorPrefix = __webpack_require__(525);
+	
+	var animation = {
+	    show: {
+	        animationDuration: '0.8s',
+	        animationTimingFunction: 'cubic-bezier(0.6,0,0.4,1)'
+	    },
+	    hide: {
+	        animationDuration: '0.4s',
+	        animationTimingFunction: 'ease-out'
+	    },
+	    showContentAnimation: insertKeyframesRule({
+	        '0%': {
+	            opacity: 0,
+	        },
+	        '40%':{
+	            opacity: 0
+	        },
+	        '100%': {
+	            opacity: 1,
+	        }
+	    }),
+	
+	    hideContentAnimation: insertKeyframesRule({
+	        '0%': {
+	            opacity: 1
+	        },
+	        '100%': {
+	            opacity: 0,
+	        }
+	    }),
+	
+	    showBackdropAnimation: insertKeyframesRule({
+	        '0%': {
+	            opacity: 0
+	        },
+	        '100%': {
+	            opacity: 0.9
+	        },
+	    }),
+	
+	    hideBackdropAnimation: insertKeyframesRule({
+	        '0%': {
+	            opacity: 0.9
+	        },
+	        '100%': {
+	            opacity: 0
+	        }
+	    })
+	};
+	
+	var showAnimation = animation.show;
+	var hideAnimation = animation.hide;
+	var showContentAnimation = animation.showContentAnimation;
+	var hideContentAnimation = animation.hideContentAnimation;
+	var showBackdropAnimation = animation.showBackdropAnimation;
+	var hideBackdropAnimation = animation.hideBackdropAnimation;
+	
+	module.exports = modalFactory({
+	    getRef: function(willHidden) {
+	        return 'content';
+	    },
+	    getSharp: function(willHidden) {
+	        var strokeDashLength = 1680;
+	
+	        var showSharpAnimation = insertKeyframesRule({
+	            '0%': {
+	                'stroke-dashoffset': strokeDashLength
+	            },
+	            '100%': {
+	                'stroke-dashoffset': 0
+	            },
+	        });
+	
+	
+	        var sharpStyle = {
+	            position: 'absolute',
+	            width: 'calc(100%)',
+	            height: 'calc(100%)',
+	            zIndex: '-1'
+	        };
+	
+	        var rectStyle = appendVendorPrefix({
+	            animationDuration: willHidden? '0.4s' :'0.8s',
+	            animationFillMode: 'forwards',
+	            animationName: willHidden? hideContentAnimation: showSharpAnimation,
+	            stroke: '#ffffff',
+	            strokeWidth: '2px',
+	            strokeDasharray: strokeDashLength
+	        });
+	
+	        return React.createElement("div", {style: sharpStyle}, 
+	            React.createElement("svg", {
+	                xmlns: "http://www.w3.org/2000/svg", 
+	                width: "100%", 
+	                height: "100%", 
+	                viewBox: "0 0 496 136", 
+	                preserveAspectRatio: "none"}, 
+	                React.createElement("rect", {style: rectStyle, 
+	                    x: "2", 
+	                    y: "2", 
+	                    fill: "none", 
+	                    width: "492", 
+	                    height: "132"})
+	            )
+	        )
+	    },
+	    getModalStyle: function(willHidden) {
+	        return appendVendorPrefix({
+	            zIndex: 1050,
+	            position: "fixed",
+	            width: "500px",
+	            transform: "translate3d(-50%, -50%, 0)",
+	            top: "50%",
+	            left: "50%"
+	        })
+	    },
+	    getBackdropStyle: function(willHidden) {
+	        return appendVendorPrefix({
+	            position: "fixed",
+	            top: 0,
+	            right: 0,
+	            bottom: 0,
+	            left: 0,
+	            zIndex: 1040,
+	            backgroundColor: "#373A47",
+	            animationFillMode: 'forwards',
+	            animationDuration: '0.4s',
+	            animationName: willHidden ? hideBackdropAnimation : showBackdropAnimation,
+	            animationTimingFunction: (willHidden ? hideAnimation : showAnimation).animationTimingFunction
+	        });
+	    },
+	    getContentStyle: function(willHidden) {
+	        return appendVendorPrefix({
+	            margin: 0,
+	            backgroundColor: "white",
+	            animationDuration: (willHidden ? hideAnimation : showAnimation).animationDuration,
+	            animationFillMode: 'forwards',
+	            animationName: willHidden ? hideContentAnimation : showContentAnimation,
+	            animationTimingFunction: (willHidden ? hideAnimation : showAnimation).animationTimingFunction
+	        })
+	    }
+	});
+
+
+/***/ },
+/* 532 */
+/***/ function(module, exports) {
+
+	module.exports = {
+		contentStyle: {
+			height: '100%'
+		},
+	
+		modalStyle: {
+			height: '40%',
+			width: '50%'
+		},
+	
+		backDropStyle: {}
 	};
 
 /***/ }

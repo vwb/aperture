@@ -2,19 +2,49 @@ var React = require('react');
 var NavBarSearch = require('./navbar_search');
 var History = require('react-router').History;
 var SessionUtil = require('../../util/sessions_util');
+var CreateSessionForm = require('../sessions/create_session_form');
+var Modal = require('boron/OutlineModal');
+var ModalStyles = require('../../constants/modal_styles');
+
+
+
 
 var NavBar = React.createClass({
 
   mixins: [History],
+
+  showModal: function(){
+        this.refs.modal.show();
+  },
+
+  hideModal: function(){
+        this.refs.modal.hide();
+  },
+
+
+  // getInitialState: function(){
+  //   return {
+  //     modalIsOpen: false
+  //   };
+  // },
+
+  // openModal: function(){
+  //   this.setState({modalIsOpen: true})
+  // },
+
+  // closeModal: function(){
+  //   this.setState({modalIsOpen: false})
+  // },
+
+
 
   handleClick: function(){
 
     if (this.props.current){
       SessionUtil.destroySession();
     } else {
-      
-      //have the component for signing in inside here, and just change the class! Boom modal!
-      this.history.push("/user/sign_in");
+      this.showModal();
+      // this.history.push("/user/sign_in");
     }
 
   },
@@ -67,6 +97,15 @@ var NavBar = React.createClass({
             </ul>
           </div>
         </header>
+
+        <Modal 
+          ref="modal"
+          modalStyle={ModalStyles.modalStyle}
+          contentStyle={ModalStyles.contentStyle}>
+
+          <button onClick={this.hideModal} className="modal-close">Close</button>
+          <CreateSessionForm closeModal={this.hideModal}/>
+        </Modal>
       </div>
     );
 

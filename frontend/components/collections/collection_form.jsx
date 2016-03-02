@@ -20,12 +20,11 @@ var CollectionForm = React.createClass({
 
 	handleSubmit: function(e){
 		e.preventDefault();
-		debugger;
 		var params = {
 			title: this.state.title,
 			description: this.state.description,
 			photos: this.state.photoIds,
-			tags: selectedTags
+			tags: this.state.selectedTags
 		}
 		CollectionActions.createCollection(params, this.successRedirect);
 	},

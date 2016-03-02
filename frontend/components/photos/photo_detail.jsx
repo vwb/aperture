@@ -57,6 +57,21 @@ var PhotoDetail = React.createClass({
 		}
 	},
 
+	handleOuterClick: function(e){
+
+		if (e.currentTarget.className === "photo-detail"){
+			this.props.history.goBack()
+			//check if goback empty
+		}
+
+	},
+
+	handleInnerClick: function(e){
+
+		e.stopPropagation();
+
+	},
+
 	render: function() {
 
 		var check = "";
@@ -79,8 +94,8 @@ var PhotoDetail = React.createClass({
 			return (
 				<div className="photo-detail-cotainer group">
 
-					<div className="photo-detail">
-							<img src={this.state.photo.url}/>
+					<div className="photo-detail" onClick={this.handleOuterClick}>
+							<img className="img-detail" src={this.state.photo.url} onClick={this.handleInnerClick}/>
 					</div>
 
 					<section className="photo-info">

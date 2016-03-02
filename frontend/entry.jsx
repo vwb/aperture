@@ -83,7 +83,9 @@ var routes = (
 );
 
 document.addEventListener("DOMContentLoaded", function () {
-  ReactDOM.render(routes, document.getElementById('content'));
+
+	var appElement = document.getElementById('content');
+  ReactDOM.render(routes, appElement);
 });
 
 
