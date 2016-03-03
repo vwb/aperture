@@ -1,7 +1,13 @@
 class Api::PhotosController < ApplicationController
 
   def index
-    @photos = Photo.includes(:comments, :tags).all.order('random()')
+
+    if params[:tag]
+      @photos = Photo.includes(:comments, :tags).where("tags.id" => params[:tag][:id]).all
+    else
+      @photos = Photo.includes(:comments, :tags).all
+    end
+
     render :index
   end
 
@@ -11,6 +17,7 @@ class Api::PhotosController < ApplicationController
   end
 
   def create
+
     @photo = Photo.new()
     @photo.url = photo_params[:url]
     @photo.title = photo_params[:title]
@@ -20,11 +27,12 @@ class Api::PhotosController < ApplicationController
     @photo.user = current_user
     @photo.save!
 
-    if params[:photo][:tags]
-      tag_ids = Tag.find_ids(params[:photo][:tags])
-      @photo.tag_ids = tag_ids
-    end
+    # if params[:photo][:tags]
+    #   tag_ids = Tag.find_ids(params[:photo][:tags])
+    #   @photo.tag_ids = tag_ids
+    # end
 
+    #need to rewrite here!
 
     render :show
   end

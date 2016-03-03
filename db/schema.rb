@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160301172809) do
+ActiveRecord::Schema.define(version: 20160303053103) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -59,23 +59,32 @@ ActiveRecord::Schema.define(version: 20160301172809) do
 
   add_index "photos", ["user_id"], name: "index_photos_on_user_id", using: :btree
 
-  create_table "tags", force: :cascade do |t|
-    t.string   "title",         null: false
-    t.integer  "taggable_id"
-    t.string   "taggable_type"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+  create_table "taggings", force: :cascade do |t|
+    t.integer  "tag_id",     null: false
+    t.integer  "photo_id",   null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  add_index "tags", ["taggable_id"], name: "index_tags_on_taggable_id", using: :btree
+  add_index "taggings", ["photo_id"], name: "index_taggings_on_photo_id", using: :btree
+  add_index "taggings", ["tag_id"], name: "index_taggings_on_tag_id", using: :btree
+
+  create_table "tags", force: :cascade do |t|
+    t.string   "title",      null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   add_index "tags", ["title"], name: "index_tags_on_title", unique: true, using: :btree
 
   create_table "users", force: :cascade do |t|
-    t.string   "email",           null: false
-    t.string   "password_digest", null: false
-    t.string   "session_token",   null: false
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.string   "email",                                                                                                                                 null: false
+    t.string   "password_digest",                                                                                                                       null: false
+    t.string   "session_token",                                                                                                                         null: false
+    t.datetime "created_at",                                                                                                                            null: false
+    t.datetime "updated_at",                                                                                                                            null: false
+    t.string   "avatar",          default: "http://res.cloudinary.com/dpxg23zze/image/upload/c_lfill,h_300,w_300/v1456967384/b5jumwpwh3y1tqtbxjjc.jpg"
+    t.string   "username",                                                                                                                              null: false
   end
 
   add_index "users", ["email"], name: "index_users_on_email", using: :btree

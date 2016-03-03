@@ -19,7 +19,10 @@ class Photo < ActiveRecord::Base
 
   has_many :comments
 
-  has_many :tags, as: :taggable
+  has_many :taggings
+  has_many :tags, through: :taggings
+
+ # has_many :tags, as: :taggable, dependent: :destroy
   
   has_many :photo_connections
   has_many :collections, through: :photo_connections

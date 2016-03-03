@@ -32,10 +32,6 @@ var PhotoForm = React.createClass({
 		}
 
 		this.state.photos.forEach(function(photoObject, ind){
-
-			debugger;
-
-
 			options["currentInd"] = ind;
 			ApiUtil.createPhoto(photoObject, options);
 		});
@@ -114,55 +110,74 @@ var PhotoForm = React.createClass({
 		this.setState({selectedTags: tags})
 	},
 
+	renderSubmit: function(){
+		var sub = "";
+		if (this.state.photos.length > 0){
+			sub = <input 
+							type="submit"
+							value="Upload Photos"
+							className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent"/>
+		}
+
+		return sub;
+	},
+
 	render: function() {
-		//refactor this form into components? this file is getting huge.
 		return (
-			<div className="photo-form">
-				<form onSubmit={this.handleSubmit}>
-					<h3> Upload Photos </h3>
+			<div className="form-container center">
+				<div className="upload-styling center">
 
-					<PhotoButton handleUpload={this.handleImages}/>
+					<form onSubmit={this.handleSubmit} className="upload-form">
+
+						<PhotoButton 
+							handleUpload={this.handleImages} 
+							photoCount={this.state.photos.length}/>
 
 
-					<div className="uploaded-photo-view">
-						{this.generateUploadedThumbnails()}
-					</div>
+						<div className="uploaded-photo-view">
+							{this.generateUploadedThumbnails()}
+						</div>
 
-					<div className={this.state.visible}>
-						<label>
-							Title
-							<input
-								type="text"
-								valueLink={this.linkState("title")}/>
-								<br/>
-						</label>
+						<div className={this.state.visible+ " fade-in"}>
 
-						<label>
-							Description
-							<input
-								type="text"
-								valueLink={this.linkState("description")}/>
-								<br/>
-						</label>
+								<div className="form-input-container">
+									<input
+										type="text"
+										valueLink={this.linkState("title")}
+										className="form-input"
+										placeholder="Title"/>
+								</div>
 
-						<label>
-							Price
-							<input
-								type="text"
-								valueLink={this.linkState("price")}
-								placeholder="0"/>
-								<br/>
-						</label>
+								<div className="form-input-container">
+									<input
+										type="text"
+										valueLink={this.linkState("description")}
+										className="form-input"
+										placeholder="Description"/>
+								</div>
 
-						<TagForm formCallback={this.handleTags} tags={this.state.selectedTags}/>
+								<div className="form-input-container upload">
+									<input
+										type="text"
+										valueLink={this.linkState("price")}
+										className="form-input"
+										placeholder="0"/>
+								</div>
 
-					</div>
+								<div className="form-input-container">	
+									<TagForm 
+										formCallback={this.handleTags} 
+										tags={this.state.selectedTags}/>
+								</div>
 
-					<input
-						type="submit"
-						value="Upload Photos"/>
+						</div>
 
-				</form>
+						<div className="submit-button-container">
+							{this.renderSubmit()}
+						</div>
+
+					</form>
+				</div>
 			</div>
 
 		);

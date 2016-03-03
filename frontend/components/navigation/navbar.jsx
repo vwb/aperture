@@ -2,55 +2,32 @@ var React = require('react');
 var NavBarSearch = require('./navbar_search');
 var History = require('react-router').History;
 var SessionUtil = require('../../util/sessions_util');
-var CreateSessionForm = require('../sessions/create_session_form');
-var Modal = require('boron/OutlineModal');
-var ModalStyles = require('../../constants/modal_styles');
-
-
-
 
 var NavBar = React.createClass({
 
   mixins: [History],
 
-  showModal: function(){
-        this.refs.modal.show();
-  },
+  handleClick: function(e){
 
-  hideModal: function(){
-        this.refs.modal.hide();
-  },
-
-
-  // getInitialState: function(){
-  //   return {
-  //     modalIsOpen: false
-  //   };
-  // },
-
-  // openModal: function(){
-  //   this.setState({modalIsOpen: true})
-  // },
-
-  // closeModal: function(){
-  //   this.setState({modalIsOpen: false})
-  // },
-
-
-
-  handleClick: function(){
 
     if (this.props.current){
       SessionUtil.destroySession();
+      this.history.push({
+        pathname: "/"
+      })
     } else {
-      this.showModal();
-      // this.history.push("/user/sign_in");
+      this.history.push({
+        pathname: this.props.pathname,
+        state: {modal: true, returnTo: this.props.pathname, action: "sign_in"}
+      });
     }
-
   },
 
   handleUpload: function(){
-    this.history.push("/upload");
+    this.history.push({
+      pathname: this.props.pathname,
+      state: {modal: true, returnTo: this.props.pathname, action: "upload"}
+    });
   },
 
   profileLink: function(){
@@ -58,7 +35,6 @@ var NavBar = React.createClass({
   },
 
   render: function() {
-
     var text;
     var profile;
     if (this.props.current){
@@ -88,8 +64,8 @@ var NavBar = React.createClass({
                 <i className="material-icons" onClick={this.handleUpload} >add_a_photo</i>
               </li>
 
-              <li onClick={this.handleClick} className="header-li">
-                <a >{text}</a>
+              <li onClick={this.handleClick} className="header-li" id="sign-in">
+                <a>{text}</a>
               </li>
 
               {profile}
@@ -97,15 +73,6 @@ var NavBar = React.createClass({
             </ul>
           </div>
         </header>
-
-        <Modal 
-          ref="modal"
-          modalStyle={ModalStyles.modalStyle}
-          contentStyle={ModalStyles.contentStyle}>
-
-          <button onClick={this.hideModal} className="modal-close">Close</button>
-          <CreateSessionForm closeModal={this.hideModal}/>
-        </Modal>
       </div>
     );
 

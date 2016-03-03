@@ -16,6 +16,12 @@ var PhotoButton = React.createClass({
 		
 	},
 
+	renderButton: function(){
+		if (this.props.photocount === 0){
+			return ("Select Images")
+		}
+	},
+
 	componentDidMount: function(){
 		console.log("I mounted!");
 	},
@@ -24,7 +30,14 @@ var PhotoButton = React.createClass({
 
 		return (
 			<div className="PhotoForm">
-				<button onClick={this.upload}> Select Photos </button>
+				<button 
+					className="mdl-button mdl-js-button mdl-button--fab mdl-button--accent"
+					onClick={this.upload}>
+
+  				<i className="material-icons">add_a_photo</i>
+
+				</button>
+				<p>{this.renderButton()}</p>
 			</div>
 		);
 

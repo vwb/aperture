@@ -2,6 +2,22 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+.noSelect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.modal-close-button-container {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	z-index: 2;
+	}
+
 .modal-close{
 	position: fixed;
 	top: 5px;
@@ -10,17 +26,26 @@
 
 .form-container {
 	height:100%;
-	width:75%;
+	width:100%;
 	position:relative;
 	color: black;
-	text-align: center;
+}
+
+.form-spacer {
+	padding: 10px 0 0 0;
+}
+
+.form-button-container {
+	padding: 5px;
+	margin-top: 10px;
 }
 
 
 .session-form{
   position: relative;
+  top: 60%;
   transform: translateY(-50%);
-  top: 50%;
+  bottom: 0px;
 }
 
 .modal-header {
@@ -32,34 +57,10 @@
   top: 15%;
 }
 
-.form-input {
-	-webkit-appearance: none;
-  display: inline-block;
-  box-sizing: content-box;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  outline: 0;
-  width: 65%;
-  font: inherit;
-  vertical-align: baseline;
-  background: transparent;
-  color: inherit;
-}
 
 .form-input-container {
 	padding: 15px 0 0 0;
 }
 
-.form-input-container .form-input {
-  font-size: 16px;
-  font-weight: 200;
-  color: gray;
-  border-bottom: 1px solid #d3d3d3;
 
-}
 
-.form-input-container input:focus {
-  color: black;
-  border-color: black;
-}

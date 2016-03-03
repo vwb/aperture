@@ -15,6 +15,18 @@ var ApiUtil = {
 		});
 	},
 
+	fetchRelevantPhotos: function(query){
+		$.ajax({
+			url: "/api/photos",
+			datatype: "json",
+			data: query,
+			success: function(photos){
+				debugger;
+				PhotoActions.receivePhotos(photos);
+			}
+		})
+	},
+
 	createPhoto: function(params, options){
 		$.ajax({
 			type: "POST",
@@ -141,5 +153,4 @@ var ApiUtil = {
 
 
 };
-window.ApiUtil = ApiUtil;
 module.exports = ApiUtil;

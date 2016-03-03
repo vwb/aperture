@@ -2,12 +2,12 @@ var AppDispatcher = require('../dispatcher');
 var Store = require('flux/utils').Store;
 var TagConstants = require('../constants/tag_constants');
 
-_tags = {};
+_tags = [];
 
 var TagStore = new Store(AppDispatcher);
 
 TagStore.allTags = function(){
-	return Object.keys(_tags)
+	return _tags.slice();
 };
 
 TagStore.__onDispatch = function(payload){
@@ -19,10 +19,25 @@ TagStore.__onDispatch = function(payload){
 	}
 };
 
-function resetTags(tags){
-	for (var i = 0; i < tags.length; i++) {
-		_tags[tags[i].title] = tags[i]
+TagStore.findSubSet = function(query){
+	var results = [];
+	for (var i = 0; i < _tags.length; i++) {
+		var ind = _tags[i].title.indexOf(query)
+
+		if (ind > -1){
+			_tags[i]['ind'] = ind
+			results.push(_tags[i])
+		}
 	}
+	
+	//sort in ascending order the ind value
+	return results;
 };
+
+function resetTags(tags){
+	_tags = tags
+};
+
+
 
 module.exports = TagStore;

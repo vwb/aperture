@@ -1,0 +1,35 @@
+.upload-styling {
+	position: relative;
+	height: 92%;
+	width: 92%;
+	top: 50%;
+	transform: translateY(-50%);
+	background-color: #607D8B;
+	border-radius: 5px;
+	color: white;
+}
+
+.upload-form {
+	position: relative;
+	top: 40%;
+	transform: translateY(-50%);
+}
+
+.submit-button-container {
+	padding-top: 10px;
+}
+
+.upload-form .form-input {
+	width: 50%;
+	color: #F4F4F4;
+	border-bottom: 1px solid #E8E8E8;
+}
+
+.upload-form input:focus {
+  color: white;
+  border-color: white;
+} 
+
+
+
+

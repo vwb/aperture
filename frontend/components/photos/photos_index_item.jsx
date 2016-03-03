@@ -11,7 +11,7 @@ var PhotoIndexItem = React.createClass({
 
 	render: function() {
 		return (
-			<div className={this.props.cName}>
+			<div className={this.props.cName+"  fade-in"}>
 				<img onClick={this.handleClick} src={this.props.photo.url}/>
 			</div>
 		);

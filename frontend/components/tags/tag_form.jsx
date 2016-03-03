@@ -1,8 +1,9 @@
 var React = require('react');
 var TagItems = require('../tags/tag_items');
 var LinkedStateMixin = require('react-addons-linked-state-mixin');
-var TagStore = require('../../stores/tag_store');
 var TagActions = require('../../actions/tag_actions');
+var TagStore = require('../../stores/tag_store');
+var SuggestedItemList = require('../navigation/suggested_item_list');
 
 var TagForm = React.createClass({
 
@@ -12,14 +13,14 @@ var TagForm = React.createClass({
 		return {
 			tag: "",
 			selectedTags: [],
-			existingTags: TagStore.allTags()
+			filteredTags: []
 		}
 	},
 
 	componentDidMount: function(){
 		this.toke = TagStore.addListener(this._onChange)
 
-		if (this.state.existingTags.length === 0){
+		if (this.state.filteredTags.length === 0){
 			TagActions.fetchAllTags();
 		}
 	},
@@ -50,19 +51,47 @@ var TagForm = React.createClass({
 		}
 	},
 
-	render: function() {
+	_findMatching: function(tag){
+		var matchingTags = [];
 
+		if (tag){
+		 matchingTags = TagStore.findSubSet(tag)
+		} else {
+			matchingTags = [];
+		}
+
+		this.setState({tag: tag, filteredTags: matchingTags})
+	},
+
+	handleItemSelection: function(e){
+		var newTags = this.state.selectedTags.concat(e.currentTarget.innerText);
+		this.setState({
+			selectedTags: newTags,
+			tag: "",
+			filteredTags: []
+		});
+	},
+
+	handleInput: function(e){
+		var query = e.currentTarget.value
+		this._findMatching(query)
+	},
+
+	render: function() {
 
 		return (
 			<div className="tag-input">
-					<label>
-						Tags
 						<input
 							type="text"
-							valueLink={this.linkState("tag")}
-							onKeyDown={this.handleTab}/>
-					</label>
+							className="form-input"
+							value={this.state.tag}
+							onInput={this.handleInput}
+							onKeyDown={this.handleTab}
+							placeholder="Tags (tab to apply)"/>
 
+						<SuggestedItemList 
+			      	items={this.state.filteredTags} 
+			      	selectCallBack={this.handleItemSelection}/>
 
 					<TagItems tags={this.state.selectedTags}/>
 			</div>

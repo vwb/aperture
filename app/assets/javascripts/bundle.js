@@ -54,16 +54,16 @@
 	var PhotosIndex = __webpack_require__(208);
 	var PhotoDetail = __webpack_require__(247);
 	var PhotoEditForm = __webpack_require__(248);
-	var NavBar = __webpack_require__(474);
-	var PhotoForm = __webpack_require__(476);
-	var CollectionForm = __webpack_require__(487);
-	var CollectionDetail = __webpack_require__(489);
+	var NavBar = __webpack_require__(483);
+	var CollectionForm = __webpack_require__(488);
+	var CollectionDetail = __webpack_require__(492);
 	
-	var UserProfile = __webpack_require__(479);
+	var UserProfile = __webpack_require__(493);
 	var SessionStore = __webpack_require__(256);
 	var SessionUtil = __webpack_require__(253);
-	var CreateUserForm = __webpack_require__(481);
-	var CreateSessionForm = __webpack_require__(482);
+	var CreateUserForm = __webpack_require__(495);
+	
+	var ModalWrapper = __webpack_require__(496);
 	
 	__webpack_require__(232);
 	
@@ -75,6 +75,12 @@
 			return {
 				current: SessionStore.currentUser()
 			};
+		},
+	
+		componentWillReceiveProps: function (nextProps) {
+			if (nextProps.location.key !== this.props.location.key && nextProps.location.state && nextProps.location.state.modal) {
+				this.previousChildren = this.props.children;
+			}
 		},
 	
 		componentDidMount: function () {
@@ -92,13 +98,23 @@
 	
 		render: function () {
 	
+			var location = this.props.location;
+	
+			var isModal = location.state && location.state.modal && this.previousChildren;
+	
 			return React.createElement(
 				'div',
 				null,
-				React.createElement(NavBar, { current: this.state.current }),
-				this.props.children && React.cloneElement(this.props.children, { current: this.state.current })
+				React.createElement(NavBar, { current: this.state.current, pathname: location.pathname }),
+				isModal ? this.previousChildren && React.cloneElement(this.previousChildren, { current: this.state.current }) : this.props.children && React.cloneElement(this.props.children, { current: this.state.current }),
+				isModal && React.createElement(
+					ModalWrapper,
+					{ returnTo: location.state.returnTo, action: location.state.action },
+					this.props.children
+				)
 			);
 		}
+	
 	});
 	
 	var routes = React.createElement(
@@ -108,7 +124,6 @@
 			Route,
 			{ path: '/', component: App },
 			React.createElement(IndexRoute, { component: PhotosIndex }),
-			React.createElement(Route, { path: 'user/sign_in', component: CreateSessionForm }),
 			React.createElement(Route, { path: 'user/sign_up', component: CreateUserForm }),
 			React.createElement(Route, { path: 'users/:id', component: UserProfile }),
 			React.createElement(Route, { path: 'users/:id/add_collection', component: CollectionForm }),
@@ -119,8 +134,7 @@
 			Route,
 			{ path: '/photos/:id', component: PhotoDetail },
 			React.createElement(Route, { path: 'edit', component: PhotoEditForm })
-		),
-		React.createElement(Route, { path: '/upload', component: PhotoForm })
+		)
 	);
 	
 	document.addEventListener("DOMContentLoaded", function () {
@@ -128,6 +142,10 @@
 		var appElement = document.getElementById('content');
 		ReactDOM.render(routes, appElement);
 	});
+	
+	// <Route path="user/sign_in" component={ModalWrapper}/>
+
+	// <Route path="upload" component={ModalWrapper}/>
 
 /***/ },
 /* 1 */
@@ -24201,7 +24219,6 @@
 	var masonryOptions = {
 		transitionDuration: 1000,
 		itemSelector: ".grid-item"
-		// fitWidth: true
 	};
 	
 	var PhotoIndex = React.createClass({
@@ -24209,6 +24226,7 @@
 	
 	
 		getInitialState: function () {
+	
 			return {
 				photos: PhotoStore.all()
 			};
@@ -24277,6 +24295,7 @@
 	};
 	
 	PhotoStore.__onDispatch = function (payload) {
+	
 		switch (payload.actionType) {
 			case PhotoConstants.RECEIVE_ALL_PHOTOS:
 				resetPhotos(payload.photos);
@@ -31123,6 +31142,18 @@
 			});
 		},
 	
+		fetchRelevantPhotos: function (query) {
+			$.ajax({
+				url: "/api/photos",
+				datatype: "json",
+				data: query,
+				success: function (photos) {
+					debugger;
+					PhotoActions.receivePhotos(photos);
+				}
+			});
+		},
+	
 		createPhoto: function (params, options) {
 			$.ajax({
 				type: "POST",
@@ -31248,7 +31279,6 @@
 		}
 	
 	};
-	window.ApiUtil = ApiUtil;
 	module.exports = ApiUtil;
 
 /***/ },
@@ -31339,7 +31369,7 @@
 		render: function () {
 			return React.createElement(
 				'div',
-				{ className: this.props.cName },
+				{ className: this.props.cName + "  fade-in" },
 				React.createElement('img', { onClick: this.handleClick, src: this.props.photo.url })
 			);
 		}
@@ -34390,10 +34420,10 @@
 	var ApiUtil = __webpack_require__(232);
 	var SessionUtil = __webpack_require__(253);
 	var SessionStore = __webpack_require__(256);
-	var CollectionToggle = __webpack_require__(486);
+	var CollectionToggle = __webpack_require__(257);
 	var Link = __webpack_require__(159).Link;
-	var Comments = __webpack_require__(491);
-	var TagItems = __webpack_require__(496);
+	var Comments = __webpack_require__(477);
+	var TagItems = __webpack_require__(481);
 	
 	var PhotoDetail = React.createClass({
 		displayName: 'PhotoDetail',
@@ -34480,7 +34510,7 @@
 				}
 				return React.createElement(
 					'div',
-					{ className: 'photo-detail-cotainer group' },
+					{ className: 'photo-detail-cotainer group fade-in' },
 					React.createElement(
 						'div',
 						{ className: 'photo-detail', onClick: this.handleOuterClick },
@@ -35043,7 +35073,102 @@
 	module.exports = SessionStore;
 
 /***/ },
-/* 257 */,
+/* 257 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var CollectionList = __webpack_require__(258);
+	var RaisedButton = __webpack_require__(259).RaisedButton;
+	var CollectionActions = __webpack_require__(474);
+	var CollectionStore = __webpack_require__(476);
+	
+	var CollectionToggle = React.createClass({
+		displayName: 'CollectionToggle',
+	
+	
+		getInitialState: function () {
+			return {
+				className: "collection-list",
+				collections: ""
+			};
+		},
+	
+		toggle: function () {
+			var name = this.state.className === "collection-list" ? "collection-list visible" : "collection-list";
+			this.setState({ className: name });
+		},
+	
+		componentDidMount: function () {
+			this.toke = CollectionStore.addListener(this._onChange);
+		},
+	
+		_onChange: function () {
+			this.setState({ collections: CollectionStore.all() });
+		},
+	
+		componentWillReceiveProps: function (newProps) {
+			if (newProps.currentUser) {
+				CollectionActions.fetchUserCollections(newProps.currentUser.id);
+			}
+		},
+	
+		handleClick: function () {
+			this.toggle();
+		},
+	
+		componentWillUnmount: function () {
+			this.toke.remove();
+		},
+	
+		addPhotoToCollection: function (collectionId) {
+			CollectionActions.addPhoto(collectionId, this.props.photo.id);
+		},
+	
+		removePhotoFromCollection: function (collectionId) {
+			CollectionActions.removePhoto(collectionId, this.props.photo.id);
+		},
+	
+		render: function () {
+	
+			var list = "";
+	
+			if (this.props.currentUser) {
+				list = React.createElement(CollectionList, {
+					cName: this.state.className,
+					collections: this.state.collections,
+					addPhotoCallBack: this.addPhotoToCollection,
+					removePhotoCallBack: this.removePhotoFromCollection,
+					photo: this.props.photo });
+			};
+	
+			return React.createElement(
+				'div',
+				{ className: 'collection-list-container' },
+				React.createElement(
+					'button',
+					{
+						onClick: this.handleClick,
+						className: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored',
+						id: 'collection-list' },
+					React.createElement(
+						'span',
+						null,
+						' Add to Collections '
+					),
+					React.createElement(
+						'i',
+						{ className: 'material-icons' },
+						'collections'
+					)
+				),
+				list
+			);
+		}
+	});
+	
+	module.exports = CollectionToggle;
+
+/***/ },
 /* 258 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -68628,13 +68753,360 @@
 /* 474 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var AppDispatcher = __webpack_require__(210);
+	var ApiUtil = __webpack_require__(232);
+	var CollectionConstants = __webpack_require__(475);
+	
+	var CollectionActions = {
+	
+		//sends addition request to the backend
+		addPhoto: function (collectionId, photoId) {
+			var params = {
+				photo_id: photoId
+			};
+			ApiUtil.addPhotoToCollection(collectionId, params, this.receiveCollections);
+		},
+	
+		removePhoto: function (collectionId, photoId) {
+			var params = {
+				photo_id: photoId
+			};
+			ApiUtil.removePhotoFromCollection(collectionId, params, this.receiveCollections);
+		},
+	
+		fetchUserCollections: function (userID) {
+			var params = {
+				user_id: userID
+			};
+			ApiUtil.fetchUserCollections(params, this.receiveCollections);
+		},
+	
+		fetchCollection: function (collectionID) {
+			ApiUtil.fetchCollection(collectionID, this.receiveCollections);
+		},
+	
+		receiveCollections: function (collections) {
+			AppDispatcher.dispatch({
+				actionType: CollectionConstants.RECEIVE_COLLECTIONS,
+				collections: collections
+			});
+		},
+	
+		createCollection: function (params, successRedirect) {
+			ApiUtil.createCollection(params, this.receiveCollections, successRedirect);
+		}
+	
+	};
+	
+	module.exports = CollectionActions;
+
+/***/ },
+/* 475 */
+/***/ function(module, exports) {
+
+	module.exports = {
+		RECEIVE_COLLECTIONS: "RECEIVE_COLLECTIONS"
+	};
+
+/***/ },
+/* 476 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(210);
+	var Store = __webpack_require__(214).Store;
+	var CollectionConstants = __webpack_require__(475);
+	
+	var CollectionStore = new Store(AppDispatcher);
+	
+	_collections = [];
+	
+	CollectionStore.__onDispatch = function (payload) {
+	
+		switch (payload.actionType) {
+	
+			case CollectionConstants.RECEIVE_COLLECTIONS:
+				updateCollection(payload.collections);
+				CollectionStore.__emitChange();
+				break;
+		}
+	};
+	
+	CollectionStore.all = function () {
+		return _collections.slice();
+	};
+	
+	CollectionStore.findById = function (id) {
+		for (var i = 0; i < _collections.length; i++) {
+			if (_collections[i].id === id) {
+				return _collections[i];
+			}
+		}
+	};
+	
+	CollectionStore.collection = function () {
+		if (_collections.length === 1) {
+			return _collections[0];
+		}
+	};
+	
+	function updateCollection(collections) {
+		if (collections instanceof Array) {
+			_collections = collections;
+		} else {
+			_collections = [collections];
+		}
+	};
+	
+	module.exports = CollectionStore;
+
+/***/ },
+/* 477 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var React = __webpack_require__(1);
-	var NavBarSearch = __webpack_require__(475);
+	var CommentItem = __webpack_require__(478);
+	var CommentForm = __webpack_require__(479);
+	
+	var Comments = React.createClass({
+		displayName: 'Comments',
+	
+	
+		getInitialState: function () {
+			return {
+				comments: "",
+				photo: ""
+			};
+		},
+	
+		componentWillReceiveProps: function (newProps) {
+			this.setState({
+				photo: newProps.photo,
+				comments: newProps.photo.comments
+			});
+		},
+	
+		generateComments: function () {
+			if (this.state.comments) {
+				return this.state.comments.map(function (comment, ind) {
+					return React.createElement(CommentItem, { comment: comment, key: ind });
+				});
+			}
+		},
+	
+		render: function () {
+			return React.createElement(
+				'div',
+				{ className: 'comment-container' },
+				React.createElement(
+					'h4',
+					null,
+					'Comments'
+				),
+				React.createElement(CommentForm, { photo: this.state.photo }),
+				React.createElement(
+					'ul',
+					{ className: 'comment-list' },
+					this.generateComments()
+				)
+			);
+		}
+	});
+	
+	module.exports = Comments;
+
+/***/ },
+/* 478 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	
+	var CommentItem = React.createClass({
+		displayName: "CommentItem",
+	
+		getInitialState: function () {
+			return {
+				comment: this.props.comment
+			};
+		},
+	
+		// componentWillReceiveProps: function(newProps){
+		// 	debugger;
+		// 	this.setState({comment: newProps.comment})
+		// },
+	
+		content: function () {
+			if (this.state.comment) {
+				return React.createElement(
+					"li",
+					{ className: "comment-item" },
+					React.createElement(
+						"section",
+						{ className: "comment-header" },
+						this.state.comment.user_id
+					),
+					React.createElement(
+						"section",
+						{ className: "comment-body" },
+						this.state.comment.content
+					)
+				);
+			}
+		},
+	
+		render: function () {
+			return React.createElement(
+				"div",
+				null,
+				this.content()
+			);
+		}
+	});
+	
+	module.exports = CommentItem;
+
+/***/ },
+/* 479 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var LinkedStateMixin = __webpack_require__(249);
+	var History = __webpack_require__(159).History;
+	var CommentActions = __webpack_require__(480);
+	
+	var CommentForm = React.createClass({
+		displayName: 'CommentForm',
+	
+	
+		mixins: [LinkedStateMixin, History],
+	
+		getInitialState: function () {
+			return {
+				content: "",
+				photo_id: ""
+			};
+		},
+	
+		componentWillReceiveProps: function (newProps) {
+			this.setState({ photo_id: newProps.photo.id });
+		},
+	
+		handleSubmit: function (e) {
+			e.preventDefault();
+	
+			params = {
+				content: this.state.content,
+				photo_id: this.state.photo_id
+			};
+	
+			CommentActions.createComment(params);
+		},
+	
+		render: function () {
+	
+			return React.createElement(
+				'div',
+				{ className: 'CommentForm' },
+				React.createElement(
+					'form',
+					{ onSubmit: this.handleSubmit },
+					React.createElement('textarea', { valueLink: this.linkState("content"), placeholder: 'Leave a comment...' }),
+					React.createElement('br', null),
+					React.createElement('input', { type: 'submit', value: 'Post Comment' })
+				)
+			);
+		}
+	});
+	
+	module.exports = CommentForm;
+
+/***/ },
+/* 480 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(210);
+	var ApiUtil = __webpack_require__(232);
+	
+	var CommentActions = {
+		createComment: function (params) {
+			ApiUtil.createComment(params);
+		}
+	};
+	
+	module.exports = CommentActions;
+
+/***/ },
+/* 481 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var TagItem = __webpack_require__(482);
+	
+	var TagItems = React.createClass({
+		displayName: 'TagItems',
+	
+	
+		generateTagItems: function () {
+			if (this.props.tags) {
+				return this.props.tags.map(function (tag, ind) {
+					return React.createElement(TagItem, { tag: tag, key: ind });
+				});
+			}
+		},
+	
+		render: function () {
+			return React.createElement(
+				'div',
+				{ className: 'tag-items' },
+				React.createElement(
+					'span',
+					null,
+					' ',
+					this.generateTagItems(),
+					' '
+				)
+			);
+		}
+	});
+	
+	module.exports = TagItems;
+
+/***/ },
+/* 482 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	
+	var TagItem = React.createClass({
+		displayName: "TagItem",
+	
+	
+		renderTags: function () {
+			if (typeof this.props.tag === "string") {
+				return this.props.tag;
+			} else {
+				return this.props.tag.title;
+			}
+		},
+	
+		render: function () {
+			return React.createElement(
+				"span",
+				{ className: "tag-item" },
+				this.renderTags()
+			);
+		}
+	});
+	
+	module.exports = TagItem;
+
+/***/ },
+/* 483 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var NavBarSearch = __webpack_require__(484);
 	var History = __webpack_require__(159).History;
 	var SessionUtil = __webpack_require__(253);
-	var CreateSessionForm = __webpack_require__(482);
-	var Modal = __webpack_require__(531);
-	var ModalStyles = __webpack_require__(532);
 	
 	var NavBar = React.createClass({
 	  displayName: 'NavBar',
@@ -68642,40 +69114,26 @@
 	
 	  mixins: [History],
 	
-	  showModal: function () {
-	    this.refs.modal.show();
-	  },
-	
-	  hideModal: function () {
-	    this.refs.modal.hide();
-	  },
-	
-	  // getInitialState: function(){
-	  //   return {
-	  //     modalIsOpen: false
-	  //   };
-	  // },
-	
-	  // openModal: function(){
-	  //   this.setState({modalIsOpen: true})
-	  // },
-	
-	  // closeModal: function(){
-	  //   this.setState({modalIsOpen: false})
-	  // },
-	
-	  handleClick: function () {
+	  handleClick: function (e) {
 	
 	    if (this.props.current) {
 	      SessionUtil.destroySession();
+	      this.history.push({
+	        pathname: "/"
+	      });
 	    } else {
-	      this.showModal();
-	      // this.history.push("/user/sign_in");
+	      this.history.push({
+	        pathname: this.props.pathname,
+	        state: { modal: true, returnTo: this.props.pathname, action: "sign_in" }
+	      });
 	    }
 	  },
 	
 	  handleUpload: function () {
-	    this.history.push("/upload");
+	    this.history.push({
+	      pathname: this.props.pathname,
+	      state: { modal: true, returnTo: this.props.pathname, action: "upload" }
+	    });
 	  },
 	
 	  profileLink: function () {
@@ -68683,7 +69141,6 @@
 	  },
 	
 	  render: function () {
-	
 	    var text;
 	    var profile;
 	    if (this.props.current) {
@@ -68740,7 +69197,7 @@
 	            ),
 	            React.createElement(
 	              'li',
-	              { onClick: this.handleClick, className: 'header-li' },
+	              { onClick: this.handleClick, className: 'header-li', id: 'sign-in' },
 	              React.createElement(
 	                'a',
 	                null,
@@ -68750,19 +69207,6 @@
 	            profile
 	          )
 	        )
-	      ),
-	      React.createElement(
-	        Modal,
-	        {
-	          ref: 'modal',
-	          modalStyle: ModalStyles.modalStyle,
-	          contentStyle: ModalStyles.contentStyle },
-	        React.createElement(
-	          'button',
-	          { onClick: this.hideModal, className: 'modal-close' },
-	          'Close'
-	        ),
-	        React.createElement(CreateSessionForm, { closeModal: this.hideModal })
 	      )
 	    );
 	  }
@@ -68771,35 +69215,103 @@
 	module.exports = NavBar;
 
 /***/ },
-/* 475 */
+/* 484 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
+	var TagActions = __webpack_require__(485);
+	var TagStore = __webpack_require__(487);
+	var SuggestedItemList = __webpack_require__(510);
+	var ApiUtil = __webpack_require__(232);
 	
 	var NavBarSearch = React.createClass({
-		displayName: "NavBarSearch",
+		displayName: 'NavBarSearch',
 	
+	
+		//if page is rendered based on a search query, return it!
 	
 		getInitialState: function () {
 			return {
-				query: ""
+				query: "",
+				filteredTags: [],
+				focused: false
 			};
+		},
+	
+		componentDidMount: function () {
+			this.toke = TagStore.addListener(this._onChange);
+			TagActions.fetchAllTags();
+		},
+	
+		comonentWillUnmount: function () {
+			this.toke.remove();
+		},
+	
+		handleInput: function (e) {
+			var query = e.currentTarget.value;
+			this._findMatching(query);
+		},
+	
+		_findMatching: function (query) {
+			var matchingTags = [];
+	
+			if (query) {
+				matchingTags = TagStore.findSubSet(query);
+			} else {
+				matchingTags = [];
+			}
+	
+			this.setState({ query: query, filteredTags: matchingTags });
+		},
+	
+		handleItemSelection: function (e) {
+			this._findMatching(e.currentTarget.innerText);
+			this.refs.searchInput.focus();
+		},
+	
+		handleKey: function (e) {
+			if (e.which === 9) {
+	
+				if (this.state.filteredTags.length > 0) {
+	
+					e.preventDefault();
+					this.setState({ query: this.state.filteredTags[0].title });
+				}
+			}
+		},
+	
+		handleSubmit: function () {
+			if (this.state.filteredTags.length === 1) {
+				var params = { tag: this.state.filteredTags[0] };
+				ApiUtil.fetchRelevantPhotos(params);
+			} else if (this.state.query === "") {
+				ApiUtil.fetchAllPhotos();
+			} else {
+				//raise error
+			}
 		},
 	
 		render: function () {
 			return React.createElement(
-				"form",
-				{ className: "search-form" },
+				'form',
+				{ className: 'search-form', onSubmit: this.handleSubmit },
 				React.createElement(
-					"div",
-					{ className: "search-input-container" },
-					React.createElement("input", {
-						className: "search-input",
-						type: "text",
-						value: "",
-						id: "query",
-						placeholder: "Search..."
-					})
+					'div',
+					{ className: 'search-input-container' },
+					React.createElement('input', {
+						className: 'search-input',
+						ref: 'searchInput',
+						type: 'text',
+						id: 'query',
+						placeholder: 'Search...',
+						onChange: this.handleInput,
+						value: this.state.query,
+						autoComplete: 'off',
+						onKeyDown: this.handleKey
+					}),
+					React.createElement(SuggestedItemList, {
+						items: this.state.filteredTags,
+						selectCallBack: this.handleItemSelection })
 				)
 			);
 		}
@@ -68808,843 +69320,91 @@
 	module.exports = NavBarSearch;
 
 /***/ },
-/* 476 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var PhotoButton = __webpack_require__(477);
-	var LinkedStateMixin = __webpack_require__(249);
-	var PhotoThumb = __webpack_require__(478);
-	var ApiUtil = __webpack_require__(232);
-	var TagForm = __webpack_require__(498);
-	
-	var PhotoForm = React.createClass({
-		displayName: 'PhotoForm',
-	
-	
-		mixins: [LinkedStateMixin],
-	
-		getInitialState: function () {
-			this.currentPhoto = {};
-	
-			return {
-				title: "",
-				description: "",
-				price: 0,
-				photos: [],
-				selectedTags: "",
-				highLighted: "",
-				visible: "hidden"
-			};
-		},
-	
-		handleSubmit: function () {
-			this.saveInfo();
-	
-			var options = {
-				totalImages: this.state.photos.length - 1,
-				callBack: this.successRedirect
-			};
-	
-			this.state.photos.forEach(function (photoObject, ind) {
-	
-				debugger;
-	
-				options["currentInd"] = ind;
-				ApiUtil.createPhoto(photoObject, options);
-			});
-		},
-	
-		successRedirect: function () {
-			this.props.history.push("/");
-		},
-	
-		handleImages: function (imageObjects) {
-			var currentState = this.state.photos.concat(imageObjects);
-			this.setState({ photos: currentState });
-		},
-	
-		generateUploadedThumbnails: function () {
-	
-			return this.state.photos.map(function (photo, ind) {
-				var cName = "photo-thumb-container";
-	
-				if (ind === this.state.highLighted) {
-					cName = cName + " selected";
-				}
-	
-				return React.createElement(PhotoThumb, {
-					photo: photo,
-					key: ind,
-					ind: ind,
-					updateForm: this.updateDetailForm,
-					cName: cName });
-			}.bind(this));
-		},
-	
-		updateDetailForm: function (url, ind) {
-	
-			this.setState({
-				highLighted: ind,
-				visible: ""
-			});
-	
-			var photo = this._findPhoto(url);
-	
-			if (this.currentPhoto.url !== photo.url) {
-				this.saveInfo();
-				this.setState({
-					title: photo.title,
-					description: photo.description,
-					price: photo.price,
-					selectedTags: photo.tags
-				});
-			}
-	
-			this.currentPhoto = photo;
-		},
-	
-		saveInfo: function () {
-			if (this.currentPhoto.url) {
-				this.currentPhoto["title"] = this.state.title;
-				this.currentPhoto["description"] = this.state.description;
-				this.currentPhoto["price"] = this.state.price;
-				this.currentPhoto["tags"] = this.state.selectedTags;
-			}
-		},
-	
-		_findPhoto: function (url) {
-			for (var i = 0; i < this.state.photos.length; i++) {
-				if (this.state.photos[i].url === url) {
-					return this.state.photos[i];
-				}
-			}
-		},
-	
-		handleTags: function (tags) {
-			this.setState({ selectedTags: tags });
-		},
-	
-		render: function () {
-			//refactor this form into components? this file is getting huge.
-			return React.createElement(
-				'div',
-				{ className: 'photo-form' },
-				React.createElement(
-					'form',
-					{ onSubmit: this.handleSubmit },
-					React.createElement(
-						'h3',
-						null,
-						' Upload Photos '
-					),
-					React.createElement(PhotoButton, { handleUpload: this.handleImages }),
-					React.createElement(
-						'div',
-						{ className: 'uploaded-photo-view' },
-						this.generateUploadedThumbnails()
-					),
-					React.createElement(
-						'div',
-						{ className: this.state.visible },
-						React.createElement(
-							'label',
-							null,
-							'Title',
-							React.createElement('input', {
-								type: 'text',
-								valueLink: this.linkState("title") }),
-							React.createElement('br', null)
-						),
-						React.createElement(
-							'label',
-							null,
-							'Description',
-							React.createElement('input', {
-								type: 'text',
-								valueLink: this.linkState("description") }),
-							React.createElement('br', null)
-						),
-						React.createElement(
-							'label',
-							null,
-							'Price',
-							React.createElement('input', {
-								type: 'text',
-								valueLink: this.linkState("price"),
-								placeholder: '0' }),
-							React.createElement('br', null)
-						),
-						React.createElement(TagForm, { formCallback: this.handleTags, tags: this.state.selectedTags })
-					),
-					React.createElement('input', {
-						type: 'submit',
-						value: 'Upload Photos' })
-				)
-			);
-		}
-	});
-	//want tags on tab/enter to add tag to selected tag list and clear state
-	module.exports = PhotoForm;
-
-/***/ },
-/* 477 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ApiUtil = __webpack_require__(232);
-	var RaisedButton = __webpack_require__(260);
-	
-	var PhotoButton = React.createClass({
-		displayName: 'PhotoButton',
-	
-	
-		upload: function (e) {
-			e.preventDefault();
-	
-			var self = this;
-			cloudinary.openUploadWidget(CLOUDINARY_OPTIONS, function (error, results) {
-				if (!error) {
-					self.props.handleUpload(results);
-				}
-			});
-		},
-	
-		componentDidMount: function () {
-			console.log("I mounted!");
-		},
-	
-		render: function () {
-	
-			return React.createElement(
-				'div',
-				{ className: 'PhotoForm' },
-				React.createElement(
-					'button',
-					{ onClick: this.upload },
-					' Select Photos '
-				)
-			);
-		}
-	});
-	
-	module.exports = PhotoButton;
-
-/***/ },
-/* 478 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	
-	var PhotoThumb = React.createClass({
-		displayName: 'PhotoThumb',
-	
-	
-		clickHandler: function (e) {
-			this.props.updateForm(e.currentTarget.src, this.props.ind);
-		},
-	
-		render: function () {
-			return React.createElement(
-				'span',
-				{ className: this.props.cName },
-				React.createElement('img', { onClick: this.clickHandler, src: this.props.photo.url })
-			);
-		}
-	});
-	
-	module.exports = PhotoThumb;
-
-/***/ },
-/* 479 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var UserStore = __webpack_require__(480);
-	var Masonry = __webpack_require__(237);
-	var ApiUtil = __webpack_require__(232);
-	var PhotoIndexItem = __webpack_require__(236);
-	var Link = __webpack_require__(159).Link;
-	
-	//APP-TODO: possibly refactor the presentation of the photo index
-	//into a nested route that can then switch between the galleries and photos
-	
-	var masonryOptions = {
-		transitionDuration: 0,
-		itemSelector: ".grid-item"
-	};
-	
-	// fitWidth: true
-	var UserProfile = React.createClass({
-		displayName: 'UserProfile',
-	
-	
-		getInitialState: function () {
-			return {
-				user: UserStore.user()
-			};
-		},
-	
-		componentDidMount: function () {
-			this.userToke = UserStore.addListener(this._onChange);
-			ApiUtil.fetchUser(parseInt(this.props.params.id));
-		},
-	
-		_onChange: function () {
-			this.setState({ user: UserStore.user() });
-		},
-	
-		componentWillUnmount: function () {
-			this.userToke.remove();
-		},
-	
-		generateUserCollections: function () {
-	
-			if (this._userPresent()) {
-				return this.state.user.collections.map(function (collection, key) {
-					return React.createElement(
-						'div',
-						{ key: key },
-						' ',
-						React.createElement(
-							Link,
-							{ to: "collections/" + collection.id },
-							' ',
-							collection.title,
-							' '
-						),
-						' '
-					);
-				});
-			}
-		},
-	
-		generatePhotoItems: function () {
-			if (this._userPresent()) {
-				return this.state.user.photos.map(function (photo, key) {
-					return React.createElement(PhotoIndexItem, { key: key, photo: photo, cName: 'grid-item profile-image', className: 'photo-index-item' });
-				});
-			}
-		},
-	
-		_userPresent: function () {
-			if (this.state.user.email) {
-				return true;
-			} else {
-				return false;
-			}
-		},
-	
-		render: function () {
-			var current;
-	
-			if (this._userPresent() && this.props.current) {
-				if (this.state.user.id === this.props.current.id) {
-					current = React.createElement(
-						'div',
-						{ className: 'user-options' },
-						React.createElement(
-							'span',
-							{ className: 'profile-button-container' },
-							React.createElement(
-								Link,
-								{ to: "users/" + this.state.user.id + "/add_collection",
-									className: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored' },
-								' Add Collection'
-							)
-						),
-						React.createElement(
-							'span',
-							{ className: 'profile-button-container' },
-							React.createElement(
-								'button',
-								{
-									className: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored' },
-								' Edit Profile'
-							)
-						)
-					);
-				}
-			} else {
-				current = "";
-			}
-	
-			return React.createElement(
-				'div',
-				{ className: 'wrapper user-profile group' },
-				React.createElement(
-					'div',
-					{ className: 'user-profile-header' },
-					React.createElement(
-						'div',
-						null,
-						' ',
-						"USER AVATAR",
-						' '
-					),
-					React.createElement(
-						'div',
-						null,
-						' ',
-						this.state.user.email,
-						' '
-					),
-					React.createElement(
-						'div',
-						null,
-						' ',
-						current,
-						' '
-					)
-				),
-				React.createElement(
-					'section',
-					{ className: 'user-prof-collection' },
-					React.createElement(
-						'h3',
-						null,
-						' Collections '
-					),
-					this.generateUserCollections()
-				),
-				React.createElement(
-					'section',
-					{ className: 'user-photos' },
-					React.createElement(
-						'h3',
-						null,
-						' Photos '
-					),
-					React.createElement(
-						Masonry,
-						{
-							className: 'grid',
-							elementType: 'div',
-							options: masonryOptions,
-							disableImagesLoaded: false },
-						this.generatePhotoItems()
-					)
-				),
-				this.props.children
-			);
-		}
-	});
-	
-	module.exports = UserProfile;
-
-/***/ },
-/* 480 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(210);
-	var Store = __webpack_require__(214).Store;
-	var UserConstants = __webpack_require__(235);
-	
-	_user = {};
-	
-	var UserStore = new Store(AppDispatcher);
-	
-	UserStore.user = function () {
-		return _user;
-	};
-	
-	UserStore.__onDispatch = function (payload) {
-		switch (payload.actionType) {
-			case UserConstants.RECEIVE_USER:
-				setUser(payload.user);
-				UserStore.__emitChange();
-				break;
-		}
-	};
-	
-	function setUser(user) {
-		_user = user;
-	}
-	
-	module.exports = UserStore;
-
-/***/ },
-/* 481 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var LinkedStateMixin = __webpack_require__(249);
-	var SessionsUtil = __webpack_require__(253);
-	
-	var SignUpForm = React.createClass({
-		displayName: 'SignUpForm',
-	
-	
-		mixins: [LinkedStateMixin],
-	
-		getInitialState: function () {
-			return {
-				email: "",
-				password: ""
-			};
-		},
-	
-		handleSubmit: function (e) {
-			e.preventDefault();
-	
-			var params = {
-				email: this.state.email,
-				password: this.state.password
-			};
-	
-			SessionsUtil.createUser(params, this.successRedirect);
-		},
-	
-		successRedirect: function () {
-			this.props.history.push("/");
-		},
-	
-		render: function () {
-			return React.createElement(
-				'div',
-				{ className: 'wrapper' },
-				React.createElement(
-					'form',
-					{ onSubmit: this.handleSubmit },
-					'Sign Up!',
-					React.createElement('br', null),
-					React.createElement(
-						'label',
-						{ htmlFor: 'email' },
-						'Email:',
-						React.createElement('input', {
-							type: 'text',
-							valueLink: this.linkState("email"),
-							placeholder: 'sample@email.com' })
-					),
-					React.createElement('br', null),
-					React.createElement(
-						'label',
-						{ htmlFor: 'password' },
-						'Password:',
-						React.createElement('input', {
-							type: 'password',
-							valueLink: this.linkState("password") })
-					),
-					React.createElement('br', null),
-					React.createElement('input', { type: 'submit', value: 'Create Account' })
-				)
-			);
-		}
-	});
-	
-	module.exports = SignUpForm;
-
-/***/ },
-/* 482 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var LinkedStateMixin = __webpack_require__(249);
-	var SessionUtil = __webpack_require__(253);
-	
-	var SignInForm = React.createClass({
-		displayName: 'SignInForm',
-	
-	
-		mixins: [LinkedStateMixin],
-	
-		getInitialState: function () {
-			return {
-				email: "",
-				password: ""
-			};
-		},
-	
-		handleSubmit: function (e) {
-			e.preventDefault();
-	
-			var params = {
-				email: this.state.email,
-				password: this.state.password
-			};
-	
-			SessionUtil.createSession(params, this.successRedirect);
-		},
-	
-		handleSignUp: function (e) {
-			e.preventDefault();
-			this.props.history.push("user/sign_up");
-		},
-	
-		//any way to push "back" to where the use was before they logged in?
-		successRedirect: function () {
-			this.props.closeModal();
-		},
-	
-		render: function () {
-	
-			return React.createElement(
-				'div',
-				{ className: 'form-container center' },
-				React.createElement(
-					'div',
-					{ className: 'modal-header' },
-					'Sign In'
-				),
-				React.createElement(
-					'form',
-					{ onSubmit: this.handleSubmit, className: 'session-form' },
-					React.createElement(
-						'div',
-						{ className: 'form-input-container' },
-						React.createElement('input', {
-							type: 'text',
-							valueLink: this.linkState("email"),
-							placeholder: 'sample@email.com',
-							className: 'form-input',
-							placeholder: 'Email' })
-					),
-					React.createElement(
-						'div',
-						{ className: 'form-input-container' },
-						React.createElement('input', {
-							type: 'password',
-							valueLink: this.linkState("password"),
-							className: 'form-input',
-							placeholder: 'Password' })
-					),
-					React.createElement(
-						'div',
-						{ className: 'form-button-container' },
-						React.createElement('input', {
-							type: 'submit',
-							value: 'Sign In',
-							className: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored' }),
-						React.createElement('br', null),
-						React.createElement(
-							'button',
-							{ onClick: this.handleSignUp },
-							' Sign Up! '
-						)
-					)
-				)
-			);
-		}
-	});
-	
-	module.exports = SignInForm;
-
-/***/ },
-/* 483 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(210);
-	var ApiUtil = __webpack_require__(232);
-	var CollectionConstants = __webpack_require__(484);
-	
-	var CollectionActions = {
-	
-		//sends addition request to the backend
-		addPhoto: function (collectionId, photoId) {
-			var params = {
-				photo_id: photoId
-			};
-			ApiUtil.addPhotoToCollection(collectionId, params, this.receiveCollections);
-		},
-	
-		removePhoto: function (collectionId, photoId) {
-			var params = {
-				photo_id: photoId
-			};
-			ApiUtil.removePhotoFromCollection(collectionId, params, this.receiveCollections);
-		},
-	
-		fetchUserCollections: function (userID) {
-			var params = {
-				user_id: userID
-			};
-			ApiUtil.fetchUserCollections(params, this.receiveCollections);
-		},
-	
-		fetchCollection: function (collectionID) {
-			ApiUtil.fetchCollection(collectionID, this.receiveCollections);
-		},
-	
-		receiveCollections: function (collections) {
-			AppDispatcher.dispatch({
-				actionType: CollectionConstants.RECEIVE_COLLECTIONS,
-				collections: collections
-			});
-		},
-	
-		createCollection: function (params, successRedirect) {
-			ApiUtil.createCollection(params, this.receiveCollections, successRedirect);
-		}
-	
-	};
-	
-	module.exports = CollectionActions;
-
-/***/ },
-/* 484 */
-/***/ function(module, exports) {
-
-	module.exports = {
-		RECEIVE_COLLECTIONS: "RECEIVE_COLLECTIONS"
-	};
-
-/***/ },
 /* 485 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var AppDispatcher = __webpack_require__(210);
-	var Store = __webpack_require__(214).Store;
-	var CollectionConstants = __webpack_require__(484);
+	var TagConstants = __webpack_require__(486);
+	var ApiUtil = __webpack_require__(232);
 	
-	var CollectionStore = new Store(AppDispatcher);
+	var TagActions = {
+		fetchAllTags: function () {
+			ApiUtil.fetchAllTags(this.receiveAllTags);
+		},
 	
-	_collections = [];
-	
-	CollectionStore.__onDispatch = function (payload) {
-	
-		switch (payload.actionType) {
-	
-			case CollectionConstants.RECEIVE_COLLECTIONS:
-				updateCollection(payload.collections);
-				CollectionStore.__emitChange();
-				break;
+		receiveAllTags: function (tags) {
+			AppDispatcher.dispatch({
+				actionType: TagConstants.RECEIVE_ALL_TAGS,
+				tags: tags
+			});
 		}
 	};
 	
-	CollectionStore.all = function () {
-		return _collections.slice();
-	};
-	
-	CollectionStore.findById = function (id) {
-		for (var i = 0; i < _collections.length; i++) {
-			if (_collections[i].id === id) {
-				return _collections[i];
-			}
-		}
-	};
-	
-	CollectionStore.collection = function () {
-		if (_collections.length === 1) {
-			return _collections[0];
-		}
-	};
-	
-	function updateCollection(collections) {
-		if (collections instanceof Array) {
-			_collections = collections;
-		} else {
-			_collections = [collections];
-		}
-	};
-	
-	module.exports = CollectionStore;
+	module.exports = TagActions;
 
 /***/ },
 /* 486 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	var React = __webpack_require__(1);
-	var CollectionList = __webpack_require__(258);
-	var RaisedButton = __webpack_require__(259).RaisedButton;
-	var CollectionActions = __webpack_require__(483);
-	var CollectionStore = __webpack_require__(485);
-	
-	var CollectionToggle = React.createClass({
-		displayName: 'CollectionToggle',
-	
-	
-		getInitialState: function () {
-			return {
-				className: "collection-list",
-				collections: ""
-			};
-		},
-	
-		toggle: function () {
-			var name = this.state.className === "collection-list" ? "collection-list visible" : "collection-list";
-			this.setState({ className: name });
-		},
-	
-		componentDidMount: function () {
-			this.toke = CollectionStore.addListener(this._onChange);
-		},
-	
-		_onChange: function () {
-			this.setState({ collections: CollectionStore.all() });
-		},
-	
-		componentWillReceiveProps: function (newProps) {
-			if (newProps.currentUser) {
-				CollectionActions.fetchUserCollections(newProps.currentUser.id);
-			}
-		},
-	
-		handleClick: function () {
-			this.toggle();
-		},
-	
-		componentWillUnmount: function () {
-			this.toke.remove();
-		},
-	
-		addPhotoToCollection: function (collectionId) {
-			CollectionActions.addPhoto(collectionId, this.props.photo.id);
-		},
-	
-		removePhotoFromCollection: function (collectionId) {
-			CollectionActions.removePhoto(collectionId, this.props.photo.id);
-		},
-	
-		render: function () {
-	
-			var list = "";
-	
-			if (this.props.currentUser) {
-				list = React.createElement(CollectionList, {
-					cName: this.state.className,
-					collections: this.state.collections,
-					addPhotoCallBack: this.addPhotoToCollection,
-					removePhotoCallBack: this.removePhotoFromCollection,
-					photo: this.props.photo });
-			};
-	
-			return React.createElement(
-				'div',
-				{ className: 'collection-list-container' },
-				React.createElement(
-					'button',
-					{
-						onClick: this.handleClick,
-						className: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored',
-						id: 'collection-list' },
-					React.createElement(
-						'span',
-						null,
-						' Add to Collections '
-					),
-					React.createElement(
-						'i',
-						{ className: 'material-icons' },
-						'collections'
-					)
-				),
-				list
-			);
-		}
-	});
-	
-	module.exports = CollectionToggle;
+	module.exports = {
+		RECEIVE_ALL_TAGS: "RECEIVE_ALL_TAGS"
+	};
 
 /***/ },
 /* 487 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var AppDispatcher = __webpack_require__(210);
+	var Store = __webpack_require__(214).Store;
+	var TagConstants = __webpack_require__(486);
+	
+	_tags = [];
+	
+	var TagStore = new Store(AppDispatcher);
+	
+	TagStore.allTags = function () {
+		return _tags.slice();
+	};
+	
+	TagStore.__onDispatch = function (payload) {
+		switch (payload.actionType) {
+			case TagConstants.RECEIVE_ALL_TAGS:
+				resetTags(payload.tags);
+				TagStore.__emitChange();
+				break;
+		}
+	};
+	
+	TagStore.findSubSet = function (query) {
+		var results = [];
+		for (var i = 0; i < _tags.length; i++) {
+			var ind = _tags[i].title.indexOf(query);
+	
+			if (ind > -1) {
+				_tags[i]['ind'] = ind;
+				results.push(_tags[i]);
+			}
+		}
+	
+		//sort in ascending order the ind value
+		return results;
+	};
+	
+	function resetTags(tags) {
+		_tags = tags;
+	};
+	
+	module.exports = TagStore;
+
+/***/ },
+/* 488 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var React = __webpack_require__(1);
 	var LinkedStateMixin = __webpack_require__(249);
-	var PhotoSelector = __webpack_require__(488);
-	var CollectionActions = __webpack_require__(483);
-	var TagForm = __webpack_require__(498);
+	var PhotoSelector = __webpack_require__(489);
+	var CollectionActions = __webpack_require__(474);
+	var TagForm = __webpack_require__(491);
 	
 	var CollectionForm = React.createClass({
 		displayName: 'CollectionForm',
@@ -69730,13 +69490,14 @@
 	module.exports = CollectionForm;
 
 /***/ },
-/* 488 */
+/* 489 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var Masonry = __webpack_require__(237);
-	var PhotoThumb = __webpack_require__(478);
+	var PhotoThumb = __webpack_require__(490);
 	var PhotoStore = __webpack_require__(209);
+	var ApiUtil = __webpack_require__(232);
 	
 	var masonryOptions = {
 		transitionDuration: 0,
@@ -69823,12 +69584,144 @@
 	module.exports = PhotoSelector;
 
 /***/ },
-/* 489 */
+/* 490 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var CollectionStore = __webpack_require__(485);
-	var CollectionActions = __webpack_require__(483);
+	
+	var PhotoThumb = React.createClass({
+		displayName: 'PhotoThumb',
+	
+	
+		clickHandler: function (e) {
+			this.props.updateForm(e.currentTarget.src, this.props.ind);
+		},
+	
+		render: function () {
+			return React.createElement(
+				'span',
+				{ className: this.props.cName },
+				React.createElement('img', { onClick: this.clickHandler, src: this.props.photo.url })
+			);
+		}
+	});
+	
+	module.exports = PhotoThumb;
+
+/***/ },
+/* 491 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var TagItems = __webpack_require__(481);
+	var LinkedStateMixin = __webpack_require__(249);
+	var TagActions = __webpack_require__(485);
+	var TagStore = __webpack_require__(487);
+	var SuggestedItemList = __webpack_require__(510);
+	
+	var TagForm = React.createClass({
+		displayName: 'TagForm',
+	
+	
+		mixins: [LinkedStateMixin],
+	
+		getInitialState: function () {
+			return {
+				tag: "",
+				selectedTags: [],
+				filteredTags: []
+			};
+		},
+	
+		componentDidMount: function () {
+			this.toke = TagStore.addListener(this._onChange);
+	
+			if (this.state.filteredTags.length === 0) {
+				TagActions.fetchAllTags();
+			}
+		},
+	
+		componentWillUnmount: function () {
+			this.toke.remove();
+		},
+	
+		componentWillReceiveProps: function (newProps) {
+			if (newProps.tags) {
+				this.setState({ selectedTags: newProps.tags });
+			}
+		},
+	
+		_onChange: function () {
+			this.setState({ existingTags: TagStore.allTags() });
+		},
+	
+		handleTab: function (e) {
+			if (e.which === 9) {
+				e.preventDefault();
+				var newTags = this.state.selectedTags.concat(this.state.tag);
+				this.setState({
+					selectedTags: newTags,
+					tag: ""
+				});
+				this.props.formCallback(newTags);
+			}
+		},
+	
+		_findMatching: function (tag) {
+			var matchingTags = [];
+	
+			if (tag) {
+				matchingTags = TagStore.findSubSet(tag);
+			} else {
+				matchingTags = [];
+			}
+	
+			this.setState({ tag: tag, filteredTags: matchingTags });
+		},
+	
+		handleItemSelection: function (e) {
+			var newTags = this.state.selectedTags.concat(e.currentTarget.innerText);
+			this.setState({
+				selectedTags: newTags,
+				tag: "",
+				filteredTags: []
+			});
+		},
+	
+		handleInput: function (e) {
+			var query = e.currentTarget.value;
+			this._findMatching(query);
+		},
+	
+		render: function () {
+	
+			return React.createElement(
+				'div',
+				{ className: 'tag-input' },
+				React.createElement('input', {
+					type: 'text',
+					className: 'form-input',
+					value: this.state.tag,
+					onInput: this.handleInput,
+					onKeyDown: this.handleTab,
+					placeholder: 'Tags (tab to apply)' }),
+				React.createElement(SuggestedItemList, {
+					items: this.state.filteredTags,
+					selectCallBack: this.handleItemSelection }),
+				React.createElement(TagItems, { tags: this.state.selectedTags })
+			);
+		}
+	});
+	
+	module.exports = TagForm;
+
+/***/ },
+/* 492 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var CollectionStore = __webpack_require__(476);
+	var CollectionActions = __webpack_require__(474);
 	var Masonry = __webpack_require__(237);
 	var PhotoIndexItem = __webpack_require__(236);
 	
@@ -69935,418 +69828,914 @@
 	module.exports = CollectionDetail;
 
 /***/ },
-/* 490 */,
-/* 491 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var CommentItem = __webpack_require__(492);
-	var CommentForm = __webpack_require__(493);
-	
-	var Comments = React.createClass({
-		displayName: 'Comments',
-	
-	
-		getInitialState: function () {
-			return {
-				comments: "",
-				photo: ""
-			};
-		},
-	
-		componentWillReceiveProps: function (newProps) {
-			this.setState({
-				photo: newProps.photo,
-				comments: newProps.photo.comments
-			});
-		},
-	
-		generateComments: function () {
-			if (this.state.comments) {
-				return this.state.comments.map(function (comment, ind) {
-					return React.createElement(CommentItem, { comment: comment, key: ind });
-				});
-			}
-		},
-	
-		render: function () {
-			return React.createElement(
-				'div',
-				{ className: 'comment-container' },
-				React.createElement(
-					'h4',
-					null,
-					'Comments'
-				),
-				React.createElement(CommentForm, { photo: this.state.photo }),
-				React.createElement(
-					'ul',
-					{ className: 'comment-list' },
-					this.generateComments()
-				)
-			);
-		}
-	});
-	
-	module.exports = Comments;
-
-/***/ },
-/* 492 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	
-	var CommentItem = React.createClass({
-		displayName: "CommentItem",
-	
-		getInitialState: function () {
-			return {
-				comment: this.props.comment
-			};
-		},
-	
-		// componentWillReceiveProps: function(newProps){
-		// 	debugger;
-		// 	this.setState({comment: newProps.comment})
-		// },
-	
-		content: function () {
-			if (this.state.comment) {
-				return React.createElement(
-					"li",
-					{ className: "comment-item" },
-					React.createElement(
-						"section",
-						{ className: "comment-header" },
-						this.state.comment.user_id
-					),
-					React.createElement(
-						"section",
-						{ className: "comment-body" },
-						this.state.comment.content
-					)
-				);
-			}
-		},
-	
-		render: function () {
-			return React.createElement(
-				"div",
-				null,
-				this.content()
-			);
-		}
-	});
-	
-	module.exports = CommentItem;
-
-/***/ },
 /* 493 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var LinkedStateMixin = __webpack_require__(249);
-	var History = __webpack_require__(159).History;
-	var CommentActions = __webpack_require__(495);
+	var UserStore = __webpack_require__(494);
+	var Masonry = __webpack_require__(237);
+	var ApiUtil = __webpack_require__(232);
+	var PhotoIndexItem = __webpack_require__(236);
+	var Link = __webpack_require__(159).Link;
 	
-	var CommentForm = React.createClass({
-		displayName: 'CommentForm',
+	//APP-TODO: possibly refactor the presentation of the photo index
+	//into a nested route that can then switch between the galleries and photos
 	
+	var masonryOptions = {
+		transitionDuration: 0,
+		itemSelector: ".grid-item"
+	};
 	
-		mixins: [LinkedStateMixin, History],
+	var UserProfile = React.createClass({
+		displayName: 'UserProfile',
+	
 	
 		getInitialState: function () {
 			return {
-				content: "",
-				photo_id: ""
+				user: UserStore.user()
 			};
 		},
 	
-		componentWillReceiveProps: function (newProps) {
-			this.setState({ photo_id: newProps.photo.id });
+		componentDidMount: function () {
+			this.userToke = UserStore.addListener(this._onChange);
+			ApiUtil.fetchUser(parseInt(this.props.params.id));
 		},
 	
-		handleSubmit: function (e) {
-			e.preventDefault();
-	
-			params = {
-				content: this.state.content,
-				photo_id: this.state.photo_id
-			};
-	
-			CommentActions.createComment(params);
+		_onChange: function () {
+			this.setState({ user: UserStore.user() });
 		},
 	
-		render: function () {
+		componentWillUnmount: function () {
+			this.userToke.remove();
+		},
 	
-			return React.createElement(
-				'div',
-				{ className: 'CommentForm' },
-				React.createElement(
-					'form',
-					{ onSubmit: this.handleSubmit },
-					React.createElement('textarea', { valueLink: this.linkState("content"), placeholder: 'Leave a comment...' }),
-					React.createElement('br', null),
-					React.createElement('input', { type: 'submit', value: 'Post Comment' })
-				)
-			);
-		}
-	});
+		generateUserCollections: function () {
 	
-	module.exports = CommentForm;
-
-/***/ },
-/* 494 */,
-/* 495 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(210);
-	var ApiUtil = __webpack_require__(232);
-	
-	var CommentActions = {
-		createComment: function (params) {
-			ApiUtil.createComment(params);
-		}
-	};
-	
-	module.exports = CommentActions;
-
-/***/ },
-/* 496 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var TagItem = __webpack_require__(497);
-	
-	var TagItems = React.createClass({
-		displayName: 'TagItems',
-	
-	
-		generateTagItems: function () {
-			if (this.props.tags) {
-				return this.props.tags.map(function (tag, ind) {
-					return React.createElement(TagItem, { tag: tag, key: ind });
+			if (this._userPresent()) {
+				return this.state.user.collections.map(function (collection, key) {
+					return React.createElement(
+						'div',
+						{ key: key },
+						' ',
+						React.createElement(
+							Link,
+							{ to: "collections/" + collection.id },
+							' ',
+							collection.title,
+							' '
+						),
+						' '
+					);
 				});
 			}
 		},
 	
+		generatePhotoItems: function () {
+			if (this._userPresent()) {
+				return this.state.user.photos.map(function (photo, key) {
+					return React.createElement(PhotoIndexItem, { key: key, photo: photo, cName: 'grid-item profile-image', className: 'photo-index-item' });
+				});
+			}
+		},
+	
+		_userPresent: function () {
+			if (this.state.user.email) {
+				return true;
+			} else {
+				return false;
+			}
+		},
+	
+		handleBackgrounImage: function () {
+			if (this._userPresent()) {
+				return this.state.user.photos[0].url;
+			}
+		},
+	
 		render: function () {
+			var current;
+	
+			if (this._userPresent() && this.props.current) {
+				if (this.state.user.id === this.props.current.id) {
+					current = React.createElement(
+						'div',
+						{ className: 'user-options' },
+						React.createElement(
+							'span',
+							{ className: 'profile-button-container' },
+							React.createElement(
+								Link,
+								{ to: "users/" + this.state.user.id + "/add_collection",
+									className: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored' },
+								' Add Collection'
+							)
+						),
+						React.createElement(
+							'span',
+							{ className: 'profile-button-container' },
+							React.createElement(
+								'button',
+								{
+									className: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored' },
+								' Edit Profile'
+							)
+						)
+					);
+				}
+			} else {
+				current = "";
+			}
+	
 			return React.createElement(
 				'div',
-				{ className: 'tag-items' },
+				{ className: 'parallax' },
 				React.createElement(
-					'span',
-					null,
-					' ',
-					this.generateTagItems(),
-					' '
+					'div',
+					{ className: 'parallax__layer parallax__layer--back background' },
+					React.createElement('img', { src: this.handleBackgrounImage() })
+				),
+				React.createElement(
+					'div',
+					{ className: 'parallax__layer parallax__layer--base group' },
+					React.createElement(
+						'div',
+						{ className: 'user-profile' },
+						React.createElement(
+							'div',
+							{ className: 'user-profile-header' },
+							React.createElement(
+								'div',
+								{ className: 'profile-picture circle' },
+								React.createElement('img', { src: this.state.user.avatar })
+							),
+							React.createElement(
+								'div',
+								{ className: 'profile-info' },
+								this.state.user.email
+							),
+							React.createElement(
+								'div',
+								{ className: 'profile-actions' },
+								current
+							)
+						),
+						React.createElement(
+							'section',
+							{ className: 'user-prof-collection' },
+							React.createElement(
+								'h3',
+								null,
+								' Collections '
+							),
+							this.generateUserCollections()
+						),
+						React.createElement(
+							'section',
+							{ className: 'user-photos' },
+							React.createElement(
+								'h3',
+								null,
+								' Photos '
+							),
+							React.createElement(
+								Masonry,
+								{
+									className: 'grid',
+									elementType: 'div',
+									options: masonryOptions,
+									disableImagesLoaded: false },
+								this.generatePhotoItems()
+							)
+						),
+						this.props.children
+					)
 				)
 			);
 		}
 	});
 	
-	module.exports = TagItems;
+	module.exports = UserProfile;
 
 /***/ },
-/* 497 */
+/* 494 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var React = __webpack_require__(1);
+	var AppDispatcher = __webpack_require__(210);
+	var Store = __webpack_require__(214).Store;
+	var UserConstants = __webpack_require__(235);
 	
-	var TagItem = React.createClass({
-		displayName: "TagItem",
+	_user = {};
 	
+	var UserStore = new Store(AppDispatcher);
 	
-		renderTags: function () {
-			if (typeof this.props.tag === "string") {
-				return this.props.tag;
-			} else {
-				return this.props.tag.title;
-			}
-		},
+	UserStore.user = function () {
+		return _user;
+	};
 	
-		render: function () {
-			return React.createElement(
-				"span",
-				{ className: "tag-item" },
-				this.renderTags()
-			);
+	UserStore.__onDispatch = function (payload) {
+		switch (payload.actionType) {
+			case UserConstants.RECEIVE_USER:
+				setUser(payload.user);
+				UserStore.__emitChange();
+				break;
 		}
-	});
+	};
 	
-	module.exports = TagItem;
+	function setUser(user) {
+		_user = user;
+	}
+	
+	module.exports = UserStore;
 
 /***/ },
-/* 498 */
+/* 495 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var TagItems = __webpack_require__(496);
 	var LinkedStateMixin = __webpack_require__(249);
-	var TagStore = __webpack_require__(499);
-	var TagActions = __webpack_require__(500);
+	var SessionsUtil = __webpack_require__(253);
 	
-	var TagForm = React.createClass({
-		displayName: 'TagForm',
+	var SignUpForm = React.createClass({
+		displayName: 'SignUpForm',
 	
 	
 		mixins: [LinkedStateMixin],
 	
 		getInitialState: function () {
 			return {
-				tag: "",
-				selectedTags: [],
-				existingTags: TagStore.allTags()
+				email: "",
+				password: ""
 			};
 		},
 	
-		componentDidMount: function () {
-			this.toke = TagStore.addListener(this._onChange);
+		handleSubmit: function (e) {
+			e.preventDefault();
 	
-			if (this.state.existingTags.length === 0) {
-				TagActions.fetchAllTags();
-			}
+			var params = {
+				email: this.state.email,
+				password: this.state.password
+			};
+	
+			SessionsUtil.createUser(params, this.successRedirect);
 		},
 	
-		componentWillUnmount: function () {
-			this.toke.remove();
+		successRedirect: function () {
+			this.props.history.push("/");
+		},
+	
+		render: function () {
+			return React.createElement(
+				'div',
+				{ className: 'wrapper' },
+				React.createElement(
+					'form',
+					{ onSubmit: this.handleSubmit },
+					'Sign Up!',
+					React.createElement('br', null),
+					React.createElement(
+						'label',
+						{ htmlFor: 'email' },
+						'Email:',
+						React.createElement('input', {
+							type: 'text',
+							valueLink: this.linkState("email"),
+							placeholder: 'sample@email.com' })
+					),
+					React.createElement('br', null),
+					React.createElement(
+						'label',
+						{ htmlFor: 'password' },
+						'Password:',
+						React.createElement('input', {
+							type: 'password',
+							valueLink: this.linkState("password") })
+					),
+					React.createElement('br', null),
+					React.createElement('input', { type: 'submit', value: 'Create Account' })
+				)
+			);
+		}
+	});
+	
+	module.exports = SignUpForm;
+
+/***/ },
+/* 496 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var PhotoForm = __webpack_require__(497);
+	var SignInForm = __webpack_require__(499);
+	var ModalStyles = __webpack_require__(509);
+	var Modal = __webpack_require__(500);
+	
+	var ModalWrapper = React.createClass({
+		displayName: 'ModalWrapper',
+	
+	
+		getInitialState: function () {
+			return {
+				modalBody: "",
+				modalAppliedStyle: ""
+			};
+		},
+	
+		showModal: function () {
+			this.refs.modal.show();
+		},
+	
+		hideModal: function () {
+			this.refs.modal.hide();
+		},
+	
+		renderModal: function (path) {
+			var modalElements = this._selectModalBody(path);
+			this.setState({
+				modalBody: modalElements.body,
+				modalAppliedStyle: modalElements.style
+			});
+			this.showModal();
+		},
+	
+		componentDidMount: function () {
+			var action = this.props.action;
+			this.renderModal(action);
 		},
 	
 		componentWillReceiveProps: function (newProps) {
-			if (newProps.tags) {
-				this.setState({ selectedTags: newProps.tags });
-			}
+			var action = newProps.action;
+			this.renderModal(action);
 		},
 	
-		_onChange: function () {
-			this.setState({ existingTags: TagStore.allTags() });
+		_selectModalBody: function (action) {
+			var modalElements = {};
+	
+			if (action === "upload") {
+				modalElements["body"] = React.createElement(PhotoForm, { closeModal: this.hideModal });
+				modalElements["style"] = ModalStyles.uploadForm;
+			} else if (action === "sign_in") {
+				modalElements["body"] = React.createElement(SignInForm, { closeModal: this.hideModal });
+				modalElements["style"] = ModalStyles.signIn;
+			} else if (path.indexOf("sign_up") > -1) {}
+	
+			return modalElements;
 		},
 	
-		handleTab: function (e) {
-			if (e.which === 9) {
-				e.preventDefault();
-				var newTags = this.state.selectedTags.concat(this.state.tag);
+		render: function () {
+			return React.createElement(
+				'div',
+				{ className: 'ModalWrapper' },
+				React.createElement(
+					Modal,
+					{
+						ref: 'modal',
+						modalStyle: this.state.modalAppliedStyle.modalStyle,
+						contentStyle: this.state.modalAppliedStyle.contentStyle,
+						className: 'noSelect' },
+					React.createElement(
+						'div',
+						{ className: 'modal-close-button-container' },
+						React.createElement(
+							'button',
+							{
+								className: 'mdl-button mdl-js-button mdl-button--icon mdl-button--colored',
+								onClick: this.hideModal },
+							React.createElement(
+								'i',
+								{ className: 'material-icons' },
+								'clear'
+							)
+						)
+					),
+					this.state.modalBody
+				)
+			);
+		}
+	});
+	
+	module.exports = ModalWrapper;
+
+/***/ },
+/* 497 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var PhotoButton = __webpack_require__(498);
+	var LinkedStateMixin = __webpack_require__(249);
+	var PhotoThumb = __webpack_require__(490);
+	var ApiUtil = __webpack_require__(232);
+	var TagForm = __webpack_require__(491);
+	
+	var PhotoForm = React.createClass({
+		displayName: 'PhotoForm',
+	
+	
+		mixins: [LinkedStateMixin],
+	
+		getInitialState: function () {
+			this.currentPhoto = {};
+	
+			return {
+				title: "",
+				description: "",
+				price: 0,
+				photos: [],
+				selectedTags: "",
+				highLighted: "",
+				visible: "hidden"
+			};
+		},
+	
+		handleSubmit: function () {
+			this.saveInfo();
+	
+			var options = {
+				totalImages: this.state.photos.length - 1,
+				callBack: this.successRedirect
+			};
+	
+			this.state.photos.forEach(function (photoObject, ind) {
+				options["currentInd"] = ind;
+				ApiUtil.createPhoto(photoObject, options);
+			});
+		},
+	
+		successRedirect: function () {
+			this.props.history.push("/");
+		},
+	
+		handleImages: function (imageObjects) {
+			var currentState = this.state.photos.concat(imageObjects);
+			this.setState({ photos: currentState });
+		},
+	
+		generateUploadedThumbnails: function () {
+	
+			return this.state.photos.map(function (photo, ind) {
+				var cName = "photo-thumb-container";
+	
+				if (ind === this.state.highLighted) {
+					cName = cName + " selected";
+				}
+	
+				return React.createElement(PhotoThumb, {
+					photo: photo,
+					key: ind,
+					ind: ind,
+					updateForm: this.updateDetailForm,
+					cName: cName });
+			}.bind(this));
+		},
+	
+		updateDetailForm: function (url, ind) {
+	
+			this.setState({
+				highLighted: ind,
+				visible: ""
+			});
+	
+			var photo = this._findPhoto(url);
+	
+			if (this.currentPhoto.url !== photo.url) {
+				this.saveInfo();
 				this.setState({
-					selectedTags: newTags,
-					tag: ""
+					title: photo.title,
+					description: photo.description,
+					price: photo.price,
+					selectedTags: photo.tags
 				});
-				this.props.formCallback(newTags);
 			}
+	
+			this.currentPhoto = photo;
+		},
+	
+		saveInfo: function () {
+			if (this.currentPhoto.url) {
+				this.currentPhoto["title"] = this.state.title;
+				this.currentPhoto["description"] = this.state.description;
+				this.currentPhoto["price"] = this.state.price;
+				this.currentPhoto["tags"] = this.state.selectedTags;
+			}
+		},
+	
+		_findPhoto: function (url) {
+			for (var i = 0; i < this.state.photos.length; i++) {
+				if (this.state.photos[i].url === url) {
+					return this.state.photos[i];
+				}
+			}
+		},
+	
+		handleTags: function (tags) {
+			this.setState({ selectedTags: tags });
+		},
+	
+		renderSubmit: function () {
+			var sub = "";
+			if (this.state.photos.length > 0) {
+				sub = React.createElement('input', {
+					type: 'submit',
+					value: 'Upload Photos',
+					className: 'mdl-button mdl-js-button mdl-button--raised mdl-button--accent' });
+			}
+	
+			return sub;
+		},
+	
+		render: function () {
+			return React.createElement(
+				'div',
+				{ className: 'form-container center' },
+				React.createElement(
+					'div',
+					{ className: 'upload-styling center' },
+					React.createElement(
+						'form',
+						{ onSubmit: this.handleSubmit, className: 'upload-form' },
+						React.createElement(PhotoButton, {
+							handleUpload: this.handleImages,
+							photoCount: this.state.photos.length }),
+						React.createElement(
+							'div',
+							{ className: 'uploaded-photo-view' },
+							this.generateUploadedThumbnails()
+						),
+						React.createElement(
+							'div',
+							{ className: this.state.visible + " fade-in" },
+							React.createElement(
+								'div',
+								{ className: 'form-input-container' },
+								React.createElement('input', {
+									type: 'text',
+									valueLink: this.linkState("title"),
+									className: 'form-input',
+									placeholder: 'Title' })
+							),
+							React.createElement(
+								'div',
+								{ className: 'form-input-container' },
+								React.createElement('input', {
+									type: 'text',
+									valueLink: this.linkState("description"),
+									className: 'form-input',
+									placeholder: 'Description' })
+							),
+							React.createElement(
+								'div',
+								{ className: 'form-input-container upload' },
+								React.createElement('input', {
+									type: 'text',
+									valueLink: this.linkState("price"),
+									className: 'form-input',
+									placeholder: '0' })
+							),
+							React.createElement(
+								'div',
+								{ className: 'form-input-container' },
+								React.createElement(TagForm, {
+									formCallback: this.handleTags,
+									tags: this.state.selectedTags })
+							)
+						),
+						React.createElement(
+							'div',
+							{ className: 'submit-button-container' },
+							this.renderSubmit()
+						)
+					)
+				)
+			);
+		}
+	});
+	//want tags on tab/enter to add tag to selected tag list and clear state
+	module.exports = PhotoForm;
+
+/***/ },
+/* 498 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ApiUtil = __webpack_require__(232);
+	var RaisedButton = __webpack_require__(260);
+	
+	var PhotoButton = React.createClass({
+		displayName: 'PhotoButton',
+	
+	
+		upload: function (e) {
+			e.preventDefault();
+	
+			var self = this;
+			cloudinary.openUploadWidget(CLOUDINARY_OPTIONS, function (error, results) {
+				if (!error) {
+					self.props.handleUpload(results);
+				}
+			});
+		},
+	
+		renderButton: function () {
+			if (this.props.photocount === 0) {
+				return "Select Images";
+			}
+		},
+	
+		componentDidMount: function () {
+			console.log("I mounted!");
 		},
 	
 		render: function () {
 	
 			return React.createElement(
 				'div',
-				{ className: 'tag-input' },
+				{ className: 'PhotoForm' },
 				React.createElement(
-					'label',
-					null,
-					'Tags',
-					React.createElement('input', {
-						type: 'text',
-						valueLink: this.linkState("tag"),
-						onKeyDown: this.handleTab })
+					'button',
+					{
+						className: 'mdl-button mdl-js-button mdl-button--fab mdl-button--accent',
+						onClick: this.upload },
+					React.createElement(
+						'i',
+						{ className: 'material-icons' },
+						'add_a_photo'
+					)
 				),
-				React.createElement(TagItems, { tags: this.state.selectedTags })
+				React.createElement(
+					'p',
+					null,
+					this.renderButton()
+				)
 			);
 		}
 	});
 	
-	module.exports = TagForm;
+	module.exports = PhotoButton;
 
 /***/ },
 /* 499 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppDispatcher = __webpack_require__(210);
-	var Store = __webpack_require__(214).Store;
-	var TagConstants = __webpack_require__(501);
+	var React = __webpack_require__(1);
+	var LinkedStateMixin = __webpack_require__(249);
+	var SessionUtil = __webpack_require__(253);
 	
-	_tags = {};
+	var Modal = __webpack_require__(500);
 	
-	var TagStore = new Store(AppDispatcher);
+	var SignInForm = React.createClass({
+		displayName: 'SignInForm',
 	
-	TagStore.allTags = function () {
-		return Object.keys(_tags);
-	};
 	
-	TagStore.__onDispatch = function (payload) {
-		switch (payload.actionType) {
-			case TagConstants.RECEIVE_ALL_TAGS:
-				resetTags(payload.tags);
-				TagStore.__emitChange();
-				break;
+		mixins: [LinkedStateMixin],
+	
+		getInitialState: function () {
+			return {
+				email: "",
+				password: ""
+			};
+		},
+	
+		handleSubmit: function (e) {
+			e.preventDefault();
+	
+			var params = {
+				email: this.state.email,
+				password: this.state.password
+			};
+	
+			SessionUtil.createSession(params, this.successRedirect);
+		},
+	
+		handleSignUp: function (e) {
+			e.preventDefault();
+			this.props.history.push("user/sign_up");
+		},
+	
+		//any way to push "back" to where the use was before they logged in?
+		successRedirect: function () {
+			this.props.closeModal();
+		},
+	
+		render: function () {
+	
+			return React.createElement(
+				'div',
+				{ className: 'form-container center noSelect' },
+				React.createElement(
+					'div',
+					{ className: 'modal-header' },
+					'Sign In'
+				),
+				React.createElement(
+					'form',
+					{ onSubmit: this.handleSubmit, className: 'session-form' },
+					React.createElement(
+						'div',
+						{ className: 'form-input-container' },
+						React.createElement('input', {
+							type: 'text',
+							valueLink: this.linkState("email"),
+							placeholder: 'sample@email.com',
+							className: 'form-input',
+							placeholder: 'Email' })
+					),
+					React.createElement(
+						'div',
+						{ className: 'form-input-container' },
+						React.createElement('input', {
+							type: 'password',
+							valueLink: this.linkState("password"),
+							className: 'form-input',
+							placeholder: 'Password' })
+					),
+					React.createElement(
+						'div',
+						{ className: 'form-button-container' },
+						React.createElement(
+							'div',
+							{ className: 'form-spacer' },
+							React.createElement('input', {
+								type: 'submit',
+								value: 'Sign In',
+								className: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored' })
+						),
+						React.createElement(
+							'div',
+							{ className: 'form-spacer' },
+							React.createElement(
+								'button',
+								{
+									onClick: this.handleSignUp,
+									className: 'mdl-button mdl-js-button mdl-button--colored' },
+								'Sign Up'
+							)
+						)
+					)
+				)
+			);
 		}
-	};
+	});
 	
-	function resetTags(tags) {
-		for (var i = 0; i < tags.length; i++) {
-			_tags[tags[i].title] = tags[i];
-		}
-	};
-	
-	module.exports = TagStore;
+	module.exports = SignInForm;
 
 /***/ },
 /* 500 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppDispatcher = __webpack_require__(210);
-	var TagConstants = __webpack_require__(501);
-	var ApiUtil = __webpack_require__(232);
+	var React = __webpack_require__(1);
+	var modalFactory = __webpack_require__(501);
+	var insertKeyframesRule = __webpack_require__(506);
+	var appendVendorPrefix = __webpack_require__(503);
 	
-	var TagActions = {
-		fetchAllTags: function () {
-			ApiUtil.fetchAllTags(this.receiveAllTags);
-		},
+	var animation = {
+	    show: {
+	        animationDuration: '0.8s',
+	        animationTimingFunction: 'cubic-bezier(0.6,0,0.4,1)'
+	    },
+	    hide: {
+	        animationDuration: '0.4s',
+	        animationTimingFunction: 'ease-out'
+	    },
+	    showContentAnimation: insertKeyframesRule({
+	        '0%': {
+	            opacity: 0,
+	        },
+	        '40%':{
+	            opacity: 0
+	        },
+	        '100%': {
+	            opacity: 1,
+	        }
+	    }),
 	
-		receiveAllTags: function (tags) {
-			AppDispatcher.dispatch({
-				actionType: TagConstants.RECEIVE_ALL_TAGS,
-				tags: tags
-			});
-		}
+	    hideContentAnimation: insertKeyframesRule({
+	        '0%': {
+	            opacity: 1
+	        },
+	        '100%': {
+	            opacity: 0,
+	        }
+	    }),
+	
+	    showBackdropAnimation: insertKeyframesRule({
+	        '0%': {
+	            opacity: 0
+	        },
+	        '100%': {
+	            opacity: 0.9
+	        },
+	    }),
+	
+	    hideBackdropAnimation: insertKeyframesRule({
+	        '0%': {
+	            opacity: 0.9
+	        },
+	        '100%': {
+	            opacity: 0
+	        }
+	    })
 	};
 	
-	module.exports = TagActions;
+	var showAnimation = animation.show;
+	var hideAnimation = animation.hide;
+	var showContentAnimation = animation.showContentAnimation;
+	var hideContentAnimation = animation.hideContentAnimation;
+	var showBackdropAnimation = animation.showBackdropAnimation;
+	var hideBackdropAnimation = animation.hideBackdropAnimation;
+	
+	module.exports = modalFactory({
+	    getRef: function(willHidden) {
+	        return 'content';
+	    },
+	    getSharp: function(willHidden) {
+	        var strokeDashLength = 1680;
+	
+	        var showSharpAnimation = insertKeyframesRule({
+	            '0%': {
+	                'stroke-dashoffset': strokeDashLength
+	            },
+	            '100%': {
+	                'stroke-dashoffset': 0
+	            },
+	        });
+	
+	
+	        var sharpStyle = {
+	            position: 'absolute',
+	            width: 'calc(100%)',
+	            height: 'calc(100%)',
+	            zIndex: '-1'
+	        };
+	
+	        var rectStyle = appendVendorPrefix({
+	            animationDuration: willHidden? '0.4s' :'0.8s',
+	            animationFillMode: 'forwards',
+	            animationName: willHidden? hideContentAnimation: showSharpAnimation,
+	            stroke: '#ffffff',
+	            strokeWidth: '2px',
+	            strokeDasharray: strokeDashLength
+	        });
+	
+	        return React.createElement("div", {style: sharpStyle}, 
+	            React.createElement("svg", {
+	                xmlns: "http://www.w3.org/2000/svg", 
+	                width: "100%", 
+	                height: "100%", 
+	                viewBox: "0 0 496 136", 
+	                preserveAspectRatio: "none"}, 
+	                React.createElement("rect", {style: rectStyle, 
+	                    x: "2", 
+	                    y: "2", 
+	                    fill: "none", 
+	                    width: "492", 
+	                    height: "132"})
+	            )
+	        )
+	    },
+	    getModalStyle: function(willHidden) {
+	        return appendVendorPrefix({
+	            zIndex: 1050,
+	            position: "fixed",
+	            width: "500px",
+	            transform: "translate3d(-50%, -50%, 0)",
+	            top: "50%",
+	            left: "50%"
+	        })
+	    },
+	    getBackdropStyle: function(willHidden) {
+	        return appendVendorPrefix({
+	            position: "fixed",
+	            top: 0,
+	            right: 0,
+	            bottom: 0,
+	            left: 0,
+	            zIndex: 1040,
+	            backgroundColor: "#373A47",
+	            animationFillMode: 'forwards',
+	            animationDuration: '0.4s',
+	            animationName: willHidden ? hideBackdropAnimation : showBackdropAnimation,
+	            animationTimingFunction: (willHidden ? hideAnimation : showAnimation).animationTimingFunction
+	        });
+	    },
+	    getContentStyle: function(willHidden) {
+	        return appendVendorPrefix({
+	            margin: 0,
+	            backgroundColor: "white",
+	            animationDuration: (willHidden ? hideAnimation : showAnimation).animationDuration,
+	            animationFillMode: 'forwards',
+	            animationName: willHidden ? hideContentAnimation : showContentAnimation,
+	            animationTimingFunction: (willHidden ? hideAnimation : showAnimation).animationTimingFunction
+	        })
+	    }
+	});
+
 
 /***/ },
 /* 501 */
-/***/ function(module, exports) {
-
-	module.exports = {
-		RECEIVE_ALL_TAGS: "RECEIVE_ALL_TAGS"
-	};
-
-/***/ },
-/* 502 */,
-/* 503 */,
-/* 504 */,
-/* 505 */,
-/* 506 */,
-/* 507 */,
-/* 508 */,
-/* 509 */,
-/* 510 */,
-/* 511 */,
-/* 512 */,
-/* 513 */,
-/* 514 */,
-/* 515 */,
-/* 516 */,
-/* 517 */,
-/* 518 */,
-/* 519 */,
-/* 520 */,
-/* 521 */,
-/* 522 */,
-/* 523 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var transitionEvents = __webpack_require__(524);
-	var appendVendorPrefix = __webpack_require__(525);
+	var transitionEvents = __webpack_require__(502);
+	var appendVendorPrefix = __webpack_require__(503);
 	
 	module.exports = function(animation){
 	
@@ -70525,7 +70914,7 @@
 
 
 /***/ },
-/* 524 */
+/* 502 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -70626,12 +71015,12 @@
 
 
 /***/ },
-/* 525 */
+/* 503 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var getVendorPropertyName = __webpack_require__(526);
+	var getVendorPropertyName = __webpack_require__(504);
 	
 	module.exports = function(target, sources) {
 	  var to = Object(target);
@@ -70662,12 +71051,12 @@
 
 
 /***/ },
-/* 526 */
+/* 504 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var builtinStyle = __webpack_require__(527);
+	var builtinStyle = __webpack_require__(505);
 	var prefixes = ['Moz', 'Webkit', 'O', 'ms'];
 	var domVendorPrefix;
 	
@@ -70705,7 +71094,7 @@
 
 
 /***/ },
-/* 527 */
+/* 505 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -70714,13 +71103,13 @@
 
 
 /***/ },
-/* 528 */
+/* 506 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var insertRule = __webpack_require__(529);
-	var vendorPrefix = __webpack_require__(530)();
+	var insertRule = __webpack_require__(507);
+	var vendorPrefix = __webpack_require__(508)();
 	var index = 0;
 	
 	module.exports = function(keyframes) {
@@ -70750,7 +71139,7 @@
 
 
 /***/ },
-/* 529 */
+/* 507 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -70775,7 +71164,7 @@
 
 
 /***/ },
-/* 530 */
+/* 508 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -70794,173 +71183,104 @@
 
 
 /***/ },
-/* 531 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var modalFactory = __webpack_require__(523);
-	var insertKeyframesRule = __webpack_require__(528);
-	var appendVendorPrefix = __webpack_require__(525);
-	
-	var animation = {
-	    show: {
-	        animationDuration: '0.8s',
-	        animationTimingFunction: 'cubic-bezier(0.6,0,0.4,1)'
-	    },
-	    hide: {
-	        animationDuration: '0.4s',
-	        animationTimingFunction: 'ease-out'
-	    },
-	    showContentAnimation: insertKeyframesRule({
-	        '0%': {
-	            opacity: 0,
-	        },
-	        '40%':{
-	            opacity: 0
-	        },
-	        '100%': {
-	            opacity: 1,
-	        }
-	    }),
-	
-	    hideContentAnimation: insertKeyframesRule({
-	        '0%': {
-	            opacity: 1
-	        },
-	        '100%': {
-	            opacity: 0,
-	        }
-	    }),
-	
-	    showBackdropAnimation: insertKeyframesRule({
-	        '0%': {
-	            opacity: 0
-	        },
-	        '100%': {
-	            opacity: 0.9
-	        },
-	    }),
-	
-	    hideBackdropAnimation: insertKeyframesRule({
-	        '0%': {
-	            opacity: 0.9
-	        },
-	        '100%': {
-	            opacity: 0
-	        }
-	    })
-	};
-	
-	var showAnimation = animation.show;
-	var hideAnimation = animation.hide;
-	var showContentAnimation = animation.showContentAnimation;
-	var hideContentAnimation = animation.hideContentAnimation;
-	var showBackdropAnimation = animation.showBackdropAnimation;
-	var hideBackdropAnimation = animation.hideBackdropAnimation;
-	
-	module.exports = modalFactory({
-	    getRef: function(willHidden) {
-	        return 'content';
-	    },
-	    getSharp: function(willHidden) {
-	        var strokeDashLength = 1680;
-	
-	        var showSharpAnimation = insertKeyframesRule({
-	            '0%': {
-	                'stroke-dashoffset': strokeDashLength
-	            },
-	            '100%': {
-	                'stroke-dashoffset': 0
-	            },
-	        });
-	
-	
-	        var sharpStyle = {
-	            position: 'absolute',
-	            width: 'calc(100%)',
-	            height: 'calc(100%)',
-	            zIndex: '-1'
-	        };
-	
-	        var rectStyle = appendVendorPrefix({
-	            animationDuration: willHidden? '0.4s' :'0.8s',
-	            animationFillMode: 'forwards',
-	            animationName: willHidden? hideContentAnimation: showSharpAnimation,
-	            stroke: '#ffffff',
-	            strokeWidth: '2px',
-	            strokeDasharray: strokeDashLength
-	        });
-	
-	        return React.createElement("div", {style: sharpStyle}, 
-	            React.createElement("svg", {
-	                xmlns: "http://www.w3.org/2000/svg", 
-	                width: "100%", 
-	                height: "100%", 
-	                viewBox: "0 0 496 136", 
-	                preserveAspectRatio: "none"}, 
-	                React.createElement("rect", {style: rectStyle, 
-	                    x: "2", 
-	                    y: "2", 
-	                    fill: "none", 
-	                    width: "492", 
-	                    height: "132"})
-	            )
-	        )
-	    },
-	    getModalStyle: function(willHidden) {
-	        return appendVendorPrefix({
-	            zIndex: 1050,
-	            position: "fixed",
-	            width: "500px",
-	            transform: "translate3d(-50%, -50%, 0)",
-	            top: "50%",
-	            left: "50%"
-	        })
-	    },
-	    getBackdropStyle: function(willHidden) {
-	        return appendVendorPrefix({
-	            position: "fixed",
-	            top: 0,
-	            right: 0,
-	            bottom: 0,
-	            left: 0,
-	            zIndex: 1040,
-	            backgroundColor: "#373A47",
-	            animationFillMode: 'forwards',
-	            animationDuration: '0.4s',
-	            animationName: willHidden ? hideBackdropAnimation : showBackdropAnimation,
-	            animationTimingFunction: (willHidden ? hideAnimation : showAnimation).animationTimingFunction
-	        });
-	    },
-	    getContentStyle: function(willHidden) {
-	        return appendVendorPrefix({
-	            margin: 0,
-	            backgroundColor: "white",
-	            animationDuration: (willHidden ? hideAnimation : showAnimation).animationDuration,
-	            animationFillMode: 'forwards',
-	            animationName: willHidden ? hideContentAnimation : showContentAnimation,
-	            animationTimingFunction: (willHidden ? hideAnimation : showAnimation).animationTimingFunction
-	        })
-	    }
-	});
-
-
-/***/ },
-/* 532 */
+/* 509 */
 /***/ function(module, exports) {
 
 	module.exports = {
-		contentStyle: {
-			height: '100%'
+	
+		signIn: {
+			contentStyle: {
+				height: '100%',
+				width: '100%'
+			},
+			modalStyle: {
+				height: '350px',
+				width: '275px',
+				WebkitTouchCallout: 'none',
+				WebkitUserSelect: 'none',
+				KhtmlUserSelect: 'none',
+				MozUserSelect: 'none',
+				msUserSelect: 'none',
+				userSelect: 'none'
+			},
+	
+			backDropStyle: {}
 		},
 	
-		modalStyle: {
-			height: '40%',
-			width: '50%'
-		},
+		uploadForm: {
+			contentStyle: {
+				height: '100%',
+				width: '100%'
+			},
+			modalStyle: {
+				height: '90%',
+				width: '90%'
+			},
 	
-		backDropStyle: {}
+			backDropStyle: {}
+		}
+	
 	};
+
+/***/ },
+/* 510 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var SuggestedItem = __webpack_require__(511);
+	
+	var SuggestedItemList = React.createClass({
+		displayName: 'SuggestedItemList',
+	
+	
+		renderSuggestedItems: function () {
+			var items = [];
+	
+			if (this.props.items.length > 0) {
+				var max = this.props.items.length > 4 ? 4 : this.props.items.length;
+	
+				for (var i = 0; i < max; i++) {
+					items.push(React.createElement(SuggestedItem, {
+						title: this.props.items[i].title,
+						selectCallBack: this.props.selectCallBack,
+						key: i }));
+				}
+			}
+	
+			return items;
+		},
+	
+		render: function () {
+			return React.createElement(
+				'section',
+				{ className: 'suggested-item-container' },
+				this.renderSuggestedItems()
+			);
+		}
+	});
+	
+	module.exports = SuggestedItemList;
+
+/***/ },
+/* 511 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	
+	var SuggestedItem = React.createClass({
+		displayName: "SuggestedItem",
+	
+	
+		render: function () {
+			return React.createElement(
+				"span",
+				{ className: "suggested-item", onClick: this.props.selectCallBack },
+				this.props.title
+			);
+		}
+	});
+	
+	module.exports = SuggestedItem;
 
 /***/ }
 /******/ ]);

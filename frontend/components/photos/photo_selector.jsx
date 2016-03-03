@@ -2,6 +2,7 @@ var React = require('react');
 var Masonry = require('react-masonry-component');
 var PhotoThumb = require('../photos/photo_thumb');
 var PhotoStore = require('../../stores/photo_store');
+var ApiUtil = require('../../util/api_util');
 
 var masonryOptions = {
 	transitionDuration: 0,

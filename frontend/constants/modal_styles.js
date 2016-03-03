@@ -1,14 +1,37 @@
 module.exports = {
-	contentStyle: {
-		height: '100%'
+
+	signIn : {
+		contentStyle: {
+			height: '100%',
+			width: '100%'
+		},
+		modalStyle: {
+			height: '350px',
+			width: '275px',
+			WebkitTouchCallout: 'none',
+	    WebkitUserSelect: 'none',
+	    KhtmlUserSelect: 'none',
+	    MozUserSelect: 'none',
+	    msUserSelect: 'none',
+	    userSelect: 'none'
+		},
+
+		backDropStyle: {
+		}
 	},
 
-	modalStyle: {
-		height: '40%',
-		width: '50%'
-	},
-
-	backDropStyle: {
-
+	uploadForm: {
+		contentStyle: {
+			height: '100%',
+			width: '100%',
+		},
+		modalStyle: {
+			height: '90%',
+			width: '90%'
+		},
+		
+		backDropStyle: {
+		}
 	}
+
 }

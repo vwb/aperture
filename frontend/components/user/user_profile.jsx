@@ -11,7 +11,6 @@ var Link = require('react-router').Link
 var masonryOptions = {
 	transitionDuration: 0,
 	itemSelector: ".grid-item",
-	// fitWidth: true
 };
 
 var UserProfile = React.createClass({
@@ -62,6 +61,12 @@ var UserProfile = React.createClass({
 		}
 	},
 
+	handleBackgrounImage: function(){
+		if (this._userPresent()){
+			return this.state.user.photos[0].url
+		}
+	},
+
 	render: function() {
 		var current;
 
@@ -90,37 +95,52 @@ var UserProfile = React.createClass({
 		}
 
 		return (
+			<div className="parallax">
 
-			<div className="wrapper user-profile group">
-
-				<div className="user-profile-header">
-					<div> {"USER AVATAR"} </div>
-					<div> {this.state.user.email} </div>
-					<div> {current} </div>
+				<div className="parallax__layer parallax__layer--back background">
+					<img src={this.handleBackgrounImage()}/>
 				</div>
 
-				<section className="user-prof-collection">
-					<h3> Collections </h3>
-					{this.generateUserCollections()}
+				<div className="parallax__layer parallax__layer--base group">
 
-				</section>
+					<div className="user-profile">
 
-				<section className="user-photos">
-					<h3> Photos </h3>
-					<Masonry
-						className={'grid'}
-						elementType={'div'}
-						options={masonryOptions}
-						disableImagesLoaded={false}>
+						<div className="user-profile-header">
+							<div className="profile-picture circle"> 
+								<img src={this.state.user.avatar} />
+							</div>
 
-						{this.generatePhotoItems()}
+							<div className="profile-info"> 
+								{this.state.user.email} 
+							</div>
 
-					</Masonry>
-					
-				</section>
+							<div className="profile-actions"> 
+								{current}
+							 </div>
+						</div>
 
-				{this.props.children}
-				
+						<section className="user-prof-collection">
+							<h3> Collections </h3>
+							{this.generateUserCollections()}
+						</section>
+
+						<section className="user-photos">
+							<h3> Photos </h3>
+							<Masonry
+								className={'grid'}
+								elementType={'div'}
+								options={masonryOptions}
+								disableImagesLoaded={false}>
+
+								{this.generatePhotoItems()}
+
+							</Masonry>
+							
+						</section>
+
+					{this.props.children}
+					</div>
+				</div>
 			</div>
 		);
 	}

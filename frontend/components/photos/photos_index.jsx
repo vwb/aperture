@@ -7,12 +7,12 @@ var Masonry = require('react-masonry-component');
 var masonryOptions = {
 	transitionDuration: 1000,
 	itemSelector: ".grid-item"
-	// fitWidth: true
 };
 
 var PhotoIndex = React.createClass({
 
 	getInitialState: function(){
+
 		return {
 			photos: PhotoStore.all()
 		};

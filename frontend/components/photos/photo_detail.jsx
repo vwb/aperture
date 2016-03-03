@@ -92,7 +92,7 @@ var PhotoDetail = React.createClass({
 				} 
 			}
 			return (
-				<div className="photo-detail-cotainer group">
+				<div className="photo-detail-cotainer group fade-in">
 
 					<div className="photo-detail" onClick={this.handleOuterClick}>
 							<img className="img-detail" src={this.state.photo.url} onClick={this.handleInnerClick}/>

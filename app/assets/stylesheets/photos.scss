@@ -1,3 +1,65 @@
 // Place all the styles related to the photos controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+//TRANSITIONS
+
+/* make keyframes that tell the start state and the end state of our object */
+@-webkit-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@-moz-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+.fade-in {
+  opacity:0;  /* make things invisible upon start */
+  -webkit-animation:fadeIn ease-in 1;  /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
+  -moz-animation:fadeIn ease-in 1;
+  animation:fadeIn ease-in 1;
+
+  -webkit-animation-fill-mode:forwards;  /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
+  -moz-animation-fill-mode:forwards;
+  animation-fill-mode:forwards;
+
+  -webkit-animation-duration:0.25s;
+  -moz-animation-duration:0.25s;
+  animation-duration:0.25s;
+}
+
+.photo-detail-container {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+.photo-detail {
+	position: absolute;
+	height: 100%;
+	padding: 10px;
+	float: left;
+	right: 300px;
+	left: 0;
+	background-color: #202020;
+}
+
+.photo-detail img{
+	max-width: 100%;
+	max-height: 100%;
+	display: block;
+	margin: auto;
+	position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 10px 10px 10px 10px;
+}
+
+.photo-info {
+	color: black;
+	position: absolute;
+	padding: 10px;
+	height: 100%;
+	right: 0;
+	width: 300px;
+	display: block;
+	background-color: #D9D9D9;
+}

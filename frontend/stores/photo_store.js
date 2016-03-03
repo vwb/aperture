@@ -11,6 +11,7 @@ PhotoStore.all = function(){
 };
 
 PhotoStore.__onDispatch = function(payload){
+
 	switch (payload.actionType){
 		case PhotoConstants.RECEIVE_ALL_PHOTOS:
 			resetPhotos(payload.photos);

@@ -13,7 +13,7 @@
 class Collection < ActiveRecord::Base
   validates :title, :user_id, presence: true
 
-  has_many :tags, as: :taggable
+#  has_many :tags, as: :taggable, dependent: :destroy
 
   has_many :photo_connections
   has_many :photos, through: :photo_connections

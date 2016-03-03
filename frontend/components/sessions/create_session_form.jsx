@@ -2,6 +2,8 @@ var React = require('react');
 var LinkedStateMixin = require('react-addons-linked-state-mixin');
 var SessionUtil = require('../../util/sessions_util');
 
+var Modal = require('boron/OutlineModal');
+
 var SignInForm = React.createClass({
 
 	mixins: [LinkedStateMixin],
@@ -38,7 +40,7 @@ var SignInForm = React.createClass({
 		
 		return (
 
-				<div className="form-container center">
+				<div className="form-container center noSelect">
 
 					<div className="modal-header">
 						Sign In
@@ -64,12 +66,22 @@ var SignInForm = React.createClass({
 						</div>
 
 						<div className="form-button-container">
-							<input 
-								type="submit" 
-								value="Sign In"
-								className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"/>
-							<br/>
-							<button onClick={this.handleSignUp}> Sign Up! </button>
+
+							<div className="form-spacer">
+								<input 
+									type="submit" 
+									value="Sign In"
+									className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"/>
+							</div>
+
+							<div className="form-spacer">
+								<button 
+									onClick={this.handleSignUp}
+									className="mdl-button mdl-js-button mdl-button--colored">
+										Sign Up
+								</button>
+							</div>
+
 						</div>
 
 					</form>
