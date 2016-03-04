@@ -71,7 +71,7 @@ var App = React.createClass({
 	      		this.props.children && React.cloneElement(this.props.children, {current: this.state.current}) }
 
 	      	{isModal && (
-	      		<ModalWrapper returnTo={location.state.returnTo} action={location.state.action}>
+	      		<ModalWrapper returnTo={location.state.returnTo} action={location.state.action} user={location.state.user}>
 	      			{this.props.children}
 	      		</ModalWrapper>
 	      	)}
@@ -84,21 +84,17 @@ var App = React.createClass({
 
 var routes = (
 	<Router>
-
 		<Route path="/" component={App}>
 
 			<IndexRoute component={PhotosIndex}/>
 
 			<Route path="user/sign_up" component={CreateUserForm}/>
 			<Route path="users/:id" component={UserProfile}/>
-			
 			<Route path="users/:id/add_collection" component={CollectionForm}/>
+			
 			<Route path="collections/:id" component={CollectionDetail}/>
 
 			<Route path="photos" component={PhotosIndex}/>
-
-
-
 		</Route>
 
 
@@ -115,11 +111,3 @@ document.addEventListener("DOMContentLoaded", function () {
 	var appElement = document.getElementById('content');
   ReactDOM.render(routes, appElement);
 });
-
-
-			// <Route path="user/sign_in" component={ModalWrapper}/>
-
-			// <Route path="upload" component={ModalWrapper}/>
-
-
-

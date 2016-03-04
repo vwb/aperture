@@ -74,7 +74,6 @@ var CollectionToggle = React.createClass({
 					id="collection-list">
 						<span> Add to Collections </span>
 						<i className="material-icons">collections</i>
-
 				</button>
 
 				{list}

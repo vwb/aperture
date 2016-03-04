@@ -1,42 +1,12 @@
 BUGS:
-	what is this wierd double loading going on?
-	double loading of the photodetail page...
-	modals acting kind of funny
-
-	tags: wrote a polymorphic association but not the join table. Need to make a join table 'tagging' that will link
-	a 'tag_id' and 'photo_id'
-
-tags:
-	- need to make a tagging join table between:
-
-			> photos				\
-											tagging		 tag <
-			> collctions		/
-
-
-For now keep it simple:
-	> rewrite the tag table to use a tagging join table.
-	>
-
-
-
 
 
 ******* nested for loop to determine photos inclusion within a collection. (BAD)! Optimize later *******
-- backend validation for uniqueness within scope of the other id (photo, collection) only want one!
-
 
 Questions: CSS trick for the view collection page. How to prevent it from squishing horizontally? Is this possible without javascript?
 
-Tags: basic approach... currently using taggable and curious how the parameters should look for something like this when instantiating. Unless just assigning the photo/collection.tags does all the magic for me like with the join table.
 
-TAGS
-	- photo upload form / collection upload form should support input of tags
-	- tag store, constants, etc.
 
-	- How to instantiate new tags, what to assign the taggable/elements. ...
-	- tags are not being added to a photo if they already exist.
-		> can't have just one instance of a tag!
 
 
 
@@ -45,22 +15,42 @@ TASKS FOR TOMORROW:
 
 	BIG ITEMS:
 
-		MAKE THE PHOTO DETAIL "LOOK" LIKE A MODAL (escape goes back, click on a little X in the corner)
+		Fix routes so that i can use a hook route when calling photo detail page and can use escape/etc to go there.
 
-		STYLE THE USER PROFILE PAGE -> parallax, make pretty
-			> need to add key collection photo? / somehow grab the photos from the current user profile page or something...
+		(Almost done) Add tag form to edit picture form
 
-		ADD USER INFORMATION -> avatar, username, fname, lname
-			> figure out how to grab the user information for the comment models
+		Photo Upload form
+			- add ability to remove added photos
+			- have it automatically 'select' the first image
+
+		Add Edit profile form
+
+		Add Edit collection form
+
+		Error Handling for Forms
+
+		Create tag "items" that can be cancelled
+
+
+		Create a guest account feature
+
+		Make a splash page
+
+		Infinite scroll
+
+		Add ability to delete a comment
+
+
+
 
 		finish up styling:
-			- collection form
 			- 'selected' images
 			- tag items -> add "x" to cancel the tag, style the shit out of em.
-
-		Add tag form to edit picture form
+			- image hover (show username, link to collections?)
 
 		scale for larger amounts of images
+			> user avatar upload change to square images
+			> 
 
 		INFINITE SCROLL!
 

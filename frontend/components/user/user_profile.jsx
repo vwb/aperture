@@ -3,17 +3,22 @@ var UserStore = require('../../stores/user_store');
 var Masonry = require('react-masonry-component');
 var ApiUtil = require('../../util/api_util');
 var PhotoIndexItem = require('../photos/photos_index_item');
-var Link = require('react-router').Link
+var Link = require('react-router').Link;
+var CollectionIndex = require('../collections/collection_index');
+var History = require('react-router').History;
+
 
 //APP-TODO: possibly refactor the presentation of the photo index 
 //into a nested route that can then switch between the galleries and photos
 
 var masonryOptions = {
 	transitionDuration: 0,
-	itemSelector: ".grid-item",
+	itemSelector: ".grid-item"
 };
 
 var UserProfile = React.createClass({
+
+	mixins: [History],
 
 	getInitialState: function(){
 		return {
@@ -63,9 +68,22 @@ var UserProfile = React.createClass({
 
 	handleBackgrounImage: function(){
 		if (this._userPresent()){
-			return this.state.user.photos[0].url
+			if (this.state.user.photos.length > 0){
+				return this.state.user.photos[0].url
+			} else {
+				return ""
+			}
 		}
 	},
+
+	handleEdit: function(){
+	   this.history.replace({
+      pathname: this.props.location.pathname,
+      state: {modal: true, returnTo: this.props.location.pathname, action: "edit_profile", user: this.state.user}
+    });
+	},
+
+
 
 	render: function() {
 		var current;
@@ -83,7 +101,9 @@ var UserProfile = React.createClass({
 
 						<span className="profile-button-container">
 							<button
-							className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"> Edit Profile 
+							className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+							onClick={this.handleEdit}> 
+								Edit Profile 
 							</button>
 						</span>
 
@@ -93,7 +113,6 @@ var UserProfile = React.createClass({
 		} else {
 			current = "";
 		}
-
 		return (
 			<div className="parallax">
 
@@ -111,7 +130,7 @@ var UserProfile = React.createClass({
 							</div>
 
 							<div className="profile-info"> 
-								{this.state.user.email} 
+								{this.state.user.username} 
 							</div>
 
 							<div className="profile-actions"> 
@@ -120,12 +139,21 @@ var UserProfile = React.createClass({
 						</div>
 
 						<section className="user-prof-collection">
-							<h3> Collections </h3>
-							{this.generateUserCollections()}
+
+							<div className="header-spacer">
+								<h3> Collections </h3>
+							</div>
+
+							<CollectionIndex collections={this.state.user.collections}/>
 						</section>
 
+					{/* USER PHOTOS CAN BE FACTORED OUT */}
+
 						<section className="user-photos">
-							<h3> Photos </h3>
+							<div className="header-spacer"> 
+								<h3> Photos </h3>
+							</div>
+
 							<Masonry
 								className={'grid'}
 								elementType={'div'}

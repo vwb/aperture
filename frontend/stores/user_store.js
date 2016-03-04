@@ -7,7 +7,8 @@ _user = {}
 var UserStore = new Store(AppDispatcher);
 
 UserStore.user = function(){
-	return _user;
+	var copy = Object.assign({}, _user)
+	return copy
 };
 
 UserStore.__onDispatch = function(payload){

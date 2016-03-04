@@ -54,16 +54,16 @@
 	var PhotosIndex = __webpack_require__(208);
 	var PhotoDetail = __webpack_require__(247);
 	var PhotoEditForm = __webpack_require__(248);
-	var NavBar = __webpack_require__(483);
-	var CollectionForm = __webpack_require__(488);
-	var CollectionDetail = __webpack_require__(492);
+	var NavBar = __webpack_require__(486);
+	var CollectionForm = __webpack_require__(493);
+	var CollectionDetail = __webpack_require__(497);
 	
-	var UserProfile = __webpack_require__(493);
+	var UserProfile = __webpack_require__(498);
 	var SessionStore = __webpack_require__(256);
 	var SessionUtil = __webpack_require__(253);
-	var CreateUserForm = __webpack_require__(495);
+	var CreateUserForm = __webpack_require__(501);
 	
-	var ModalWrapper = __webpack_require__(496);
+	var ModalWrapper = __webpack_require__(502);
 	
 	__webpack_require__(232);
 	
@@ -109,7 +109,7 @@
 				isModal ? this.previousChildren && React.cloneElement(this.previousChildren, { current: this.state.current }) : this.props.children && React.cloneElement(this.props.children, { current: this.state.current }),
 				isModal && React.createElement(
 					ModalWrapper,
-					{ returnTo: location.state.returnTo, action: location.state.action },
+					{ returnTo: location.state.returnTo, action: location.state.action, user: location.state.user },
 					this.props.children
 				)
 			);
@@ -142,10 +142,6 @@
 		var appElement = document.getElementById('content');
 		ReactDOM.render(routes, appElement);
 	});
-	
-	// <Route path="user/sign_in" component={ModalWrapper}/>
-
-	// <Route path="upload" component={ModalWrapper}/>
 
 /***/ },
 /* 1 */
@@ -24234,7 +24230,10 @@
 	
 		componentDidMount: function () {
 			this.toke = PhotoStore.addListener(this._onChange);
-			ApiUtil.fetchAllPhotos();
+	
+			if (this.state.photos.length === 0) {
+				ApiUtil.fetchAllPhotos();
+			}
 		},
 	
 		_onChange: function () {
@@ -24243,7 +24242,6 @@
 	
 		generatePhotoItems: function () {
 			return this.state.photos.map(function (photo, key) {
-	
 				var cName = "grid-item";
 				return React.createElement(PhotoIndexItem, { key: key, photo: photo, className: 'photo-index-item', cName: cName });
 			});
@@ -24287,6 +24285,7 @@
 	var PhotoConstants = __webpack_require__(231);
 	
 	_photos = [];
+	_photo = {};
 	
 	var PhotoStore = new Store(AppDispatcher);
 	
@@ -24295,14 +24294,13 @@
 	};
 	
 	PhotoStore.__onDispatch = function (payload) {
-	
 		switch (payload.actionType) {
 			case PhotoConstants.RECEIVE_ALL_PHOTOS:
 				resetPhotos(payload.photos);
 				PhotoStore.__emitChange();
 				break;
 			case PhotoConstants.RECEIVE_PHOTO:
-				addPhoto(payload.photo);
+				setPhoto(payload.photo);
 				PhotoStore.__emitChange();
 				break;
 			case PhotoConstants.UPDATE_PHOTO:
@@ -24324,12 +24322,17 @@
 		}
 	};
 	
+	PhotoStore.fetchPhoto = function () {
+		var copy = Object.assign({}, _photo);
+		return copy;
+	};
+	
 	function resetPhotos(photos) {
 		_photos = photos;
 	};
 	
-	function addPhoto(photo) {
-		_photos.push(photo);
+	function setPhoto(photo) {
+		_photo = photo;
 	};
 	
 	function updatePhoto(photo) {
@@ -24339,6 +24342,8 @@
 				break;
 			};
 		};
+	
+		_photo = photo;
 	};
 	
 	function removePhoto(photo) {
@@ -31142,27 +31147,39 @@
 			});
 		},
 	
+		fetchPhoto: function (id) {
+			$.ajax({
+				url: "/api/photos/" + id,
+				datatype: "json",
+				success: function (photo) {
+					PhotoActions.receivePhoto(photo);
+				}
+			});
+		},
+	
 		fetchRelevantPhotos: function (query) {
 			$.ajax({
 				url: "/api/photos",
 				datatype: "json",
 				data: query,
 				success: function (photos) {
-					debugger;
 					PhotoActions.receivePhotos(photos);
 				}
 			});
 		},
 	
-		createPhoto: function (params, options) {
+		createPhoto: function (params, values) {
+			var data = { photo: params };
+			debugger;
+	
 			$.ajax({
 				type: "POST",
 				url: "/api/photos",
 				datatype: "json",
-				data: { photo: params },
+				data: data,
 				success: function (photo) {
 					PhotoActions.receivePhoto(photo);
-					options.callBack();
+					values.callBack();
 				}
 			});
 		},
@@ -34424,6 +34441,8 @@
 	var Link = __webpack_require__(159).Link;
 	var Comments = __webpack_require__(477);
 	var TagItems = __webpack_require__(481);
+	var UserDetail = __webpack_require__(483);
+	var CloseButton = __webpack_require__(485);
 	
 	var PhotoDetail = React.createClass({
 		displayName: 'PhotoDetail',
@@ -34431,7 +34450,7 @@
 	
 		getInitialState: function () {
 			return {
-				photo: PhotoStore.find_by_id(parseInt(this.props.params.id)),
+				photo: "",
 				current: SessionStore.currentUser()
 			};
 		},
@@ -34439,6 +34458,7 @@
 		componentDidMount: function () {
 			this.toke = PhotoStore.addListener(this._onChange);
 			this.sessionToke = SessionStore.addListener(this._onSessionChange);
+			$(document.body).on('keydown', this.handleKey);
 	
 			if (!this.state.current) {
 				SessionUtil.fetchCurrent();
@@ -34446,7 +34466,7 @@
 		},
 	
 		_onChange: function () {
-			this.setState({ photo: PhotoStore.find_by_id(parseInt(this.props.params.id)) });
+			this.setState({ photo: PhotoStore.fetchPhoto() });
 		},
 	
 		_onSessionChange: function () {
@@ -34456,6 +34476,7 @@
 		componentWillUnmount: function () {
 			this.toke.remove();
 			this.sessionToke.remove();
+			$(document.body).off('keydown', this.handleKey);
 		},
 	
 		_photoPresenceCheck: function () {
@@ -34463,29 +34484,38 @@
 				this.havePhoto = true;
 			} else {
 				this.havePhoto = false;
-				ApiUtil.fetchAllPhotos();
+				ApiUtil.fetchPhoto(this.props.params.id);
 			}
 		},
 	
 		handleEdit: function () {
 			if (this.props.location.pathname.indexOf("edit") > -1) {
-				this.props.history.push("photos/" + this.state.photo.id);
+				this.props.history.replace("photos/" + this.state.photo.id);
 			} else {
-				this.props.history.push("photos/" + this.state.photo.id + "/edit");
+				this.props.history.replace({
+					pathname: "photos/" + this.state.photo.id + "/edit",
+					state: { photo: this.state.photo } });
 			}
 		},
 	
 		handleOuterClick: function (e) {
-	
 			if (e.currentTarget.className === "photo-detail") {
-				this.props.history.goBack();
-				//check if goback empty
+				this.closeDetail();
 			}
 		},
 	
 		handleInnerClick: function (e) {
-	
 			e.stopPropagation();
+		},
+	
+		handleKey: function (e) {
+			if (e.which === 27) {
+				this.closeDetail();
+			}
+		},
+	
+		closeDetail: function () {
+			this.props.history.goBack();
 		},
 	
 		render: function () {
@@ -34502,7 +34532,7 @@
 						check = React.createElement(
 							'button',
 							{
-								className: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored',
+								className: 'mdl-button mdl-js-button mdl-button--colored',
 								onClick: this.handleEdit },
 							'Edit Image'
 						);
@@ -34510,7 +34540,7 @@
 				}
 				return React.createElement(
 					'div',
-					{ className: 'photo-detail-cotainer group fade-in' },
+					{ className: 'photo-detail-cotainer group fade-in', tabIndex: '1' },
 					React.createElement(
 						'div',
 						{ className: 'photo-detail', onClick: this.handleOuterClick },
@@ -34519,35 +34549,29 @@
 					React.createElement(
 						'section',
 						{ className: 'photo-info' },
+						React.createElement(CloseButton, { action: this.closeDetail }),
+						React.createElement(UserDetail, { userId: this.state.photo.user_id }),
 						React.createElement(
 							'p',
 							null,
-							'Title: ',
-							this.state.photo.title
+							' ',
+							this.state.photo.title,
+							' '
 						),
 						React.createElement(
 							'p',
 							null,
-							'Description: ',
-							this.state.photo.description
-						),
-						React.createElement(
-							'p',
-							null,
-							'Price: ',
-							this.state.photo.price
+							' ',
+							this.state.photo.description,
+							' '
 						),
 						React.createElement(
 							'section',
 							{ className: 'tag-section' },
-							'Tags:',
 							React.createElement(TagItems, { tags: this.state.photo.tags })
 						),
-						React.createElement('br', null),
 						React.createElement(CollectionToggle, { photo: this.state.photo, currentUser: this.state.current }),
-						React.createElement('br', null),
 						check,
-						React.createElement('br', null),
 						this.props.children,
 						React.createElement(Comments, { photo: this.state.photo })
 					)
@@ -34573,6 +34597,7 @@
 	var ApiUtil = __webpack_require__(232);
 	var History = __webpack_require__(159).History;
 	var PhotoStore = __webpack_require__(209);
+	var TagForm = __webpack_require__(496);
 	
 	var PhotoEditForm = React.createClass({
 		displayName: 'PhotoEditForm',
@@ -34583,20 +34608,26 @@
 		getInitialState: function () {
 			return {
 				title: "",
-				price: "",
-				photo: ""
+				description: "",
+				photo: "",
+				selectedTags: ""
 			};
 		},
 	
 		componentDidMount: function () {
-			var photo = PhotoStore.find_by_id(parseInt(this.props.params.id));
+			var photo = this.props.location.state.photo;
 			if (photo) {
 				this.setState({
 					title: photo.title,
-					price: photo.price,
-					photo: photo
+					description: photo.description,
+					photo: photo,
+					selectedTags: photo.tags
 				});
 			}
+		},
+	
+		handleTags: function (tags) {
+			this.setState({ selectedTags: tags });
 		},
 	
 		handleSubmit: function (e) {
@@ -34605,14 +34636,14 @@
 	
 			var params = {
 				title: this.state.title,
-				price: this.state.price
+				description: this.state.description,
+				tags: this.state.selectedTags
 			};
 	
 			ApiUtil.updatePhoto(this.state.photo.id, params);
 		},
 	
 		handleDelete: function (e) {
-			debugger;
 			ApiUtil.deletePhoto(this.state.photo.id);
 			this.history.push("/");
 		},
@@ -34622,35 +34653,35 @@
 		render: function () {
 			return React.createElement(
 				'div',
-				{ className: 'PhotoEditForm' },
-				React.createElement(
-					'h3',
-					null,
-					' Edit Image '
-				),
+				{ className: 'edit-form-container' },
 				React.createElement(
 					'form',
-					{ onSubmit: this.handleSubmit },
+					{ onSubmit: this.handleSubmit, className: 'photo-edit-form' },
 					React.createElement(
-						'label',
-						{ htmlFor: 'title' },
-						'Title'
+						'div',
+						{ className: 'form-input-container' },
+						React.createElement('input', {
+							type: 'text',
+							className: 'form-input',
+							placeholder: 'Title',
+							valueLink: this.linkState("title") })
 					),
-					React.createElement('input', {
-						type: 'text',
-						valueLink: this.linkState("title"),
-						id: 'title' }),
-					React.createElement('br', null),
 					React.createElement(
-						'label',
-						{ htmlFor: 'price' },
-						'Price'
+						'div',
+						{ className: 'form-input-container' },
+						React.createElement('input', {
+							className: 'form-input',
+							type: 'text',
+							placeholder: 'Description',
+							valueLink: this.linkState("description") })
 					),
-					React.createElement('input', {
-						type: 'text',
-						valueLink: this.linkState("price"),
-						id: 'price' }),
-					React.createElement('br', null),
+					React.createElement(
+						'div',
+						{ className: 'form-input-container' },
+						React.createElement(TagForm, {
+							formCallback: this.handleTags,
+							tags: this.state.selectedTags })
+					),
 					React.createElement('input', { type: 'submit', value: 'Confirm Edits' })
 				),
 				React.createElement(
@@ -34911,7 +34942,7 @@
 				datatype: "json",
 				success: function (data) {
 					SessionActions.newUser(data);
-					callback();
+					callback(data.id);
 				}
 			});
 		},
@@ -35183,25 +35214,40 @@
 			if (this.props.collections) {
 	
 				var title = "";
+				var imgName = "";
+				var cName = "";
 	
 				return this.props.collections.map(function (collection, ind) {
 					title = collection.title;
-	
-					//nested for loop here... need to optimize some how. Possibly as objects?
+					imgName = "../../assets/unselected_list.png";
+					cName = "";
 	
 					for (var i = 0; i < collection.photos.length; i++) {
 						if (collection.photos[i].id === this.props.photo.id) {
-							title += " (included)";
+	
+							imgName = "../../assets/selected_list.png";
+							cName = "included";
 						}
 					}
 	
 					return React.createElement(
-						"li",
+						"div",
 						{
+							className: "collection-list-wrapper " + cName,
 							key: ind,
 							onClick: this.collectionSelect,
+							onClick: this.collectionSelect,
 							id: collection.id },
-						title
+						React.createElement(
+							"div",
+							{ className: "toggle-container" },
+							React.createElement("img", { className: "fade-in", src: imgName })
+						),
+						React.createElement(
+							"li",
+							{ className: "item" },
+							title
+						)
 					);
 				}.bind(this));
 			}
@@ -35210,7 +35256,7 @@
 		collectionSelect: function (e) {
 			var collectionId = parseInt(e.currentTarget.id);
 	
-			if (e.currentTarget.innerHTML.indexOf("included") === -1) {
+			if (e.currentTarget.className.indexOf("included") === -1) {
 				this.props.addPhotoCallBack(collectionId);
 			} else {
 				this.props.removePhotoCallBack(collectionId);
@@ -35220,10 +35266,10 @@
 		render: function () {
 			return React.createElement(
 				"div",
-				{ className: this.props.cName },
+				null,
 				React.createElement(
 					"ul",
-					null,
+					{ className: this.props.cName },
 					this.generateCollectionItems()
 				)
 			);
@@ -68919,9 +68965,13 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
+	var History = __webpack_require__(159).History;
 	
 	var CommentItem = React.createClass({
-		displayName: "CommentItem",
+		displayName: 'CommentItem',
+	
+	
+		mixins: [History],
 	
 		getInitialState: function () {
 			return {
@@ -68929,25 +68979,37 @@
 			};
 		},
 	
-		// componentWillReceiveProps: function(newProps){
-		// 	debugger;
-		// 	this.setState({comment: newProps.comment})
-		// },
+		handleClick: function () {
+			this.history.push("/users/" + this.state.comment.user.id);
+		},
 	
 		content: function () {
 			if (this.state.comment) {
 				return React.createElement(
-					"li",
-					{ className: "comment-item" },
+					'li',
+					{ className: 'comment-item' },
 					React.createElement(
-						"section",
-						{ className: "comment-header" },
-						this.state.comment.user_id
+						'section',
+						{ className: 'comment-header' },
+						React.createElement(
+							'div',
+							{ className: 'comment-img-container', onClick: this.handleClick },
+							React.createElement('img', { src: this.state.comment.user.avatar })
+						)
 					),
 					React.createElement(
-						"section",
-						{ className: "comment-body" },
-						this.state.comment.content
+						'section',
+						{ className: 'comment-body' },
+						React.createElement(
+							'div',
+							{ className: 'comment-user-info', onClick: this.handleClick },
+							this.state.comment.user.username
+						),
+						React.createElement(
+							'div',
+							{ className: 'comment-content' },
+							this.state.comment.content
+						)
 					)
 				);
 			}
@@ -68955,7 +69017,7 @@
 	
 		render: function () {
 			return React.createElement(
-				"div",
+				'div',
 				null,
 				this.content()
 			);
@@ -68997,7 +69059,7 @@
 				content: this.state.content,
 				photo_id: this.state.photo_id
 			};
-	
+			this.setState({ content: "" });
 			CommentActions.createComment(params);
 		},
 	
@@ -69005,13 +69067,19 @@
 	
 			return React.createElement(
 				'div',
-				{ className: 'CommentForm' },
+				{ className: 'comment-form' },
 				React.createElement(
 					'form',
 					{ onSubmit: this.handleSubmit },
-					React.createElement('textarea', { valueLink: this.linkState("content"), placeholder: 'Leave a comment...' }),
-					React.createElement('br', null),
-					React.createElement('input', { type: 'submit', value: 'Post Comment' })
+					React.createElement(
+						'div',
+						{ className: 'comment-input' },
+						React.createElement('input', {
+							type: 'text',
+							valueLink: this.linkState("content"),
+							className: 'form-input',
+							placeholder: 'Leave a comment...' })
+					)
 				)
 			);
 		}
@@ -69104,7 +69172,145 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var NavBarSearch = __webpack_require__(484);
+	var UserStore = __webpack_require__(484);
+	var ApiUtil = __webpack_require__(232);
+	
+	var UserDetail = React.createClass({
+		displayName: 'UserDetail',
+	
+	
+		getInitialState: function () {
+	
+			return {
+				user: UserStore.user()
+			};
+		},
+	
+		componentDidMount: function () {
+			this.toke = UserStore.addListener(this._onChange);
+			ApiUtil.fetchUser(this.props.userId);
+		},
+	
+		componentWillUnmount: function () {
+			this.toke.remove();
+		},
+	
+		_onChange: function () {
+			this.setState({ user: UserStore.user() });
+		},
+	
+		_userPresent: function () {
+			if (Object.keys(this.state.user).length > 0) {
+				return true;
+			} else {
+				return false;
+			}
+		},
+	
+		renderURL: function () {
+			if (this._userPresent()) {
+				return this.state.user.avatar;
+			} else {
+				return "";
+			}
+		},
+	
+		renderName: function () {
+			if (this._userPresent()) {
+				return this.state.user.username;
+			} else {
+				return "";
+			}
+		},
+	
+		render: function () {
+			return React.createElement(
+				'div',
+				{ className: 'user-detail' },
+				React.createElement(
+					'section',
+					{ className: 'img-container' },
+					React.createElement('img', { src: this.renderURL() })
+				),
+				React.createElement(
+					'section',
+					{ className: 'user-info' },
+					this.renderName()
+				)
+			);
+		}
+	});
+	
+	module.exports = UserDetail;
+
+/***/ },
+/* 484 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(210);
+	var Store = __webpack_require__(214).Store;
+	var UserConstants = __webpack_require__(235);
+	
+	_user = {};
+	
+	var UserStore = new Store(AppDispatcher);
+	
+	UserStore.user = function () {
+		var copy = Object.assign({}, _user);
+		return copy;
+	};
+	
+	UserStore.__onDispatch = function (payload) {
+		switch (payload.actionType) {
+			case UserConstants.RECEIVE_USER:
+				setUser(payload.user);
+				UserStore.__emitChange();
+				break;
+		}
+	};
+	
+	function setUser(user) {
+		_user = user;
+	}
+	
+	module.exports = UserStore;
+
+/***/ },
+/* 485 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	
+	var CloseButton = React.createClass({
+	  displayName: "CloseButton",
+	
+	  render: function () {
+	    return React.createElement(
+	      "div",
+	      { className: "modal-close-button-container" },
+	      React.createElement(
+	        "button",
+	        {
+	          className: "mdl-button mdl-js-button mdl-button--icon mdl-button--colored",
+	          onClick: this.props.action },
+	        React.createElement(
+	          "i",
+	          { className: "material-icons" },
+	          "clear"
+	        )
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = CloseButton;
+
+/***/ },
+/* 486 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var NavBarSearch = __webpack_require__(487);
 	var History = __webpack_require__(159).History;
 	var SessionUtil = __webpack_require__(253);
 	
@@ -69122,7 +69328,7 @@
 	        pathname: "/"
 	      });
 	    } else {
-	      this.history.push({
+	      this.history.replace({
 	        pathname: this.props.pathname,
 	        state: { modal: true, returnTo: this.props.pathname, action: "sign_in" }
 	      });
@@ -69130,7 +69336,7 @@
 	  },
 	
 	  handleUpload: function () {
-	    this.history.push({
+	    this.history.replace({
 	      pathname: this.props.pathname,
 	      state: { modal: true, returnTo: this.props.pathname, action: "upload" }
 	    });
@@ -69215,13 +69421,13 @@
 	module.exports = NavBar;
 
 /***/ },
-/* 484 */
+/* 487 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var TagActions = __webpack_require__(485);
-	var TagStore = __webpack_require__(487);
-	var SuggestedItemList = __webpack_require__(510);
+	var TagActions = __webpack_require__(488);
+	var TagStore = __webpack_require__(490);
+	var SuggestedItemList = __webpack_require__(491);
 	var ApiUtil = __webpack_require__(232);
 	
 	var NavBarSearch = React.createClass({
@@ -69239,12 +69445,7 @@
 		},
 	
 		componentDidMount: function () {
-			this.toke = TagStore.addListener(this._onChange);
 			TagActions.fetchAllTags();
-		},
-	
-		comonentWillUnmount: function () {
-			this.toke.remove();
 		},
 	
 		handleInput: function (e) {
@@ -69280,15 +69481,20 @@
 			}
 		},
 	
-		handleSubmit: function () {
+		handleSubmit: function (e) {
+			e.preventDefault();
+	
 			if (this.state.filteredTags.length === 1) {
 				var params = { tag: this.state.filteredTags[0] };
 				ApiUtil.fetchRelevantPhotos(params);
+	
+				//APP_TODO: redirect to the main page
 			} else if (this.state.query === "") {
-				ApiUtil.fetchAllPhotos();
-			} else {
-				//raise error
-			}
+					ApiUtil.fetchAllPhotos();
+					//APP_TODO: redirect to the main page
+				} else {
+						//raise error
+					}
 		},
 	
 		render: function () {
@@ -69320,11 +69526,11 @@
 	module.exports = NavBarSearch;
 
 /***/ },
-/* 485 */
+/* 488 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var AppDispatcher = __webpack_require__(210);
-	var TagConstants = __webpack_require__(486);
+	var TagConstants = __webpack_require__(489);
 	var ApiUtil = __webpack_require__(232);
 	
 	var TagActions = {
@@ -69343,7 +69549,7 @@
 	module.exports = TagActions;
 
 /***/ },
-/* 486 */
+/* 489 */
 /***/ function(module, exports) {
 
 	module.exports = {
@@ -69351,12 +69557,12 @@
 	};
 
 /***/ },
-/* 487 */
+/* 490 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var AppDispatcher = __webpack_require__(210);
 	var Store = __webpack_require__(214).Store;
-	var TagConstants = __webpack_require__(486);
+	var TagConstants = __webpack_require__(489);
 	
 	_tags = [];
 	
@@ -69397,14 +69603,74 @@
 	module.exports = TagStore;
 
 /***/ },
-/* 488 */
+/* 491 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var SuggestedItem = __webpack_require__(492);
+	
+	var SuggestedItemList = React.createClass({
+		displayName: 'SuggestedItemList',
+	
+	
+		renderSuggestedItems: function () {
+			var items = [];
+	
+			if (this.props.items.length > 0) {
+				var max = this.props.items.length > 4 ? 4 : this.props.items.length;
+	
+				for (var i = 0; i < max; i++) {
+					items.push(React.createElement(SuggestedItem, {
+						title: this.props.items[i].title,
+						selectCallBack: this.props.selectCallBack,
+						key: i }));
+				}
+			}
+	
+			return items;
+		},
+	
+		render: function () {
+			return React.createElement(
+				'section',
+				{ className: 'suggested-item-container' },
+				this.renderSuggestedItems()
+			);
+		}
+	});
+	
+	module.exports = SuggestedItemList;
+
+/***/ },
+/* 492 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	
+	var SuggestedItem = React.createClass({
+		displayName: "SuggestedItem",
+	
+	
+		render: function () {
+			return React.createElement(
+				"span",
+				{ className: "suggested-item", onClick: this.props.selectCallBack },
+				this.props.title
+			);
+		}
+	});
+	
+	module.exports = SuggestedItem;
+
+/***/ },
+/* 493 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var LinkedStateMixin = __webpack_require__(249);
-	var PhotoSelector = __webpack_require__(489);
+	var PhotoSelector = __webpack_require__(494);
 	var CollectionActions = __webpack_require__(474);
-	var TagForm = __webpack_require__(491);
+	var TagForm = __webpack_require__(496);
 	
 	var CollectionForm = React.createClass({
 		displayName: 'CollectionForm',
@@ -69490,12 +69756,12 @@
 	module.exports = CollectionForm;
 
 /***/ },
-/* 489 */
+/* 494 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var Masonry = __webpack_require__(237);
-	var PhotoThumb = __webpack_require__(490);
+	var PhotoThumb = __webpack_require__(495);
 	var PhotoStore = __webpack_require__(209);
 	var ApiUtil = __webpack_require__(232);
 	
@@ -69584,7 +69850,7 @@
 	module.exports = PhotoSelector;
 
 /***/ },
-/* 490 */
+/* 495 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -69609,15 +69875,15 @@
 	module.exports = PhotoThumb;
 
 /***/ },
-/* 491 */
+/* 496 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var TagItems = __webpack_require__(481);
 	var LinkedStateMixin = __webpack_require__(249);
-	var TagActions = __webpack_require__(485);
-	var TagStore = __webpack_require__(487);
-	var SuggestedItemList = __webpack_require__(510);
+	var TagActions = __webpack_require__(488);
+	var TagStore = __webpack_require__(490);
+	var SuggestedItemList = __webpack_require__(491);
 	
 	var TagForm = React.createClass({
 		displayName: 'TagForm',
@@ -69658,11 +69924,28 @@
 		handleTab: function (e) {
 			if (e.which === 9) {
 				e.preventDefault();
-				var newTags = this.state.selectedTags.concat(this.state.tag);
+				var newTags;
+	
+				if (this.state.filteredTags.length > 0) {
+					if (this.state.selectedTags.indexOf(this.state.filteredTags[0]) === -1) {
+						newTags = this.state.selectedTags.concat(this.state.filteredTags[0]);
+					}
+				} else {
+					if (this.state.selectedTags.indexOf(this.state.tag) === -1) {
+						newTags = this.state.selectedTags.concat(this.state.tag);
+					}
+				}
+	
+				if (!newTags) {
+					newTags = this.state.selectedTags;
+				}
+	
 				this.setState({
 					selectedTags: newTags,
-					tag: ""
+					tag: "",
+					filteredTags: ""
 				});
+	
 				this.props.formCallback(newTags);
 			}
 		},
@@ -69675,7 +69958,6 @@
 			} else {
 				matchingTags = [];
 			}
-	
 			this.setState({ tag: tag, filteredTags: matchingTags });
 		},
 	
@@ -69716,7 +69998,7 @@
 	module.exports = TagForm;
 
 /***/ },
-/* 492 */
+/* 497 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -69828,15 +70110,17 @@
 	module.exports = CollectionDetail;
 
 /***/ },
-/* 493 */
+/* 498 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var UserStore = __webpack_require__(494);
+	var UserStore = __webpack_require__(484);
 	var Masonry = __webpack_require__(237);
 	var ApiUtil = __webpack_require__(232);
 	var PhotoIndexItem = __webpack_require__(236);
 	var Link = __webpack_require__(159).Link;
+	var CollectionIndex = __webpack_require__(499);
+	var History = __webpack_require__(159).History;
 	
 	//APP-TODO: possibly refactor the presentation of the photo index
 	//into a nested route that can then switch between the galleries and photos
@@ -69849,6 +70133,8 @@
 	var UserProfile = React.createClass({
 		displayName: 'UserProfile',
 	
+	
+		mixins: [History],
 	
 		getInitialState: function () {
 			return {
@@ -69908,8 +70194,19 @@
 	
 		handleBackgrounImage: function () {
 			if (this._userPresent()) {
-				return this.state.user.photos[0].url;
+				if (this.state.user.photos.length > 0) {
+					return this.state.user.photos[0].url;
+				} else {
+					return "";
+				}
 			}
+		},
+	
+		handleEdit: function () {
+			this.history.replace({
+				pathname: this.props.location.pathname,
+				state: { modal: true, returnTo: this.props.location.pathname, action: "edit_profile", user: this.state.user }
+			});
 		},
 	
 		render: function () {
@@ -69936,8 +70233,9 @@
 							React.createElement(
 								'button',
 								{
-									className: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored' },
-								' Edit Profile'
+									className: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored',
+									onClick: this.handleEdit },
+								'Edit Profile'
 							)
 						)
 					);
@@ -69945,7 +70243,6 @@
 			} else {
 				current = "";
 			}
-	
 			return React.createElement(
 				'div',
 				{ className: 'parallax' },
@@ -69971,7 +70268,7 @@
 							React.createElement(
 								'div',
 								{ className: 'profile-info' },
-								this.state.user.email
+								this.state.user.username
 							),
 							React.createElement(
 								'div',
@@ -69983,19 +70280,27 @@
 							'section',
 							{ className: 'user-prof-collection' },
 							React.createElement(
-								'h3',
-								null,
-								' Collections '
+								'div',
+								{ className: 'header-spacer' },
+								React.createElement(
+									'h3',
+									null,
+									' Collections '
+								)
 							),
-							this.generateUserCollections()
+							React.createElement(CollectionIndex, { collections: this.state.user.collections })
 						),
 						React.createElement(
 							'section',
 							{ className: 'user-photos' },
 							React.createElement(
-								'h3',
-								null,
-								' Photos '
+								'div',
+								{ className: 'header-spacer' },
+								React.createElement(
+									'h3',
+									null,
+									' Photos '
+								)
 							),
 							React.createElement(
 								Masonry,
@@ -70017,54 +70322,135 @@
 	module.exports = UserProfile;
 
 /***/ },
-/* 494 */
+/* 499 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppDispatcher = __webpack_require__(210);
-	var Store = __webpack_require__(214).Store;
-	var UserConstants = __webpack_require__(235);
+	var React = __webpack_require__(1);
+	var CollectionIndexItem = __webpack_require__(500);
+	var Masonry = __webpack_require__(237);
 	
-	_user = {};
-	
-	var UserStore = new Store(AppDispatcher);
-	
-	UserStore.user = function () {
-		return _user;
+	var masonryOptions = {
+		transitionDuration: 0,
+		itemSelector: ".collection-index-item",
+		fitWidth: true
 	};
 	
-	UserStore.__onDispatch = function (payload) {
-		switch (payload.actionType) {
-			case UserConstants.RECEIVE_USER:
-				setUser(payload.user);
-				UserStore.__emitChange();
-				break;
+	var CollectionIndex = React.createClass({
+		displayName: 'CollectionIndex',
+	
+	
+		getInitialState: function () {
+			return {
+				collections: this.props.collections
+			};
+		},
+	
+		componentWillReceiveProps: function (newProps) {
+			this.setState({ collections: newProps.collections });
+		},
+	
+		renderCollectionItems: function () {
+			if (this.state.collections) {
+				return this.state.collections.map(function (col, ind) {
+					return React.createElement(CollectionIndexItem, { collection: col, key: ind });
+				});
+			}
+		},
+	
+		render: function () {
+			return React.createElement(
+				'div',
+				{ className: 'collection-index' },
+				React.createElement(
+					Masonry,
+					{
+						className: 'grid center',
+						elementType: 'div',
+						options: masonryOptions,
+						disableImagesLoaded: false },
+					this.renderCollectionItems()
+				)
+			);
 		}
-	};
+	});
 	
-	function setUser(user) {
-		_user = user;
-	}
-	
-	module.exports = UserStore;
+	module.exports = CollectionIndex;
 
 /***/ },
-/* 495 */
+/* 500 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var History = __webpack_require__(159).History;
+	
+	var CollectionIndexItem = React.createClass({
+		displayName: 'CollectionIndexItem',
+	
+	
+		mixins: [History],
+	
+		selectCoverImage: function () {
+			var collection = this.props.collection;
+	
+			if (collection.cover_photo) {
+				return collection.cover_photo;
+			} else if (collection.photos.length > 0) {
+				return collection.photos[0].url;
+			} else {
+				return "";
+			}
+		},
+	
+		handleClick: function () {
+			this.history.push("/collections/" + this.props.collection.id);
+		},
+	
+		render: function () {
+			return React.createElement(
+				'div',
+				{ className: 'collection-index-item', onClick: this.handleClick },
+				React.createElement(
+					'div',
+					{ className: 'img-container' },
+					React.createElement('img', { src: this.selectCoverImage() })
+				),
+				React.createElement(
+					'div',
+					null,
+					this.props.collection.title
+				),
+				React.createElement(
+					'div',
+					null,
+					this.props.collection.description
+				)
+			);
+		}
+	});
+	
+	module.exports = CollectionIndexItem;
+
+/***/ },
+/* 501 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var LinkedStateMixin = __webpack_require__(249);
 	var SessionsUtil = __webpack_require__(253);
+	var History = __webpack_require__(159).History;
 	
 	var SignUpForm = React.createClass({
 		displayName: 'SignUpForm',
 	
 	
-		mixins: [LinkedStateMixin],
+		mixins: [LinkedStateMixin, History],
 	
 		getInitialState: function () {
 			return {
 				email: "",
-				password: ""
+				password: "",
+				username: "",
+				passwordConfirmation: ""
 			};
 		},
 	
@@ -70073,45 +70459,97 @@
 	
 			var params = {
 				email: this.state.email,
-				password: this.state.password
+				password: this.state.password,
+				username: this.state.username
 			};
 	
 			SessionsUtil.createUser(params, this.successRedirect);
 		},
 	
-		successRedirect: function () {
-			this.props.history.push("/");
+		handleSignIn: function (e) {
+			e.preventDefault();
+			this.history.replace({
+				pathname: this.props.pathname,
+				state: { modal: true, returnTo: this.props.pathname, action: "sign_in" }
+			});
+		},
+	
+		successRedirect: function (id) {
+			this.history.push("/users/" + id);
 		},
 	
 		render: function () {
 			return React.createElement(
 				'div',
-				{ className: 'wrapper' },
+				{ className: 'form-container center' },
+				React.createElement(
+					'div',
+					{ className: 'modal-header' },
+					'New Account'
+				),
 				React.createElement(
 					'form',
-					{ onSubmit: this.handleSubmit },
-					'Sign Up!',
-					React.createElement('br', null),
+					{ onSubmit: this.handleSubmit, className: 'session-form' },
 					React.createElement(
-						'label',
-						{ htmlFor: 'email' },
-						'Email:',
+						'div',
+						{ className: 'form-input-container' },
 						React.createElement('input', {
 							type: 'text',
 							valueLink: this.linkState("email"),
-							placeholder: 'sample@email.com' })
+							placeholder: 'sample@email.com',
+							className: 'form-input',
+							placeholder: 'Email' })
 					),
-					React.createElement('br', null),
 					React.createElement(
-						'label',
-						{ htmlFor: 'password' },
-						'Password:',
+						'div',
+						{ className: 'form-input-container' },
+						React.createElement('input', {
+							type: 'text',
+							valueLink: this.linkState("username"),
+							className: 'form-input',
+							placeholder: 'Username' })
+					),
+					React.createElement(
+						'div',
+						{ className: 'form-input-container' },
 						React.createElement('input', {
 							type: 'password',
-							valueLink: this.linkState("password") })
+							valueLink: this.linkState("password"),
+							className: 'form-input',
+							placeholder: 'Password' })
 					),
-					React.createElement('br', null),
-					React.createElement('input', { type: 'submit', value: 'Create Account' })
+					React.createElement(
+						'div',
+						{ className: 'form-input-container' },
+						React.createElement('input', {
+							type: 'password',
+							valueLink: this.linkState("passwordConfirmation"),
+							className: 'form-input',
+							placeholder: 'Confirm Password' })
+					),
+					React.createElement(
+						'div',
+						{ className: 'form-button-container' },
+						React.createElement(
+							'div',
+							{ className: 'form-spacer' },
+							React.createElement('input', {
+								type: 'submit',
+								value: 'Create Account',
+								className: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored' })
+						),
+						React.createElement(
+							'div',
+							{ className: 'form-spacer' },
+							React.createElement(
+								'button',
+								{
+									onClick: this.handleSignIn,
+									className: 'mdl-button mdl-js-button mdl-button--colored' },
+								'Sign In'
+							)
+						)
+					)
 				)
 			);
 		}
@@ -70120,14 +70558,16 @@
 	module.exports = SignUpForm;
 
 /***/ },
-/* 496 */
+/* 502 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var PhotoForm = __webpack_require__(497);
-	var SignInForm = __webpack_require__(499);
-	var ModalStyles = __webpack_require__(509);
-	var Modal = __webpack_require__(500);
+	var PhotoForm = __webpack_require__(503);
+	var SignInForm = __webpack_require__(505);
+	var SignUpForm = __webpack_require__(501);
+	var ModalStyles = __webpack_require__(515);
+	var EditProfileForm = __webpack_require__(516);
+	var Modal = __webpack_require__(506);
 	
 	var ModalWrapper = React.createClass({
 		displayName: 'ModalWrapper',
@@ -70176,7 +70616,14 @@
 			} else if (action === "sign_in") {
 				modalElements["body"] = React.createElement(SignInForm, { closeModal: this.hideModal });
 				modalElements["style"] = ModalStyles.signIn;
-			} else if (path.indexOf("sign_up") > -1) {}
+			} else if (action === "sign_up") {
+				modalElements["body"] = React.createElement(SignUpForm, { closeModal: this.hideModal });
+				modalElements["style"] = ModalStyles.signUp;
+			} else if (action === "edit_profile") {
+				debugger;
+				modalElements["body"] = React.createElement(EditProfileForm, { user: this.props.user, closeModal: this.hideModal });
+				modalElements["style"] = ModalStyles.uploadForm;
+			}
 	
 			return modalElements;
 		},
@@ -70216,15 +70663,15 @@
 	module.exports = ModalWrapper;
 
 /***/ },
-/* 497 */
+/* 503 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var PhotoButton = __webpack_require__(498);
+	var PhotoButton = __webpack_require__(504);
 	var LinkedStateMixin = __webpack_require__(249);
-	var PhotoThumb = __webpack_require__(490);
+	var PhotoThumb = __webpack_require__(495);
 	var ApiUtil = __webpack_require__(232);
-	var TagForm = __webpack_require__(491);
+	var TagForm = __webpack_require__(496);
 	
 	var PhotoForm = React.createClass({
 		displayName: 'PhotoForm',
@@ -70246,8 +70693,11 @@
 			};
 		},
 	
-		handleSubmit: function () {
+		handleSubmit: function (e) {
+			e.preventDefault();
 			this.saveInfo();
+	
+			debugger;
 	
 			var options = {
 				totalImages: this.state.photos.length - 1,
@@ -70348,7 +70798,7 @@
 				{ className: 'form-container center' },
 				React.createElement(
 					'div',
-					{ className: 'upload-styling center' },
+					{ className: 'modal-form-styling center' },
 					React.createElement(
 						'form',
 						{ onSubmit: this.handleSubmit, className: 'upload-form' },
@@ -70412,7 +70862,7 @@
 	module.exports = PhotoForm;
 
 /***/ },
-/* 498 */
+/* 504 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -70472,20 +70922,21 @@
 	module.exports = PhotoButton;
 
 /***/ },
-/* 499 */
+/* 505 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var LinkedStateMixin = __webpack_require__(249);
 	var SessionUtil = __webpack_require__(253);
+	var History = __webpack_require__(159).History;
 	
-	var Modal = __webpack_require__(500);
+	var Modal = __webpack_require__(506);
 	
 	var SignInForm = React.createClass({
 		displayName: 'SignInForm',
 	
 	
-		mixins: [LinkedStateMixin],
+		mixins: [LinkedStateMixin, History],
 	
 		getInitialState: function () {
 			return {
@@ -70507,7 +70958,11 @@
 	
 		handleSignUp: function (e) {
 			e.preventDefault();
-			this.props.history.push("user/sign_up");
+	
+			this.history.replace({
+				pathname: this.props.pathname,
+				state: { modal: true, returnTo: this.props.pathname, action: "sign_up" }
+			});
 		},
 	
 		//any way to push "back" to where the use was before they logged in?
@@ -70578,13 +71033,13 @@
 	module.exports = SignInForm;
 
 /***/ },
-/* 500 */
+/* 506 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var modalFactory = __webpack_require__(501);
-	var insertKeyframesRule = __webpack_require__(506);
-	var appendVendorPrefix = __webpack_require__(503);
+	var modalFactory = __webpack_require__(507);
+	var insertKeyframesRule = __webpack_require__(512);
+	var appendVendorPrefix = __webpack_require__(509);
 	
 	var animation = {
 	    show: {
@@ -70730,12 +71185,12 @@
 
 
 /***/ },
-/* 501 */
+/* 507 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var transitionEvents = __webpack_require__(502);
-	var appendVendorPrefix = __webpack_require__(503);
+	var transitionEvents = __webpack_require__(508);
+	var appendVendorPrefix = __webpack_require__(509);
 	
 	module.exports = function(animation){
 	
@@ -70914,7 +71369,7 @@
 
 
 /***/ },
-/* 502 */
+/* 508 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -71015,12 +71470,12 @@
 
 
 /***/ },
-/* 503 */
+/* 509 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var getVendorPropertyName = __webpack_require__(504);
+	var getVendorPropertyName = __webpack_require__(510);
 	
 	module.exports = function(target, sources) {
 	  var to = Object(target);
@@ -71051,12 +71506,12 @@
 
 
 /***/ },
-/* 504 */
+/* 510 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var builtinStyle = __webpack_require__(505);
+	var builtinStyle = __webpack_require__(511);
 	var prefixes = ['Moz', 'Webkit', 'O', 'ms'];
 	var domVendorPrefix;
 	
@@ -71094,7 +71549,7 @@
 
 
 /***/ },
-/* 505 */
+/* 511 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -71103,13 +71558,13 @@
 
 
 /***/ },
-/* 506 */
+/* 512 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var insertRule = __webpack_require__(507);
-	var vendorPrefix = __webpack_require__(508)();
+	var insertRule = __webpack_require__(513);
+	var vendorPrefix = __webpack_require__(514)();
 	var index = 0;
 	
 	module.exports = function(keyframes) {
@@ -71139,7 +71594,7 @@
 
 
 /***/ },
-/* 507 */
+/* 513 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -71164,7 +71619,7 @@
 
 
 /***/ },
-/* 508 */
+/* 514 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -71183,7 +71638,7 @@
 
 
 /***/ },
-/* 509 */
+/* 515 */
 /***/ function(module, exports) {
 
 	module.exports = {
@@ -71218,69 +71673,130 @@
 			},
 	
 			backDropStyle: {}
+		},
+	
+		signUp: {
+			contentStyle: {
+				height: '100%',
+				width: '100%'
+			},
+	
+			modalStyle: {
+				height: '450px',
+				width: '300px'
+			},
+	
+			backDropStyle: {}
 		}
 	
 	};
 
 /***/ },
-/* 510 */
+/* 516 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var SuggestedItem = __webpack_require__(511);
+	var LinkedStateMixin = __webpack_require__(249);
+	var PhotoButton = __webpack_require__(504);
 	
-	var SuggestedItemList = React.createClass({
-		displayName: 'SuggestedItemList',
+	var EditProfileForm = React.createClass({
+		displayName: 'EditProfileForm',
 	
 	
-		renderSuggestedItems: function () {
-			var items = [];
+		mixins: [LinkedStateMixin],
 	
-			if (this.props.items.length > 0) {
-				var max = this.props.items.length > 4 ? 4 : this.props.items.length;
+		getInitialState: function () {
+			return {
+				username: "",
+				email: "",
+				title: "",
+				password: "",
+				avatar: ""
+			};
+		},
 	
-				for (var i = 0; i < max; i++) {
-					items.push(React.createElement(SuggestedItem, {
-						title: this.props.items[i].title,
-						selectCallBack: this.props.selectCallBack,
-						key: i }));
-				}
-			}
+		handleImages: function () {
+			debugger;
+		},
 	
-			return items;
+		handleSubmit: function () {
+			debugger;
+		},
+	
+		closeModal: function () {
+			debugger;
 		},
 	
 		render: function () {
 			return React.createElement(
-				'section',
-				{ className: 'suggested-item-container' },
-				this.renderSuggestedItems()
+				'div',
+				{ className: 'modal-form-stying center' },
+				React.createElement(
+					'form',
+					{ onSubmit: this.handleSubmit, className: 'edit-profile-form' },
+					React.createElement(
+						'div',
+						{ className: 'form-input-container' },
+						React.createElement('input', {
+							type: 'text',
+							valueLink: this.linkState("username"),
+							className: 'form-input',
+							placeholder: "Username: " + this.props.user.username })
+					),
+					React.createElement(
+						'div',
+						{ className: 'form-input-container' },
+						React.createElement('input', {
+							type: 'text',
+							valueLink: this.linkState("email"),
+							className: 'form-input',
+							placeholder: "Email: " + this.props.user.email })
+					),
+					React.createElement(
+						'div',
+						{ className: 'form-input-container' },
+						React.createElement('input', {
+							type: 'password',
+							valueLink: this.linkState("password"),
+							className: 'form-input',
+							placeholder: 'New Password' })
+					),
+					React.createElement(
+						'div',
+						{ className: 'form-input-container' },
+						React.createElement('input', {
+							type: 'password',
+							valueLink: this.linkState("password"),
+							className: 'form-input',
+							placeholder: 'Confirm Password' })
+					),
+					React.createElement(
+						'div',
+						{ className: 'form-input-container' },
+						React.createElement(
+							'span',
+							null,
+							' Update profile picture '
+						),
+						React.createElement(PhotoButton, {
+							handleUpload: this.handleImages,
+							photoCount: 1 }),
+						React.createElement(
+							'div',
+							{ className: 'photo-thumb' },
+							React.createElement('img', { src: this.props.user.avatar })
+						)
+					),
+					React.createElement('input', {
+						type: 'submit',
+						value: 'Update',
+						className: 'mdl-button mdl-js-button mdl-button--colored' })
+				)
 			);
 		}
 	});
 	
-	module.exports = SuggestedItemList;
-
-/***/ },
-/* 511 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	
-	var SuggestedItem = React.createClass({
-		displayName: "SuggestedItem",
-	
-	
-		render: function () {
-			return React.createElement(
-				"span",
-				{ className: "suggested-item", onClick: this.props.selectCallBack },
-				this.props.title
-			);
-		}
-	});
-	
-	module.exports = SuggestedItem;
+	module.exports = EditProfileForm;
 
 /***/ }
 /******/ ]);

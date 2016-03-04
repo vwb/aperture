@@ -19,12 +19,7 @@ var NavBarSearch = React.createClass({
 	},
 
 	componentDidMount: function(){
-		this.toke = TagStore.addListener(this._onChange);
 		TagActions.fetchAllTags();
-	},
-
-	comonentWillUnmount: function(){
-		this.toke.remove();
 	},
 
 	handleInput: function(e){
@@ -61,12 +56,17 @@ var NavBarSearch = React.createClass({
 		}
 	},
 
-	handleSubmit: function(){
+	handleSubmit: function(e){
+		e.preventDefault();
+
 		if (this.state.filteredTags.length === 1){
 			var params = {tag: this.state.filteredTags[0]}
 			ApiUtil.fetchRelevantPhotos(params);
+			
+			//APP_TODO: redirect to the main page
 		} else if (this.state.query === ""){
 			ApiUtil.fetchAllPhotos();
+			//APP_TODO: redirect to the main page
 		} else {
 			//raise error
 		}

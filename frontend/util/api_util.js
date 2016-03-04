@@ -15,27 +15,39 @@ var ApiUtil = {
 		});
 	},
 
+	fetchPhoto: function(id){
+		$.ajax({
+			url: "/api/photos/"+id,
+			datatype: "json",
+			success: function(photo){
+				PhotoActions.receivePhoto(photo)
+			}
+		})
+	},	
+
 	fetchRelevantPhotos: function(query){
 		$.ajax({
 			url: "/api/photos",
 			datatype: "json",
 			data: query,
 			success: function(photos){
-				debugger;
 				PhotoActions.receivePhotos(photos);
 			}
 		})
 	},
 
-	createPhoto: function(params, options){
+	createPhoto: function(params, values){
+		var data = {photo: params}
+		debugger;
+
 		$.ajax({
 			type: "POST",
 			url: "/api/photos",
 			datatype: "json",
-			data: {photo: params},
+			data: data,
 			success: function(photo){
 				PhotoActions.receivePhoto(photo);
-				options.callBack();	
+				values.callBack();	
 			}
 		});
 	},

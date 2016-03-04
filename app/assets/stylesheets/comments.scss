@@ -1,3 +1,81 @@
 // Place all the styles related to the Comments controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+
+.comment-container {
+	position: relative;
+	overflow: hidden;
+	padding: 20px 0 0 0;
+}
+
+.comment-list {
+	list-style: none;
+	padding: 0;
+	max-width: 100%;
+}
+
+.comment-item {
+	position: relative;
+	font-size: 13px;
+	width: 80%;
+	padding: 8px 0 8px 0;
+
+	.comment-header {
+		display: inline-block;
+		padding: 0 10px 0 0;
+
+		.comment-img-container {
+			cursor: pointer;
+			max-height: 30px;
+			max-width: 30px;
+			position: relative;
+
+			img {
+				height: 100%;
+				width: 100%;
+				border-radius: 50%;
+			}
+		}
+	}
+
+	.comment-body {
+		display: inline-block;
+		position: relative;
+		font-weight: 200;
+
+
+		.comment-user-info {
+			cursor: pointer;
+			display: inline-block;
+			position: relative;
+			font-weight: 400;
+		}
+
+		.comment-content {
+			display: inline-block;
+			position: relative;
+			padding-left: 7px;
+		}
+	}
+}
+
+
+.comment-input {
+	padding: 5px 10px 0 5px;
+	width: 90%;
+
+	input {
+		font-size: 14px;
+	}
+
+	input:focus {
+		color: black;
+		border-color: #454545;
+	}
+}
+
+
+.comment-form {
+
+}

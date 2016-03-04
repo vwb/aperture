@@ -1,4 +1,4 @@
-.upload-styling {
+.modal-form-styling {
 	position: relative;
 	height: 92%;
 	width: 92%;
@@ -7,6 +7,7 @@
 	background-color: #607D8B;
 	border-radius: 5px;
 	color: white;
+	overflow-y: auto;
 }
 
 .upload-form {

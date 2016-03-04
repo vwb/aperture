@@ -16,7 +16,7 @@
 	top: 5px;
 	right: 5px;
 	z-index: 2;
-	}
+}
 
 .modal-close{
 	position: fixed;
@@ -54,13 +54,21 @@
   right: 50%;
   transform: translateX(50%);
   font-size: 25px;
-  top: 15%;
+  top: 13%;
 }
 
 
 .form-input-container {
-	padding: 15px 0 0 0;
+	position: relative;
+	padding: 10px 0 10px 0;
+	left: 12.5%;
+	width: 75%;
 }
+
+.session-form input:focus {
+  color: black;
+  border-color: black;
+} 
 
 
 

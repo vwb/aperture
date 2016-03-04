@@ -21,14 +21,14 @@ class Api::UsersController < ApplicationController
   end
 
   def show
-    @user = User.includes(:photos, collections: [:photos]).find(params[:id])
+    @user = User.includes(:photos, collections: :photos).find(params[:id])
     render :show
   end
 
   private
 
   def user_params
-    params.require(:user).permit(:email, :password)
+    params.require(:user).permit(:email, :password, :username, :avatar)
   end
 
 end

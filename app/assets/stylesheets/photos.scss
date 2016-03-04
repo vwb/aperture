@@ -62,4 +62,44 @@
 	width: 300px;
 	display: block;
 	background-color: #D9D9D9;
+	overflow-y: scroll;
+}
+
+.user-detail {
+ 
+ .img-container {
+	height: 90px;
+	width: 90px;
+	position: relative;
+	display: inline-block;
+
+		img {
+			height: 100%;
+			width: 100%;
+			border-radius: 50%;
+		}
+	}
+}
+
+
+.user-info {
+	display: inline-block;
+	font-size: 22px;
+	padding: 0 0 0 10px;
+}
+
+.tag-section {
+	display: inline-block;
+	width: 100%;
+	position: relative;
+}
+
+.photo-edit-form{
+	input {
+		border-color: #5C5C5C
+	}
+
+	.form-input-container {
+		left: 7.5%;
+	}
 }

@@ -11,7 +11,7 @@ var SessionsUtil = {
 			datatype: "json",
 			success: function(data){
 				SessionActions.newUser(data);
-				callback();
+				callback(data.id);
 			}
 		});
 	},

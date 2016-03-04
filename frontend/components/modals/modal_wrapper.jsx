@@ -1,7 +1,9 @@
 var React = require('react');
 var PhotoForm = require('../photos/photo_form');
 var SignInForm = require('../sessions/create_session_form');
+var SignUpForm = require('../sessions/create_user_form');
 var ModalStyles = require('../../constants/modal_styles');
+var EditProfileForm = require('../user/edit_profile');
 var Modal = require('boron/OutlineModal');
 
 
@@ -54,9 +56,16 @@ var ModalWrapper = React.createClass({
 			modalElements["body"] = (<SignInForm closeModal={this.hideModal}/>);
 			modalElements["style"] = ModalStyles.signIn
 
-		} else if (path.indexOf("sign_up") > -1){
-
+		} else if (action === "sign_up"){
+			modalElements["body"] = (<SignUpForm closeModal={this.hideModal}/>);
+			modalElements["style"] = ModalStyles.signUp
+		
+		} else if (action === "edit_profile"){
+			debugger;
+			modalElements["body"] = (<EditProfileForm user={this.props.user} closeModal={this.hideModal}/>);
+			modalElements["style"] = ModalStyles.uploadForm
 		}
+
 
 		return modalElements;
 	},

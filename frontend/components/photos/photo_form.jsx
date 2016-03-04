@@ -23,8 +23,11 @@ var PhotoForm = React.createClass({
 		}
 	},
 
-	handleSubmit: function(){
+	handleSubmit: function(e){
+		e.preventDefault();
 		this.saveInfo();
+
+		debugger;
 
 		var options = {
 			totalImages: this.state.photos.length-1,
@@ -36,6 +39,7 @@ var PhotoForm = React.createClass({
 			ApiUtil.createPhoto(photoObject, options);
 		});
 	},
+
 
 	successRedirect: function(){
 		this.props.history.push("/");
@@ -125,7 +129,7 @@ var PhotoForm = React.createClass({
 	render: function() {
 		return (
 			<div className="form-container center">
-				<div className="upload-styling center">
+				<div className="modal-form-styling center">
 
 					<form onSubmit={this.handleSubmit} className="upload-form">
 

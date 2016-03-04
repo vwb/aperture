@@ -25,18 +25,27 @@ var CommentForm = React.createClass({
 			content: this.state.content,
 			photo_id: this.state.photo_id
 		}
-
+		this.setState({content: ""});
 		CommentActions.createComment(params);
 	},
 
 	render: function() {
 
 		return (
-			<div className="CommentForm">
+
+
+
+			<div className="comment-form">
 				<form onSubmit={this.handleSubmit}>
-					<textarea valueLink={this.linkState("content")} placeholder="Leave a comment..."/>
-					<br/>
-					<input type="submit" value="Post Comment"/>
+
+					<div className="comment-input">
+						<input
+							type="text"
+							valueLink={this.linkState("content")}
+							className="form-input"
+							placeholder="Leave a comment..."/>
+					</div>
+
 				</form>
 			</div>
 		);

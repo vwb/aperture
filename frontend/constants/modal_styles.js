@@ -32,6 +32,22 @@ module.exports = {
 		
 		backDropStyle: {
 		}
+	},
+
+	signUp : {
+		contentStyle: {
+			height: '100%',
+			width: '100%'
+		},
+
+		modalStyle: {
+			height: '450px',
+			width: '300px',
+		},
+
+		backDropStyle: {
+
+		}
 	}
 
 }

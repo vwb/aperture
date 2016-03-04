@@ -16,26 +16,28 @@ class Tag < ActiveRecord::Base
   has_many :taggings
   has_many :photos, through: :taggings
 
-  # def self.find_ids(titles)
+  def self.find_ids(tag_items)
 
-  #   results = []
+    results = []
 
-  #   relation = Tag.where(title: titles)
+    tag_items
 
-  #   relation.each do |found_tag|
-  #     results << found_tag.id
-  #     titles.delete(found_tag.title)
-  #   end
+    relation = Tag.where(title: titles)
 
-  #   if titles.length > 0
-  #     titles.each do |new_tag_title|
-  #       tag = Tag.new(title: new_tag_title)
-  #       tag.save!
-  #       results << tag.id
-  #     end
-  #   end
+    relation.each do |found_tag|
+      results << found_tag.id
+      titles.delete(found_tag.title)
+    end
 
-  #   return results
+    if titles.length > 0
+      titles.each do |new_tag_title|
+        tag = Tag.new(title: new_tag_title)
+        tag.save!
+        results << tag.id
+      end
+    end
 
-  # end
+    return results
+
+  end
 end

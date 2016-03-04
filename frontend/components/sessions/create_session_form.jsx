@@ -1,12 +1,13 @@
 var React = require('react');
 var LinkedStateMixin = require('react-addons-linked-state-mixin');
 var SessionUtil = require('../../util/sessions_util');
+var History = require('react-router').History;
 
 var Modal = require('boron/OutlineModal');
 
 var SignInForm = React.createClass({
 
-	mixins: [LinkedStateMixin],
+	mixins: [LinkedStateMixin, History],
 
 	getInitialState: function(){
 		return {
@@ -28,7 +29,11 @@ var SignInForm = React.createClass({
 
 	handleSignUp: function(e){
 		e.preventDefault();
-		this.props.history.push("user/sign_up");
+
+		this.history.replace({
+        pathname: this.props.pathname,
+        state: {modal: true, returnTo: this.props.pathname, action: "sign_up"}
+     });
 	},
 
 	//any way to push "back" to where the use was before they logged in?

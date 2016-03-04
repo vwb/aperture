@@ -45,6 +45,10 @@
 	overflow: hidden;
 }
 
+.collection-header h3{
+	padding: 25px 0 25px 0;
+}
+
 //set the min width of the image to the width of actual image?
 .background img{
 	// display: block;
@@ -72,7 +76,57 @@
 .collection-list {
 	display: none;
 }
-
 .visible {
 	display: block;
 }
+
+//PHOTO DETAIL 
+
+.collection-list-container {
+	padding: 5px 0 10px 0;
+	position: relative;
+
+	.collection-list {
+		padding: 15px 0 0 10px;
+		margin: 0;
+		width: 80%;
+	}
+
+	.item {
+		position: relative;
+		display: block;
+		padding: 5px 0 5px 0;
+		width: 80%;
+		left: 20%;
+	}
+}
+
+.collection-list-wrapper {
+	width: 100%;
+	height: 100%;
+	position: relative;
+
+
+	.toggle-container {
+		height: 20px;
+		width: 20px;
+		display: inline-block;
+		position: absolute;
+		left: 7px;
+		top: 5px;
+
+		img {
+			height: 100%;
+			width: 100%;
+		}
+	}
+}
+
+.included {
+
+}
+
+
+
+
+

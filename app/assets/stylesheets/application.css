@@ -24,6 +24,15 @@ html, body, form, label {
   vertical-align: baseline;
 }
 
+h1, h2, h3, h4, h5, h6, p, div{
+  font-weight: 200 !important;
+  cursor: default;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 !important;
+}
+
 * {
 	box-sizing: border-box;
 	font-family: 'Roboto', sans-serif;
@@ -62,18 +71,13 @@ body {
   padding: 0;
   border: 0;
   outline: 0;
-  width: 65%;
+  width: 100%;
   font: inherit;
   vertical-align: baseline;
   background: transparent;
   color: inherit;
   font-size: 16px;
   font-weight: 200;
-  color: gray;
+  color: #3F3F3F;
   border-bottom: 1px solid #d3d3d3;
 }
-
-.session-form input:focus {
-  color: black;
-  border-color: black;
-} 

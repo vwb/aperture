@@ -42,11 +42,26 @@ var TagForm = React.createClass({
 	handleTab: function(e){
 		if (e.which === 9){
 			e.preventDefault();
-			var newTags = this.state.selectedTags.concat(this.state.tag);
+			var newTags;
+
+			if (this.state.filteredTags.length > 0){
+				if (this.state.selectedTags.indexOf(this.state.filteredTags[0]) === -1){
+					newTags = this.state.selectedTags.concat(this.state.filteredTags[0]);
+				}
+			} else {
+				if (this.state.selectedTags.indexOf(this.state.tag) === -1){
+					newTags = this.state.selectedTags.concat(this.state.tag);
+				}
+			}
+
+			if (!newTags) {newTags = this.state.selectedTags}
+
 			this.setState({
 				selectedTags: newTags,
-				tag: ""
+				tag: "",
+				filteredTags: ""
 			})
+
 			this.props.formCallback(newTags);
 		}
 	},
@@ -59,7 +74,6 @@ var TagForm = React.createClass({
 		} else {
 			matchingTags = [];
 		}
-
 		this.setState({tag: tag, filteredTags: matchingTags})
 	},
 

@@ -20,7 +20,10 @@ var PhotoIndex = React.createClass({
 
 	componentDidMount: function(){
 		this.toke = PhotoStore.addListener(this._onChange);
-		ApiUtil.fetchAllPhotos();
+
+		if (this.state.photos.length === 0){
+			ApiUtil.fetchAllPhotos();
+		}
 	},
 
 	_onChange: function(){
@@ -29,7 +32,6 @@ var PhotoIndex = React.createClass({
 
 	generatePhotoItems: function(){
 		return this.state.photos.map(function(photo, key){
-
 			var	cName = "grid-item";
 			return <PhotoIndexItem key={key} photo={photo} className="photo-index-item" cName={cName}/>
 		});
@@ -54,7 +56,9 @@ var PhotoIndex = React.createClass({
 
 					</Masonry>
 				</section>
+
 			{this.props.children}
+
 			</div>
 		);
 	}

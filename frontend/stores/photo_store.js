@@ -3,6 +3,7 @@ var Store = require('flux/utils').Store;
 var PhotoConstants = require('../constants/photo_constants');
 
 _photos = [];
+_photo = {};
 
 var PhotoStore = new Store(AppDispatcher);
 
@@ -11,14 +12,13 @@ PhotoStore.all = function(){
 };
 
 PhotoStore.__onDispatch = function(payload){
-
 	switch (payload.actionType){
 		case PhotoConstants.RECEIVE_ALL_PHOTOS:
 			resetPhotos(payload.photos);
 			PhotoStore.__emitChange();
 			break;
 		case PhotoConstants.RECEIVE_PHOTO:
-			addPhoto(payload.photo);
+			setPhoto(payload.photo);
 			PhotoStore.__emitChange();
 			break;
 		case PhotoConstants.UPDATE_PHOTO:
@@ -40,12 +40,17 @@ PhotoStore.find_by_id = function(id){
 	}
 };
 
+PhotoStore.fetchPhoto = function(){
+	var copy = Object.assign({}, _photo)
+	return copy
+}
+
 function resetPhotos(photos){
 	_photos = photos;
 };
 
-function addPhoto(photo){
-	_photos.push(photo);
+function setPhoto(photo){
+	_photo = photo;
 };
 
 function updatePhoto(photo){
@@ -55,6 +60,8 @@ function updatePhoto(photo){
 			break;
 		};
 	};
+
+	_photo = photo
 };
 
 function removePhoto(photo){

@@ -3,6 +3,7 @@ var LinkedStateMixin = require('react-addons-linked-state-mixin');
 var ApiUtil = require('../../util/api_util');
 var History = require('react-router').History;
 var PhotoStore = require('../../stores/photo_store');
+var TagForm = require('../tags/tag_form');
 
 var PhotoEditForm = React.createClass({
 
@@ -11,20 +12,26 @@ var PhotoEditForm = React.createClass({
 	getInitialState: function(){
 		return {
 				title: "",
-				price: "",
-				photo: ""
+				description: "",
+				photo: "",
+				selectedTags: ""
 			};
 	},
 
 	componentDidMount: function(){
-		var photo = PhotoStore.find_by_id(parseInt(this.props.params.id))
+		var photo = this.props.location.state.photo
 		if (photo){
 			this.setState({
 				title: photo.title,
-				price: photo.price,
-				photo: photo
+				description: photo.description,
+				photo: photo,
+				selectedTags: photo.tags
 			})
 		} 
+	},
+
+	handleTags: function(tags){
+		this.setState({selectedTags: tags})
 	},
 
 	handleSubmit: function(e){
@@ -33,14 +40,14 @@ var PhotoEditForm = React.createClass({
 
 		var params = {
 			title: this.state.title,
-			price: this.state.price
+			description: this.state.description,
+			tags: this.state.selectedTags
 		};
 
 		ApiUtil.updatePhoto(this.state.photo.id, params);
 	},
 
 	handleDelete: function(e){
-		debugger;
 		ApiUtil.deletePhoto(this.state.photo.id);
 		this.history.push("/");
 	},
@@ -52,25 +59,31 @@ var PhotoEditForm = React.createClass({
 	render: function() {
 		return (
 
-			<div className="PhotoEditForm">
-
-				<h3> Edit Image </h3>
+			<div className="edit-form-container">
 				
-				<form onSubmit={this.handleSubmit}>
+				<form onSubmit={this.handleSubmit} className="photo-edit-form">
 
-					<label htmlFor="title">Title</label>
+				<div className="form-input-container">
 					<input
 						type="text"
-						valueLink={this.linkState("title")}
-						id="title"/>
-					<br/>
+						className="form-input"
+						placeholder="Title"
+						valueLink={this.linkState("title")}/>
+				</div>
 
-					<label htmlFor="price">Price</label>
+				<div className="form-input-container">
 					<input
+						className="form-input"
 						type="text"
-						valueLink={this.linkState("price")}
-						id="price"/>
-					<br/>
+						placeholder="Description"
+						valueLink={this.linkState("description")}/>
+				</div>
+
+				<div className="form-input-container">
+					<TagForm 
+						formCallback={this.handleTags} 
+						tags={this.state.selectedTags}/>
+				</div>
 
 					<input type="submit" value="Confirm Edits"/>
 

@@ -7,24 +7,42 @@ var CollectionList = React.createClass({
 		if (this.props.collections){
 
 			var title = "";
+			var imgName = "";
+			var cName = ""
+
 
 			return this.props.collections.map(function(collection, ind){
 				title = collection.title;
-
-				//nested for loop here... need to optimize some how. Possibly as objects?
+				imgName = "../../assets/unselected_list.png";
+				cName = ""
 
 				for (var i = 0; i < collection.photos.length; i++) {
 					if (collection.photos[i].id === this.props.photo.id){
-						title += " (included)";
+
+						imgName = "../../assets/selected_list.png";
+						cName = "included"
+
 					}
 				}
 
-				return (<li 
-								key={ind} 
-								onClick={this.collectionSelect} 
-								id={collection.id}> 
-									{title}
-							</li>)
+				return (
+					<div 
+						className={"collection-list-wrapper "+cName} 
+						key={ind}
+						onClick={this.collectionSelect}
+						onClick={this.collectionSelect}
+						id={collection.id}>
+
+						<div className="toggle-container">
+							<img className="fade-in" src={imgName}/>
+						</div>
+
+						<li className="item"> 
+							{title}
+						</li>
+
+					</div>
+					)
 
 			}.bind(this))
 		}
@@ -34,7 +52,7 @@ var CollectionList = React.createClass({
 	collectionSelect: function(e){
 		var collectionId = parseInt(e.currentTarget.id);
 
-		if (e.currentTarget.innerHTML.indexOf("included") === -1){
+		if (e.currentTarget.className.indexOf("included") === -1){
 			this.props.addPhotoCallBack(collectionId);
 		} else {
 			this.props.removePhotoCallBack(collectionId);
@@ -43,11 +61,9 @@ var CollectionList = React.createClass({
 
 	render: function() {
 		return (
-			<div className={this.props.cName}>
-				<ul>
-
+			<div >
+				<ul className={this.props.cName}>
 					{this.generateCollectionItems()}
-
 				</ul>
 			</div>
 		);
