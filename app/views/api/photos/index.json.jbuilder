@@ -1,3 +1,1 @@
-json.array! @photos, :id, :url, :title, :user_id, :comments, :tags, :description
-
-
+json.array! @photos, :id, :url, :title, :comments, :tags, :description, :user

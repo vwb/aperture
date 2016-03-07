@@ -5,6 +5,16 @@ var UserActions = require('../actions/user_actions');
 
 var ApiUtil = {
 
+	fetchAllUsers: function(callback){
+		$.ajax({
+			url: "/api/users",
+			datatype: "json",
+			success: function(users){
+				UserActions.receiveAllUsers(users);
+			}
+		});
+	},
+
 	fetchAllPhotos: function(){
 		$.ajax({
 			url: "/api/photos",
@@ -180,8 +190,6 @@ var ApiUtil = {
 				callback(tags);
 			}
 		})
-	}
-
-
+	}, 
 };
 module.exports = ApiUtil;

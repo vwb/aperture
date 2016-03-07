@@ -40,7 +40,7 @@
 	}
 
 	.comment-body {
-		display: inline-block;
+		display: inline;
 		position: relative;
 		font-weight: 200;
 
@@ -49,11 +49,11 @@
 			cursor: pointer;
 			display: inline-block;
 			position: relative;
-			font-weight: 400;
+			font-weight: 400 !important;
 		}
 
 		.comment-content {
-			display: inline-block;
+			display: inline;
 			position: relative;
 			padding-left: 7px;
 		}

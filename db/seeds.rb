@@ -6,8 +6,17 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-User.create!(email: "test@email.com", password: "password", username: "vinny");
-User.create!(email: "test2@email.com", password: "password", username: "test");
+User.create!(email: "test@email.com", password: "password", username: "Vinny");
+User.create!(email: "test2@email.com", password: "password", username: "Jon");
+User.create!(email: "sample@email.com", password: "password", username: "sample")
+User.create!(email: "test3@email.com", password: "password", username: "Sarah");
+User.create!(email: "test4@email.com", password: "password", username: "Ethan");
+User.create!(email: "test5@email.com", password: "password", username: "Ian");
+User.create!(email: "test6@email.com", password: "password", username: "Hailey");
+User.create!(email: "test7@email.com", password: "password", username: "Alex");
+User.create!(email: "test8@email.com", password: "password", username: "Matt");
+User.create!(email: "test9@email.com", password: "password", username: "MK");
+User.create!(email: "test10@email.com", password: "password", username: "Sara");
 
 imageURLs = [
   "http://proof.nationalgeographic.com/files/2015/07/NationalGeographic_1203310.jpg",
@@ -31,8 +40,32 @@ imageURLs = [
   "https://c2.staticflickr.com/8/7170/6837511573_b36f2798ea_b.jpg",
   "http://i.imgur.com/KFuI29B.jpg",
   "https://c1.staticflickr.com/9/8460/7958523808_02ce5acaf9_b.jpg",
-  "http://proof.nationalgeographic.com/files/2015/07/prod-yourshot-345431-6054565.jpg"
+  "http://proof.nationalgeographic.com/files/2015/07/prod-yourshot-345431-6054565.jpg",
+  "https://images.unsplash.com/photo-1447877085163-3cce903855cd?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
+  "https://images.unsplash.com/photo-1453282716202-de94e528067c?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
+  "https://images.unsplash.com/photo-1442473483905-95eb436675f1?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
+  "https://images.unsplash.com/photo-1440589473619-3cde28941638?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
+  "https://images.unsplash.com/photo-1453743327117-664e2bf4e951?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
+  "https://images.unsplash.com/photo-1452800185063-6db5e12b8e2e?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
+  "https://images.unsplash.com/photo-1452716726610-30ed68426a6b?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
+  "https://images.unsplash.com/photo-1451188502541-13943edb6acb?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
+  "https://images.unsplash.com/photo-1451337516015-6b6e9a44a8a3?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
+  "https://images.unsplash.com/photo-1443890484047-5eaa67d1d630?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
+  "https://images.unsplash.com/photo-1448518184296-a22facb4446f?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
+  "https://images.unsplash.com/photo-1451186859696-371d9477be93?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
+  "https://images.unsplash.com/photo-1448960968772-b63b3f40dfc1?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
+  "http://i.imgur.com/BymaSga.jpg",
+  "http://i.imgur.com/OIOOtKc.jpg",
+  "http://i.imgur.com/Wb1t8wP.jpg",
+  "http://i.imgur.com/y3PuWIf.jpg",
+  "http://imgur.com/YBX6uEG",
+  "http://i.imgur.com/fZx1Sct.jpg",
+  "https://i.imgur.com/OmHviNk.jpg",
+  "http://imgur.com/HOSg2FC",
+  "https://www.reddit.com/r/EarthPorn/"
 ]
+
+imageURLs.shuffle!
 
 tags = [
   "landscape",
@@ -43,23 +76,36 @@ tags = [
   "scenery",
   "mountain",
   "girl",
+  "sick",
+  "sunset",
+  "city",
+  "adult",
+  "wonderful",
+  "amazing",
+  "awesome"
 ]
 
 tags.length.times do |i|
   Tag.create!(title: tags[i])
 end
 
-22.times do |i|
-  user_id = (1..2).to_a.sample
+imageURLs.length.times do |i|
+  user_id = (1..11).to_a.sample
   p = Photo.create!(url: imageURLs[i], user_id: user_id, title: Faker::Hipster.word)
   p.tag_ids = (1..8).to_a.sample(3)
 end
 
-a = Collection.create!(title: "Favorites", user_id: 1)
-a.photo_ids = (1..21).to_a.sample(5)
+10.times do |i|
+  a = Collection.create!(title: "Favorites", user_id: i+1)
+  length = imageURLs.length
+  a.photo_ids = (1..length).to_a.sample(6)
+end
 
-b = Collection.create!(title: "Favorites", user_id: 2)
-b.photo_ids = (1..21).to_a.sample(8)
 
+50.times do |i|
+  photo_id = (1..imageURLs.length).to_a.sample
+  user_id = (1..11).to_a.sample
+  Comment.create!(content: Faker::Hipster.sentence, photo_id: photo_id, user_id: user_id)
+end
 
 

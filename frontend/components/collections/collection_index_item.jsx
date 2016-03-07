@@ -8,10 +8,10 @@ var CollectionIndexItem = React.createClass({
 	selectCoverImage: function(){
 		var collection = this.props.collection
 
-		if (collection.cover_photo){
-			return collection.cover_photo
-		} else if (collection.photos.length > 0){
+		if (collection.photos.length > 0){
 			return collection.photos[0].url
+		} else if (collection.cover_photo){
+			return collection.cover_photo
 		} else {
 			return ""
 		}

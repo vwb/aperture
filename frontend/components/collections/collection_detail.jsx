@@ -46,8 +46,10 @@ var CollectionDetail = React.createClass({
 
 	handleBackgroundImage: function(){
 		if (this.state.collection){
-			if (this.state.collection.photos){
+			if (this.state.collection.photos.length > 0){
 				return this.state.collection.photos[0].url
+			} else {
+				return this.state.collection.cover_photo
 			}
 		};
 	},

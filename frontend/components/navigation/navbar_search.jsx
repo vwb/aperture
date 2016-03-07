@@ -87,7 +87,6 @@ var NavBarSearch = React.createClass({
 
 	handleSubmit: function(e){
 		e.preventDefault();
-		debugger;
 		this.history.push({path: "/", state: {query: this.state.query}})
 	},
 

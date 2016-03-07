@@ -14,7 +14,7 @@ var PhotoIndex = React.createClass({
 	getInitialState: function(){
 
 		return {
-			photos: PhotoStore.all()
+			photos: PhotoStore.all(),
 		};
 	},
 
@@ -33,7 +33,12 @@ var PhotoIndex = React.createClass({
 	generatePhotoItems: function(){
 		return this.state.photos.map(function(photo, key){
 			var	cName = "grid-item";
-			return <PhotoIndexItem key={key} photo={photo} className="photo-index-item" cName={cName}/>
+			return <PhotoIndexItem 
+								key={key} 
+								photo={photo} 
+								className="photo-index-item" 
+								cName={cName}
+								index={true}/>
 		});
 	},
 
