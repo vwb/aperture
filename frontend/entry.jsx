@@ -62,9 +62,13 @@ var App = React.createClass({
   		location.state && location.state.modal && this.previousChildren
   	);
 
+  	if (location.state && location.state.query){
+  		var query = location.state.query;
+  	}
+
 	  return (
 	      <div>
-	      	<NavBar current={this.state.current} pathname={location.pathname}/>
+	      	<NavBar current={this.state.current} pathname={location.pathname} query={query}/>
 
 	      	{isModal ?
 	      		this.previousChildren && React.cloneElement(this.previousChildren, {current: this.state.current}) :

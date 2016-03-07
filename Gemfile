@@ -9,6 +9,7 @@ gem 'figaro'
 gem 'newrelic_rpm'
 gem 'rails_12factor'
 gem 'faker'
+gem 'kaminari'
 
 
 # Use SCSS for stylesheets

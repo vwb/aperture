@@ -3,20 +3,24 @@ var SessionActions = require('../actions/session_actions');
 
 var SessionsUtil = {
 
-	createUser: function(params, callback){
+	createUser: function(params, successCallBack, errorCallBack){
 		$.ajax({
 			type: "POST",
 			url: "/api/users",
 			data: {user: params},
 			datatype: "json",
 			success: function(data){
-				SessionActions.newUser(data);
-				callback(data.id);
-			}
+				if (data.error){
+					errorCallBack(data)
+				} else {
+					SessionActions.newUser(data);
+					successCallBack(data.id);
+				}
+			},
 		});
 	},
 
-	createSession: function(params, callback){
+	createSession: function(params, successCallBack, errorCallBack){
 
 		$.ajax({
 			type: "POST",
@@ -24,8 +28,12 @@ var SessionsUtil = {
 			data: {user: params},
 			datatype: "json",
 			success: function(data){
-				SessionActions.newSession(data);
-				callback();
+				if (data.error){
+					errorCallBack(data)
+				} else {
+					SessionActions.newSession(data);
+					successCallBack();
+				}
 			}.bind(this)
 		});
 	},

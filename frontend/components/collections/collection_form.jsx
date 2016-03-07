@@ -2,19 +2,18 @@ var React = require('react');
 var LinkedStateMixin = require('react-addons-linked-state-mixin');
 var PhotoSelector = require('../photos/photo_selector');
 var CollectionActions = require('../../actions/collection_actions');
-var TagForm = require('../tags/tag_form');
+var History = require('react-router').History;
 
 var CollectionForm = React.createClass({
 
-	mixins: [LinkedStateMixin],
+	mixins: [LinkedStateMixin, History],
 
 	getInitialState: function(){
 
 		return {
 			title: "",
 			description: "",
-			photoIds: [],
-			selectedTags: []
+			photoIds: []
 		};
 	},
 
@@ -24,54 +23,65 @@ var CollectionForm = React.createClass({
 			title: this.state.title,
 			description: this.state.description,
 			photos: this.state.photoIds,
-			tags: this.state.selectedTags
 		}
 		CollectionActions.createCollection(params, this.successRedirect);
 	},
 
 	successRedirect: function(id){
-		this.props.history.push("/collections/"+id)
+		this.history.push("/collections/"+id)
 	},
 
 	updateForm: function(selectedPhotos){
 		this.setState({photoIds: selectedPhotos});
 	},
 
-	handleTags: function(tags){
-		this.setState({selectedTags: tags})
-	},
-
 	render: function() {
 		return (
-			<div className="collection-form wrapper">
-				<form onSubmit={this.handleSubmit}>
-					Curate your collection...
+			<div className="collection-form-container">
+
+			<div className="modal-header">
+				Curate your collection...
+			</div>
+
+				<form onSubmit={this.handleSubmit} className="collection-form center">
 
 					<section>
-						<label>
-							Title
-							<input
-								type="text"
-								valueLink={this.linkState("title")}/>
-						</label>
-						<br/>
 
-						<label>
-							Description
+						<div className="form-input-container">
 							<input
 								type="text"
-								valueLink={this.linkState("description")}/>
-						</label>
-						<br/>
+								valueLink={this.linkState("title")}
+								className="form-input"
+								placeholder="Title"/>
+						</div>
+
+						<div className="form-input-container">
+							<input
+								type="text"
+								valueLink={this.linkState("description")}
+								className="form-input"
+								placeholder="Description"/>
+						</div>
+
 					</section>
 
-					<TagForm formCallback={this.handleTags} tags={this.state.selectedTags}/>
+					<div className="form-tip">
+						Choose some photos from below to get your collection started.
+					</div>
  
 					<div className="photo-selector">
 						<PhotoSelector colTitle={this.state.title} updateForm={this.updateForm}/>
 					</div>
 
-					<input type="submit" value="Create Collection"/>
+					<div id="photo-counter">
+						{this.state.photoIds.length} photos selected
+					</div>
+
+
+					<input 
+						type="submit" 
+						value="Create Collection"
+						className="mdl-button mdl-button--raised mdl-js-button mdl-button--colored"/>
 
 				</form>
 			</div>

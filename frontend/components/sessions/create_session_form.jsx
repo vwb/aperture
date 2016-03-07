@@ -2,6 +2,9 @@ var React = require('react');
 var LinkedStateMixin = require('react-addons-linked-state-mixin');
 var SessionUtil = require('../../util/sessions_util');
 var History = require('react-router').History;
+var ErrorIndex = require('../util/error_index');
+var TypistForm = require('../util/typist_form');
+
 
 var Modal = require('boron/OutlineModal');
 
@@ -12,19 +15,41 @@ var SignInForm = React.createClass({
 	getInitialState: function(){
 		return {
 			email: "",
-			password: ""
+			password: "",
+			errors: [],
+			typist: false
 		};
 	},
 
 	handleSubmit: function(e){
 		e.preventDefault();
+		var errorList = [];
+
+		debugger;
+
+		if (this.state.email === ""){
+			errorList.push("Email cannot be blank.")
+		}
+
+		if (this.state.password === ""){
+			errorList.push("Password cannot be blank.")
+		} 
 
 		var params = {
 			email: this.state.email,
 			password: this.state.password
 		};
 
-		SessionUtil.createSession(params, this.successRedirect)
+		if (errorList.length > 0){
+			this.setState({errors: errorList})
+		} else {
+			SessionUtil.createSession(params, this.successRedirect, this.errorHandler)
+		}
+
+	},
+
+	errorHandler: function(data){
+		this.setState({errors: data.error})
 	},
 
 	handleSignUp: function(e){
@@ -36,14 +61,26 @@ var SignInForm = React.createClass({
      });
 	},
 
-	//any way to push "back" to where the use was before they logged in?
 	successRedirect: function(){
 		this.props.closeModal();
 	},
 
+	handleGuestAccount: function(){
+		var params = {
+			email: "sample@email.com",
+			password: "password"
+		}
+
+		SessionUtil.createSession(params, this.successRedirect, this.errorHandler);
+	},
+
 	render: function() {
-		
-		return (
+
+		// if (this.state.typist){
+		// 	return (<TypistForm />)
+		// } else {
+			
+			return (
 
 				<div className="form-container center noSelect">
 
@@ -52,6 +89,10 @@ var SignInForm = React.createClass({
 					</div>
 
 					<form onSubmit={this.handleSubmit} className="session-form">
+
+						<div className="error-container">
+							<ErrorIndex errors={this.state.errors}/>
+						</div>
 						
 						<div className="form-input-container">
 							<input
@@ -91,8 +132,17 @@ var SignInForm = React.createClass({
 
 					</form>
 
-			</div>
-		);
+						<div className="form-spacer" id="guest-login-button">
+							<button 
+								onClick={this.handleGuestAccount}
+								className="mdl-button mdl-js-button mdl-button--colored">
+									guest login
+							</button>
+						</div>
+
+				</div>
+			);
+			//}
 	}
 });
 

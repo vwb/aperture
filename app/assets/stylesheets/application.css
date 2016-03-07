@@ -81,3 +81,15 @@ body {
   color: #3F3F3F;
   border-bottom: 1px solid #d3d3d3;
 }
+
+.destroy {
+ color: red !important;
+ font-size: 12px !important;
+}
+
+.confirm {
+  color: green !important;
+  font-size: 14px;
+}
+
+

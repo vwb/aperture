@@ -51,6 +51,7 @@ var UserProfile = React.createClass({
 
 	generatePhotoItems: function(){
 		if (this._userPresent()){
+
 			return this.state.user.photos.map(function(photo, key){
 				return <PhotoIndexItem key={key} photo={photo} cName="grid-item profile-image" className="photo-index-item"/>
 			})
@@ -66,9 +67,9 @@ var UserProfile = React.createClass({
 		}
 	},
 
-	handleBackgrounImage: function(){
+	handleBackgroundImage: function(){
 		if (this._userPresent()){
-			if (this.state.user.photos.length > 0){
+			if (this.state.user.photos && this.state.user.photos.length > 0){
 				return this.state.user.photos[0].url
 			} else {
 				return ""
@@ -76,10 +77,21 @@ var UserProfile = React.createClass({
 		}
 	},
 
-	handleEdit: function(){
+	handleEdit: function(e){
+		e.preventDefault();
+
 	   this.history.replace({
       pathname: this.props.location.pathname,
       state: {modal: true, returnTo: this.props.location.pathname, action: "edit_profile", user: this.state.user}
+    });
+	},
+
+	handleCollection: function(e){
+		e.preventDefault();
+
+		this.history.replace({
+      pathname: this.props.location.pathname,
+      state: {modal: true, returnTo: this.props.location.pathname, action: "new_collection"}
     });
 	},
 
@@ -94,9 +106,9 @@ var UserProfile = React.createClass({
 					<div className="user-options">
 
 						<span className="profile-button-container">
-							<Link to={"users/"+this.state.user.id+"/add_collection"}
+							<button onClick={this.handleCollection}
 							className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"> Add Collection 
-							</Link>
+							</button>
 						</span>
 
 						<span className="profile-button-container">
@@ -117,7 +129,7 @@ var UserProfile = React.createClass({
 			<div className="parallax">
 
 				<div className="parallax__layer parallax__layer--back background">
-					<img src={this.handleBackgrounImage()}/>
+					<img src={this.handleBackgroundImage()}/>
 				</div>
 
 				<div className="parallax__layer parallax__layer--base group">

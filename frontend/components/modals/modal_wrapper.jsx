@@ -2,8 +2,9 @@ var React = require('react');
 var PhotoForm = require('../photos/photo_form');
 var SignInForm = require('../sessions/create_session_form');
 var SignUpForm = require('../sessions/create_user_form');
-var ModalStyles = require('../../constants/modal_styles');
 var EditProfileForm = require('../user/edit_profile');
+var NewCollectionForm = require('../collections/collection_form');
+var ModalStyles = require('../../constants/modal_styles');
 var Modal = require('boron/OutlineModal');
 
 
@@ -46,8 +47,6 @@ var ModalWrapper = React.createClass({
 	_selectModalBody: function(action){
 		var modalElements = {};
 
-
-
 		if (action === "upload"){
       modalElements["body"] = (<PhotoForm closeModal={this.hideModal}/>)
       modalElements["style"] = ModalStyles.uploadForm
@@ -61,10 +60,14 @@ var ModalWrapper = React.createClass({
 			modalElements["style"] = ModalStyles.signUp
 		
 		} else if (action === "edit_profile"){
-			debugger;
 			modalElements["body"] = (<EditProfileForm user={this.props.user} closeModal={this.hideModal}/>);
-			modalElements["style"] = ModalStyles.uploadForm
+			modalElements["style"] = ModalStyles.editProfile
+		
+		} else if (action === "new_collection"){
+			modalElements["body"] = (<NewCollectionForm user={this.props.user} closeModal={this.hideModal}/>);
+			modalElements["style"] = ModalStyles.newCollection
 		}
+
 
 
 		return modalElements;

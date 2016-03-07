@@ -14,6 +14,7 @@
 
 class Photo < ActiveRecord::Base
   validates :url, :user_id, presence: true
+  # paginates_per 10
 
   belongs_to :user
 

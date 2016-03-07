@@ -4,10 +4,11 @@ var LinkedStateMixin = require('react-addons-linked-state-mixin');
 var PhotoThumb = require('./photo_thumb');
 var ApiUtil = require('../../util/api_util');
 var TagForm = require('../tags/tag_form');
+var History = require('react-router').History;
 
 var PhotoForm = React.createClass({
 
-	mixins: [LinkedStateMixin],
+	mixins: [LinkedStateMixin, History],
 
 	getInitialState: function(){
 		this.currentPhoto = {};
@@ -15,10 +16,9 @@ var PhotoForm = React.createClass({
 		return {
 			title: "",
 			description: "",
-			price: 0,
 			photos: [],
 			selectedTags: "",
-			highLighted: "",
+			highLighted: 0,
 			visible: "hidden"
 		}
 	},
@@ -26,8 +26,6 @@ var PhotoForm = React.createClass({
 	handleSubmit: function(e){
 		e.preventDefault();
 		this.saveInfo();
-
-		debugger;
 
 		var options = {
 			totalImages: this.state.photos.length-1,
@@ -42,12 +40,25 @@ var PhotoForm = React.createClass({
 
 
 	successRedirect: function(){
-		this.props.history.push("/");
+		this.history.push("/");
 	},
 
 	handleImages: function(imageObjects){
-		var currentState = this.state.photos.concat(imageObjects)
-		this.setState({photos: currentState})
+		var images = [];
+
+		for (var i = 0; i < imageObjects.length; i++) {
+			var obj = {};
+			obj["url"] = imageObjects[i].url
+			images.push(obj);
+		}
+		if (this.state.photos.length === 0){
+			this.currentPhoto = images[0];
+		}
+		var currentState = this.state.photos.concat(images)
+		this.setState({
+			photos: currentState,
+			visible: ""
+		})
 	},
 
 
@@ -65,9 +76,22 @@ var PhotoForm = React.createClass({
 								key={ind} 
 								ind={ind} 
 								updateForm={this.updateDetailForm} 
-								cName={cName}/>
+								cName={cName}
+								removeImage={this.removeImage}/>
 
 		}.bind(this))
+	},
+
+	removeImage: function(url){
+		var photos = this.state.photos;
+		for (var i = 0; i < photos.length; i++) {
+			if (photos[i].url === url){
+				photos.splice(i, 1);
+			}
+		}
+		this.setState({
+			photos: photos,
+			visible: "hidden"});
 	},
 
 	updateDetailForm: function(url, ind){
@@ -84,7 +108,6 @@ var PhotoForm = React.createClass({
 			this.setState({
 				title: photo.title, 
 				description: photo.description, 
-				price: photo.price,
 				selectedTags: photo.tags
 			});
 		}
@@ -97,7 +120,6 @@ var PhotoForm = React.createClass({
 		if (this.currentPhoto.url){
 			this.currentPhoto["title"] = this.state.title;
 			this.currentPhoto["description"] = this.state.description;
-			this.currentPhoto["price"] = this.state.price;
 			this.currentPhoto["tags"] = this.state.selectedTags;
 		}
 	},
@@ -126,13 +148,21 @@ var PhotoForm = React.createClass({
 		return sub;
 	},
 
+	renderHeader: function(){
+		if (this.state.photos.length === 0){
+			return (<div id="select-header"><h3> Select Images </h3></div>)
+		} else {
+			return ""
+		}
+	},
+
 	render: function() {
 		return (
 			<div className="form-container center">
 				<div className="modal-form-styling center">
 
 					<form onSubmit={this.handleSubmit} className="upload-form">
-
+						{this.renderHeader()}
 						<PhotoButton 
 							handleUpload={this.handleImages} 
 							photoCount={this.state.photos.length}/>
@@ -158,14 +188,6 @@ var PhotoForm = React.createClass({
 										valueLink={this.linkState("description")}
 										className="form-input"
 										placeholder="Description"/>
-								</div>
-
-								<div className="form-input-container upload">
-									<input
-										type="text"
-										valueLink={this.linkState("price")}
-										className="form-input"
-										placeholder="0"/>
 								</div>
 
 								<div className="form-input-container">	

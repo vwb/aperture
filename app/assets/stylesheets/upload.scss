@@ -12,8 +12,16 @@
 
 .upload-form {
 	position: relative;
-	top: 40%;
-	transform: translateY(-50%);
+	vertical-align: middle;
+	padding: 30px 0 30px 0;
+
+	.tag-item {
+		color: white !important;
+
+		.material-icons {
+			color: white !important;
+		}
+	}
 }
 
 .submit-button-container {
@@ -30,6 +38,14 @@
   color: white;
   border-color: white;
 } 
+
+.photo-button-form {
+	display: inline-block;
+}
+
+#select-header {
+	padding: 100px 0 40px 0;
+}
 
 
 

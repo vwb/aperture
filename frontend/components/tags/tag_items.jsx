@@ -6,9 +6,19 @@ var TagItems = React.createClass({
 	generateTagItems: function(){
 		if (this.props.tags) {
 			return this.props.tags.map(function(tag, ind){
-				return <TagItem tag={tag} key={ind}/>
-			})
+				return <TagItem 
+									tag={tag} 
+									key={ind} 
+									removeTag={this.props.removeTag}
+									tagClickHandler={this.check()}/>
+			}.bind(this))
 		}
+	},
+
+	check: function(){
+		if (this.props.clickHandler){
+			return this.props.clickHandler
+		};
 	},
 
 	render: function() {

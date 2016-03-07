@@ -2,6 +2,7 @@ var React = require('react');
 var LinkedStateMixin = require('react-addons-linked-state-mixin');
 var SessionsUtil = require('../../util/sessions_util');
 var History = require('react-router').History;
+var ErrorIndex = require('../util/error_index');
 
 var SignUpForm = React.createClass({
 
@@ -12,7 +13,8 @@ var SignUpForm = React.createClass({
 			email: "",
 			password: "",
 			username: "",
-			passwordConfirmation: ""
+			passwordConfirmation: "",
+			errors: []
 		};
 	},
 
@@ -25,7 +27,30 @@ var SignUpForm = React.createClass({
 			username: this.state.username
 		};
 
-		SessionsUtil.createUser(params, this.successRedirect);
+		var errorList = [];
+		if (this.state.password !== this.state.passwordConfirmation){
+			errorList.push("Passwords do not match.")
+		}
+
+		if (this.state.username === ""){
+			errorList.push("Username cannot be blank.")
+		} 
+
+		if (this.state.email === ""){
+			errorList.push("Email cannot be blank.")
+		}
+
+		if (errorList.length > 0){
+			
+			this.setState({errors: errorList})
+
+		} else {
+			SessionsUtil.createUser(params, this.successRedirect, this.errorHandler);
+		}
+	},
+
+	errorHandler: function(data){
+		this.setState({errors: data.error})
 	},
 
 	handleSignIn: function(e){
@@ -49,6 +74,10 @@ var SignUpForm = React.createClass({
 				</div>
 
 				<form onSubmit={this.handleSubmit} className="session-form">
+
+					<div className="error-container">
+						<ErrorIndex errors={this.state.errors}/>
+					</div>
 
 					<div className="form-input-container">
 						<input

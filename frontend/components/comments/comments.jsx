@@ -31,7 +31,7 @@ var Comments = React.createClass({
 			<div className="comment-container">
 
 				<h4>Comments</h4>
-				<CommentForm photo={this.state.photo}/>
+				<CommentForm photo={this.state.photo} current={this.props.current}/>
 				<ul className="comment-list">
 					{this.generateComments()}
 				</ul>

@@ -43,7 +43,8 @@ var CommentForm = React.createClass({
 							type="text"
 							valueLink={this.linkState("content")}
 							className="form-input"
-							placeholder="Leave a comment..."/>
+							placeholder="Leave a comment..."
+							disabled={!this.props.current}/>
 					</div>
 
 				</form>

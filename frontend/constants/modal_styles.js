@@ -48,6 +48,38 @@ module.exports = {
 		backDropStyle: {
 
 		}
+	},
+
+	editProfile : {
+		contentStyle: {
+			height: '100%',
+			width: '100%'
+		},
+
+		modalStyle: {
+			height: '90%',
+			width: '60%',
+		},
+
+		backDropStyle: {
+
+		}
+	},
+
+	newCollection: {
+		contentStyle: {
+			height: '100%',
+			width: '100%'
+		},
+
+		modalStyle: {
+			height: '90%',
+			width: '90%',
+		},
+
+		backDropStyle: {
+
+		}
 	}
 
 }

@@ -30,7 +30,7 @@ var PhotoButton = React.createClass({
 	render: function() {
 
 		return (
-			<div className="PhotoForm">
+			<div className="photo-button-form">
 				<button 
 					className="mdl-button mdl-js-button mdl-button--fab mdl-button--accent"
 					onClick={this.upload}>

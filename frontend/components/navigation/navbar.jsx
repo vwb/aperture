@@ -2,13 +2,30 @@ var React = require('react');
 var NavBarSearch = require('./navbar_search');
 var History = require('react-router').History;
 var SessionUtil = require('../../util/sessions_util');
+var ApiUtil = require('../../util/api_util');
 
 var NavBar = React.createClass({
 
   mixins: [History],
 
-  handleClick: function(e){
+  getInitialState: function(){
+    var query = ""
+    if (this.props.query){
+      query = this.props.query
+    }
 
+    return {
+      query: query
+    }
+  },
+
+  componentWillReceiveProps: function(newProps){
+    if (newProps.query){
+      this.setState({query: newProps.query})
+    }
+  },
+
+  handleClick: function(e){
 
     if (this.props.current){
       SessionUtil.destroySession();
@@ -34,38 +51,48 @@ var NavBar = React.createClass({
     this.history.push("/users/"+this.props.current.id);
   },
 
+  renderIndex: function(e){
+    e.preventDefault();
+    this.history.push("/");
+    // ApiUtil.fetchAllPhotos();
+    this.setState({query: ""})
+  },
+
   render: function() {
     var text;
     var profile;
+    var upload;
     if (this.props.current){
-      text = "Log Out";
+      text = <i className="material-icons">power_settings_new</i>;
       profile = (
-        <li className="header-li" onClick={this.profileLink}> <a>Profile</a> </li>
-      );
+        <li className="header-li hvr-underline-from-left" onClick={this.profileLink}> <i className="material-icons">account_circle</i> </li> );
+      upload = (<i className="material-icons" onClick={this.handleUpload}>add_a_photo</i>);
     } else {
-      text = "Sign In";
+      text = <i className="material-icons">person_add</i>;
+      profile = "";
     }
 
     return (
+
       <div>
         <header className="navbar-header">
           <div className="header-inner">
             <div className="logo">
-              <a href="#"><img src="../../assets/Aperture" alt="Aperture"/></a>
+              <a href="#" onClick={this.renderIndex}><img src="../../assets/Aperture" alt="Aperture"/></a>
             </div>
 
             <div className="search-container">
-              <NavBarSearch/>
+              <NavBarSearch query={this.state.query}/>
             </div>
 
             <ul className="header-ul group">
 
-              <li className="header-li">
-                <i className="material-icons" onClick={this.handleUpload} >add_a_photo</i>
+              <li className="header-li hvr-underline-from-left">
+                {upload}
               </li>
 
-              <li onClick={this.handleClick} className="header-li" id="sign-in">
-                <a>{text}</a>
+              <li onClick={this.handleClick} className="header-li hvr-underline-from-left" id="sign-in">
+                {text}
               </li>
 
               {profile}

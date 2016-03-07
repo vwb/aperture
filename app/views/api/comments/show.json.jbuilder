@@ -1,4 +1,4 @@
-json.extract! @photo, :id, :url, :title, :price, :user_id, :tags
+json.extract! @photo, :id, :url, :title, :user_id, :tags, :description
 
 json.comments @photo.comments do |comment|
 	json.content comment.content

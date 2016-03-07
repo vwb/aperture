@@ -1,120 +1,17 @@
-BUGS:
-
-
-******* nested for loop to determine photos inclusion within a collection. (BAD)! Optimize later *******
-
-Questions: CSS trick for the view collection page. How to prevent it from squishing horizontally? Is this possible without javascript?
-
-
-
-
-
-
-
 TASKS FOR TOMORROW:
 
 	BIG ITEMS:
 
-		Fix routes so that i can use a hook route when calling photo detail page and can use escape/etc to go there.
+		Infinite scroll
 
-		(Almost done) Add tag form to edit picture form
+			- fix the comment styling... getting some weird behaviors!
+			- image hover (show username, link to collections?)
+			- add default images to collections (if they dont have any photos inside)
 
-		Photo Upload form
-			- add ability to remove added photos
-			- have it automatically 'select' the first image
-
-		Add Edit profile form
-
-		Add Edit collection form
-
-		Error Handling for Forms
-
-		Create tag "items" that can be cancelled
-
-
-		Create a guest account feature
 
 		Make a splash page
 
-		Infinite scroll
 
-		Add ability to delete a comment
-
-
-
-
-		finish up styling:
-			- 'selected' images
-			- tag items -> add "x" to cancel the tag, style the shit out of em.
-			- image hover (show username, link to collections?)
+		Add Edit collection form
 
 		scale for larger amounts of images
-			> user avatar upload change to square images
-			> 
-
-		INFINITE SCROLL!
-
-		Disappearing navbar!
-
-	smaller items:
-
-		change the masonry implementation on main page to the style on the profile page
-		style the collection photo to not squish horizontally!
-			> media queries!
-			> some way to grab the photo width and set that as the minimum width? 
-			> But it needs to be propportional still to the change in the height.
-
-
-
-
-TAG NOTES
-	- creation is just put in the title if it doesn't already exist
-
-	- then with photo upload / collection creation send along the array of tags and set those in the controller
-
-	- each form should access the tag store, if tags are made that don't exist yet send another request to create those,
-		on completion grab the ids sent back and bundle with the other ajax call?
-			> possibly overthinking this.
-
-
-	-->> send all tags by title, then in the controller for creation/update grab the tags that have or haven't been created and return the ids of them all in the end. 
-		-> Tag Model method to look for tags by title then iterate over and create those that have not yet been made.
-		
-
-		-> tag store
-			- grab all of the tags and house.
-			- what needs access to this?
-				> tag_form_component
-				> search
-
-	
-
-
-
-
-
-
-
-
-
-Other Random Notes:
-	User
-		> add uniqueness validation for email on database side
-		> add a required username for users
-
-	Masonry -> copy the strategy used for the profile images! 
-
-	Optimize:
-		> figure out way to optimize the display of high resolution phptos. THe feed doesnt need all these full resolution versions of the image!
-
-	Style:
-		- when click on search bar placeholder text disappear (even before the user starts typing)
-
-		Nice little menu once users are logged in for navbar
-		http://codepen.io/alexcican/pen/gsFpd
-
-
-BONUS
-	- add ability to tag collections
-	- ability to purchase photos
-

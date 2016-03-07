@@ -22,6 +22,10 @@ var TagForm = React.createClass({
 
 		if (this.state.filteredTags.length === 0){
 			TagActions.fetchAllTags();
+		} 
+
+		if (this.props.tags){
+			this.setState({selectedTags: this.props.tags});
 		}
 	},
 
@@ -36,7 +40,7 @@ var TagForm = React.createClass({
 	},
 
 	_onChange: function(){
-		this.setState({existingTags: TagStore.allTags()});
+		this.setState({existingTags: TagStore.allTagTitles()});
 	},
 
 	handleTab: function(e){
@@ -84,11 +88,22 @@ var TagForm = React.createClass({
 			tag: "",
 			filteredTags: []
 		});
+
+		this.props.formCallback(newTags);
 	},
 
 	handleInput: function(e){
 		var query = e.currentTarget.value
 		this._findMatching(query)
+	},
+
+	handleTagDeletion: function(title){
+		var newTags = this.state.selectedTags;
+		var ind = newTags.indexOf(title);
+
+		newTags.splice(ind, 1);
+		this.setState({selectedTags: newTags});
+
 	},
 
 	render: function() {
@@ -107,7 +122,7 @@ var TagForm = React.createClass({
 			      	items={this.state.filteredTags} 
 			      	selectCallBack={this.handleItemSelection}/>
 
-					<TagItems tags={this.state.selectedTags}/>
+					<TagItems tags={this.state.selectedTags} removeTag={this.handleTagDeletion}/>
 			</div>
 		);
 	}

@@ -16,11 +16,9 @@ class Tag < ActiveRecord::Base
   has_many :taggings
   has_many :photos, through: :taggings
 
-  def self.find_ids(tag_items)
+  def self.find_ids(titles)
 
     results = []
-
-    tag_items
 
     relation = Tag.where(title: titles)
 

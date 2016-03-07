@@ -8,10 +8,9 @@ var SuggestedItemList = React.createClass({
 
 		if (this.props.items.length > 0){
 			var max = (this.props.items.length > 4) ? 4 : this.props.items.length
-
 			for (var i = 0; i < max; i++) {
 				items.push(<SuggestedItem 
-											title={this.props.items[i].title} 
+											title={this.props.items[i]} 
 											selectCallBack={this.props.selectCallBack}
 											key={i}/>)
 			}

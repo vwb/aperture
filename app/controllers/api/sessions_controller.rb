@@ -9,8 +9,8 @@ class Api::SessionsController < ApplicationController
       login_user!(@user)
       render :show
     else
-      flash.now[:errors] = "Incorrect information"
-      render :show
+      @errors = ["Incorrect login information"]
+      render :errors
     end
     
   end

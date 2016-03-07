@@ -1,8 +1,11 @@
 var React = require('react');
 var UserStore = require('../../stores/user_store');
 var ApiUtil = require('../../util/api_util');
+var History = require('react-router').History;
 
 var UserDetail = React.createClass({
+
+	mixins: [History],
 
 	getInitialState: function(){
 
@@ -48,13 +51,17 @@ var UserDetail = React.createClass({
 		}
 	},
 
+	handleClick: function(){
+		this.history.push("users/"+this.state.user.id);
+	},
+
 	render: function() {
 		return (
 			<div className="user-detail">
 				<section className="img-container">
-					<img src={this.renderURL()}/>
+					<img onClick={this.handleClick} src={this.renderURL()}/>
 				</section>
-				<section className="user-info">
+				<section onClick={this.handleClick} className="user-info">
 					{this.renderName()}
 				</section>
 			</div>

@@ -37,14 +37,14 @@ var ApiUtil = {
 	},
 
 	createPhoto: function(params, values){
-		var data = {photo: params}
-		debugger;
+
+		var testData = {photo: params}
 
 		$.ajax({
 			type: "POST",
 			url: "/api/photos",
 			datatype: "json",
-			data: data,
+			data: testData,
 			success: function(photo){
 				PhotoActions.receivePhoto(photo);
 				values.callBack();	
@@ -52,7 +52,7 @@ var ApiUtil = {
 		});
 	},
 
-	updatePhoto: function(id, params){
+	updatePhoto: function(id, params, callback){
 		$.ajax({
 			type: "PATCH",
 			url: "/api/photos/"+id,
@@ -60,6 +60,7 @@ var ApiUtil = {
 			data: {photo: params},
 			success: function(photo){
 				PhotoActions.updatePhoto(photo);
+				callback();
 			}
 		});
 	},
@@ -83,6 +84,24 @@ var ApiUtil = {
 				UserActions.receiveUser(user);
 			}
 		});
+	},
+
+	updateUser: function(id, params, successCallBack, errorCallBack){
+
+		$.ajax({
+			type: "PATCH",
+			url: "api/users/"+id,
+			data: {user: params},
+			datatype: "json",
+			success: function(data){
+				if (data.error){
+					errorCallBack(data)
+				} else {
+					successCallBack()
+					UserActions.receiveUser(data);
+				}
+			}
+		})
 	},
 
 	addPhotoToCollection: function(id, params, callback){

@@ -93,6 +93,47 @@ body.user-profile {
 }
 
 
+//EDIT PROFILE FORM
+.edit-profile-form-container {
+
+	.modal-header {
+		top: 30px;
+	}
+
+	.edit-profile-form {
+
+		position: relative;
+		top: 15%;
+
+		input {
+			color: #E6E6E6;
+			border-color: #D2D2D2;
+		}
+
+		input:focus {
+			color: white;
+			border-color: white;
+		}
+
+		.img-select {
+			position: relative;
+		}
+
+		.photo-thumb {
+			height: 80px;
+			width: 80px;
+			position: relative;
+
+			img {
+				height: 100%;
+				width: 100%;
+				border-radius: 50%;
+			}
+		}
+	}
+}
+
+
 
 
 

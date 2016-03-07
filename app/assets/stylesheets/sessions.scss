@@ -13,8 +13,8 @@
 
 .modal-close-button-container {
 	position: absolute;
-	top: 5px;
-	right: 5px;
+	top: 3px;
+	right: 3px;
 	z-index: 2;
 }
 
@@ -29,6 +29,7 @@
 	width:100%;
 	position:relative;
 	color: black;
+	overflow-y: auto;
 }
 
 .form-spacer {
@@ -69,6 +70,17 @@
   color: black;
   border-color: black;
 } 
+
+#guest-login-button {
+	.mdl-button {
+		font-size: 11px !important;
+	}
+
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
 
 
 

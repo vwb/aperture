@@ -14,15 +14,35 @@ class Api::UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
-    @user.save!
-    collection = Collection.create!(title: "Favorites", user_id: @user.id)
-    login_user!(@user)
-    render :create
+
+    if @user.save
+      collection = Collection.create!(title: "Favorites", user_id: @user.id)
+      login_user!(@user)
+      render :create
+    else
+      @errors = @user.errors.full_messages
+      render :errors
+    end
+
+      
   end
 
   def show
     @user = User.includes(:photos, collections: :photos).find(params[:id])
     render :show
+  end
+
+  def update
+    @user = User.find(params[:id])
+    debugger
+    if @user.update(user_params)
+      @user.avatar = params[:user][:avatar]
+      render :show
+    else 
+      @errors = @user.errors.full_messages
+      render :errors
+    end
+
   end
 
   private

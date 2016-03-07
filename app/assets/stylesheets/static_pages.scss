@@ -18,8 +18,6 @@
 	cursor: pointer;
 }
 
-
-
 .grid {
 	margin: 0 auto;
 	position: relative;
@@ -39,19 +37,49 @@
 	padding-bottom: 5px;
 }
 
+@media only screen and (min-width: 1100px) {
+	.grid-item {
+		width: 25%;
+	}
+}
+
+@media only screen and (min-width: 801px) and (max-width: 1099px) {
+	.grid-item {
+		width: 33.3%;
+	}
+}
+
+@media only screen and (min-width: 521px) and (max-width: 800px){
+	.grid-item {
+		width: 50%;
+	}
+}
+
+@media only screen and (max-width: 520px){
+	.grid-item {
+		width: 100%;
+	}
+}
+
+
 
 //NAVBAR STYLING
 
 .header-li > .material-icons {
-	right: 5px;
-	top: 5px;
-	transform: translateY(23%);
+	top: 10px;
+	transform: translateY(60%);
 	transition: all .1s;
 	color: black;
 }
 
-.header-li > .material-icons:hover {
-	color: gray;
+.header-li:hover {
+	.material-icons {
+		color: gray;
+	}
+}
+
+#sign-in {
+	color: black;
 }
 
 header {
@@ -92,14 +120,17 @@ header .logo > a {
 header .header-ul {
 	float: right;
 	padding: 0;
-	margin: 10px 0;
+	position: relative;
+	margin: 0;
 }
 
 header .header-li {
+	top: 1px;
 	list-style-type: none;
 	display: inline-block;
-	padding-left: 5px;
 	cursor: pointer;
+	height: 57px;
+	position: relative;
 }
 
 header .header-li > a {
@@ -120,7 +151,7 @@ header .header-li > a:hover {
 
 header .header-li > i {
 	display: block;
-	padding-right: 15px;
+	padding: 0 15px 0 15px;
 	transition: all .1s;
 }
 
@@ -176,10 +207,56 @@ header .header-li > i {
 	height: auto;
 	padding: 10px;
 	display: inline-block;
+	overflow: hidden;
+
+	.cancel-img {
+
+		position: absolute;
+		right: 9px;
+		top: 9px;
+		color: #C12121;
+		opacity: 0;
+		border-radius: 50%;
+		background-color: transparent;
+
+    transition: opacity .25s ease-in-out;
+    -moz-transition: opacity .25s ease-in-out;
+    -webkit-transition: opacity .25s ease-in-out;
+
+    transition: color .25s ease-in-out;
+    -moz-transition: color .25s ease-in-out;
+    -webkit-transition: color .25s ease-in-out;
+	}
+
 }
 
+.photo-thumb-container:hover {
+
+	.cancel-img {
+		display: block;
+		opacity: 1.0;
+    transition: opacity .25s ease-in-out;
+    -moz-transition: opacity .25s ease-in-out;
+    -webkit-transition: opacity .25s ease-in-out;
+	}
+
+	.cancel-img:hover {
+		color: #FF3A3A;
+		cursor: pointer;
+
+		transition: color .25s ease-in-out;
+    -moz-transition: color .25s ease-in-out;
+    -webkit-transition: color .25s ease-in-out;
+	}
+
+
+
+}
+
+
 .selected {
-	border: 1px solid red;
+	border: 1px solid white;
+	border-radius: 5px;
 }
 
 .photo-thumb-container img {

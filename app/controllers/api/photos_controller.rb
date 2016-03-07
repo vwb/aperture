@@ -3,12 +3,14 @@ class Api::PhotosController < ApplicationController
   def index
 
     if params[:tag]
-      @photos = Photo.includes(:comments, :tags).where("tags.id" => params[:tag][:id]).all
+      #.page(params[:page])
+      @photos = Photo.includes(:comments, :tags).where("tags.title" => params[:tag]).all
     else
       @photos = Photo.includes(:tags, comments: :user).all
     end
 
     render :index
+
   end
 
   def show
@@ -22,7 +24,6 @@ class Api::PhotosController < ApplicationController
     
     @photo.url = photo_params[:url]
     @photo.title = photo_params[:title]
-    @photo.price = photo_params[:price]
     @photo.description = photo_params[:description]
 
     @photo.user = current_user
@@ -58,7 +59,7 @@ class Api::PhotosController < ApplicationController
   private
 
   def photo_params
-    params.require(:photo).permit(:url, :title, :price, :description, :tags)
+    params.require(:photo).permit(:url, :title, :description, :tags)
   end
 
 end

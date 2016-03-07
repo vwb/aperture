@@ -10,6 +10,14 @@ TagStore.allTags = function(){
 	return _tags.slice();
 };
 
+TagStore.allTagTitles = function(){
+	var titles = _tags.map(function(tag){
+		return tag.title
+	});
+
+	return titles;
+};
+
 TagStore.__onDispatch = function(payload){
 	switch (payload.actionType){
 		case TagConstants.RECEIVE_ALL_TAGS:
@@ -21,16 +29,16 @@ TagStore.__onDispatch = function(payload){
 
 TagStore.findSubSet = function(query){
 	var results = [];
-	for (var i = 0; i < _tags.length; i++) {
-		var ind = _tags[i].title.indexOf(query)
 
+	var titles = TagStore.allTagTitles()
+
+	for (var i = 0; i < titles.length; i++) {
+		var ind = titles[i].indexOf(query)
 		if (ind > -1){
-			_tags[i]['ind'] = ind
-			results.push(_tags[i])
+			results.push(titles[i]);
 		}
 	}
-	
-	//sort in ascending order the ind value
+
 	return results;
 };
 

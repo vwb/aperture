@@ -3,8 +3,12 @@ var TagConstants = require('../constants/tag_constants');
 var ApiUtil = require('../util/api_util');
 
 var TagActions = {
-	fetchAllTags: function(){
-		ApiUtil.fetchAllTags(this.receiveAllTags);
+	fetchAllTags: function(callback){
+		if (callback){
+			ApiUtil.fetchAllTags(this.receiveAllTags, callback)
+		} else {
+			ApiUtil.fetchAllTags(this.receiveAllTags);
+		}
 	},
 
 	receiveAllTags: function(tags){

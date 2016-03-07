@@ -25,9 +25,20 @@ var PhotoEditForm = React.createClass({
 				title: photo.title,
 				description: photo.description,
 				photo: photo,
-				selectedTags: photo.tags
+				selectedTags: this.grabPhotoTags()
 			})
 		} 
+	},
+
+	grabPhotoTags: function(){
+		var results = [];
+		var tags = this.props.location.state.photo.tags;
+
+		this.props.location.state.photo.tags.forEach(function(tag){
+			results.push(tag.title);
+		})
+
+		return results;
 	},
 
 	handleTags: function(tags){
@@ -44,16 +55,19 @@ var PhotoEditForm = React.createClass({
 			tags: this.state.selectedTags
 		};
 
-		ApiUtil.updatePhoto(this.state.photo.id, params);
+		ApiUtil.updatePhoto(this.state.photo.id, params, this.successRedirect);
 	},
 
 	handleDelete: function(e){
+		e.preventDefault();
+		
 		ApiUtil.deletePhoto(this.state.photo.id);
 		this.history.push("/");
+		ApiUtil.fetchAllPhotos();
 	},
 
 	successRedirect: function(){
-
+		this.history.replace("photos/"+this.state.photo.id)
 	},
 
 	render: function() {
@@ -85,11 +99,18 @@ var PhotoEditForm = React.createClass({
 						tags={this.state.selectedTags}/>
 				</div>
 
-					<input type="submit" value="Confirm Edits"/>
+					<input 
+						type="submit" 
+						value="Confirm"
+						className="mdl-button mdl-js-button confirm"/>
+
+					<button 
+						onClick={this.handleDelete}
+						className="mdl-button mdl-js-button destroy">Delete Photo</button>
 
 				</form>
 
-				<button onClick={this.handleDelete}>Delete Photo</button>
+
 			</div>
 		);
 	}

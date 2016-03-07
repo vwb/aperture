@@ -84,25 +84,32 @@ var PhotoDetail = React.createClass({
 		this.props.history.goBack()
 	},
 
+	tagSearch: function(tag){
+		this.props.history.push({path: "/", state: {query: tag}})
+	},
+
 	render: function() {
 
-		var check = "";
+		var editCheck = "";
+		var collectionCheck = "";
 
 		this._photoPresenceCheck();
 
 		if (this.havePhoto){
 
 			if (this.state.current){
+				collectionCheck = (<CollectionToggle photo={this.state.photo} currentUser={this.state.current} />)
+
 
 				if (this.state.photo.user_id === this.state.current.id){
-					check = (
+					editCheck = (
 						<button 
 							className="mdl-button mdl-js-button mdl-button--colored"
 							onClick={this.handleEdit}> 
 								Edit Image 
 						</button>);
 				} 
-			}			
+			}		
 			return (
 
 				<div className="photo-detail-cotainer group fade-in" tabIndex="1">
@@ -115,20 +122,24 @@ var PhotoDetail = React.createClass({
 
 						<CloseButton action={this.closeDetail} />
 	          <UserDetail userId={this.state.photo.user_id}/>
-	          <p> {this.state.photo.title} </p>
-	          <p> {this.state.photo.description} </p>
+
+	          <div className="info">
+	          	<div className="detail-title"> {this.state.photo.title} </div>
+	          	<div className="detail-description"> {this.state.photo.description} </div>
+	          </div>
 
 						<section className="tag-section">
-							<TagItems tags={this.state.photo.tags}/>
+							<span> Tags: </span>
+							<TagItems tags={this.state.photo.tags} clickHandler={this.tagSearch}/>
 						</section>
 
-						<CollectionToggle photo={this.state.photo} currentUser={this.state.current} />
+						{collectionCheck}
 
-						{check}
+						{editCheck}
 
 						{this.props.children}
 
-						<Comments photo={this.state.photo}/>
+						<Comments photo={this.state.photo} current={this.state.current}/>
 						
 					</section>
 
