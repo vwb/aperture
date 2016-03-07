@@ -35186,7 +35186,8 @@
 			}
 		},
 	
-		removeTag: function () {
+		removeTag: function (e) {
+			e.preventDefault();
 			this.props.removeTag(this.props.tag);
 		},
 	

@@ -2,12 +2,10 @@
 #
 # Table name: tags
 #
-#  id            :integer          not null, primary key
-#  title         :string           not null
-#  taggable_id   :integer
-#  taggable_type :string
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
+#  id         :integer          not null, primary key
+#  title      :string           not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
 #
 
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html

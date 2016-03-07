@@ -11,8 +11,9 @@ var TagItem = React.createClass({
 		}
 	},
 
-	removeTag: function(){
-		this.props.removeTag(this.props.tag)
+	removeTag: function(e){
+		e.preventDefault();
+		this.props.removeTag(this.props.tag);
 	},
 
 	check: function(){

@@ -8,7 +8,6 @@
 #  updated_at  :datetime         not null
 #  user_id     :integer          not null
 #  title       :string
-#  price       :integer          default(0), not null
 #  description :text
 #
 

@@ -1,12 +1,12 @@
 TASKS FOR TOMORROW:
 
 	BIG ITEMS:
+			- fix the comment styling... getting some weird behaviors!
+			- add default images to collections (if they dont have any photos inside)
+			- image hover (show username, link to collections?)
 
 		Infinite scroll
 
-			- fix the comment styling... getting some weird behaviors!
-			- image hover (show username, link to collections?)
-			- add default images to collections (if they dont have any photos inside)
 
 
 		Make a splash page
