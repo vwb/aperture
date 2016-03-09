@@ -3,6 +3,7 @@ var LinkedStateMixin = require('react-addons-linked-state-mixin');
 var PhotoSelector = require('../photos/photo_selector');
 var CollectionActions = require('../../actions/collection_actions');
 var History = require('react-router').History;
+var ErrorIndex = require('../util/error_index');
 
 var CollectionForm = React.createClass({
 
@@ -13,7 +14,8 @@ var CollectionForm = React.createClass({
 		return {
 			title: "",
 			description: "",
-			photoIds: []
+			photoIds: [],
+			errors: []
 		};
 	},
 
@@ -24,7 +26,11 @@ var CollectionForm = React.createClass({
 			description: this.state.description,
 			photos: this.state.photoIds,
 		}
-		CollectionActions.createCollection(params, this.successRedirect);
+		CollectionActions.createCollection(params, this.successRedirect, this.errorHandler);
+	},
+
+	errorHandler: function(data){
+		this.setState({errors: data.error})
 	},
 
 	successRedirect: function(id){
@@ -44,6 +50,10 @@ var CollectionForm = React.createClass({
 			</div>
 
 				<form onSubmit={this.handleSubmit} className="collection-form center">
+
+						<div className="error-container">
+							<ErrorIndex errors={this.state.errors}/>
+						</div>
 
 					<section>
 

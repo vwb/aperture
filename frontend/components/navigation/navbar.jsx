@@ -33,7 +33,7 @@ var NavBar = React.createClass({
         pathname: "/"
       })
     } else {
-      this.history.replace({
+      this.history.push({
         pathname: this.props.pathname,
         state: {modal: true, returnTo: this.props.pathname, action: "sign_in"}
       });
@@ -41,7 +41,9 @@ var NavBar = React.createClass({
   },
 
   handleUpload: function(){
-    this.history.replace({
+    debugger;
+
+    this.history.push({
       pathname: this.props.pathname,
       state: {modal: true, returnTo: this.props.pathname, action: "upload"}
     });

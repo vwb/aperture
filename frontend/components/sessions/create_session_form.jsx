@@ -3,7 +3,6 @@ var LinkedStateMixin = require('react-addons-linked-state-mixin');
 var SessionUtil = require('../../util/sessions_util');
 var History = require('react-router').History;
 var ErrorIndex = require('../util/error_index');
-var TypistForm = require('../util/typist_form');
 
 
 var Modal = require('boron/OutlineModal');
@@ -24,8 +23,6 @@ var SignInForm = React.createClass({
 	handleSubmit: function(e){
 		e.preventDefault();
 		var errorList = [];
-
-		debugger;
 
 		if (this.state.email === ""){
 			errorList.push("Email cannot be blank.")

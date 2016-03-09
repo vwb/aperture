@@ -37,25 +37,25 @@
 	padding-bottom: 5px;
 }
 
-@media only screen and (min-width: 1151px) {
+@media only screen and (min-width: 1126px) {
 	.grid-item {
 		width: 25%;
 	}
 }
 
-@media only screen and (min-width: 941px) and (max-width: 1150px) {
+@media only screen and (min-width: 1000px) and (max-width: 1225px) {
 	.grid-item {
 		width: 33.3%;
 	}
 }
 
-@media only screen and (min-width: 551px) and (max-width: 940px){
+@media only screen and (min-width: 701px) and (max-width: 999px){
 	.grid-item {
 		width: 50%;
 	}
 }
 
-@media only screen and (max-width: 550px){
+@media only screen and (max-width: 700px){
 	.grid-item {
 		width: 100%;
 	}

@@ -32,7 +32,7 @@ var ApiUtil = {
 			success: function(photo){
 				PhotoActions.receivePhoto(photo)
 			}
-		})
+		});
 	},	
 
 	fetchRelevantPhotos: function(query){
@@ -43,12 +43,12 @@ var ApiUtil = {
 			success: function(photos){
 				PhotoActions.receivePhotos(photos);
 			}
-		})
+		});
 	},
 
 	createPhoto: function(params, values){
 
-		var testData = {photo: params}
+		var testData = {photo: params};
 
 		$.ajax({
 			type: "POST",
@@ -157,15 +157,19 @@ var ApiUtil = {
 		});
 	},
 
-	createCollection: function(params, callback, successRedirect){
+	createCollection: function(params, callback, successRedirect, errorCallBack){
 		$.ajax({
 			url: "/api/collections",
 			data: {collection: params},
 			type: "POST",
 			datatype: "json",
-			success: function(collections){
-				callback(collections)
-				successRedirect(collections.id)
+			success: function(data){
+				if (data.error){
+					errorCallBack(data)
+				} else {
+					callback(collections)
+					successRedirect(collections.id)
+				}
 			}
 		});
 	},
@@ -190,6 +194,7 @@ var ApiUtil = {
 				callback(tags);
 			}
 		})
-	}, 
+	}
+
 };
 module.exports = ApiUtil;

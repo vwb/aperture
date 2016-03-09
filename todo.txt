@@ -1,11 +1,27 @@
 TASKS FOR TOMORROW:
 
+		seed data 
+			> use real sentences -> not faker hipster
+			> add beautiful men (maybe remove some of the more risque women)
+
+		guest login fix
+			> two guest accounts using at the same time freaks it out
+
+		comments
+			> when logged out prompt a log in if user tries to comment.
+
+		modals
+			> on going back causes modal to pop up, then back to homescreen
+			> zero in on this bug
+			
 
 		Infinite scroll
-
-
-
 		Make a splash page
+		Disappearing navbar
+
+		Optmimize database access/data flow
+
+		Allow counting of views, collection view page of some kind. (see all collections an image is in)
 
 
 		Add Edit collection form

@@ -80,7 +80,7 @@ var UserProfile = React.createClass({
 	handleEdit: function(e){
 		e.preventDefault();
 
-	   this.history.replace({
+	   this.history.push({
       pathname: this.props.location.pathname,
       state: {modal: true, returnTo: this.props.location.pathname, action: "edit_profile", user: this.state.user}
     });
@@ -89,7 +89,7 @@ var UserProfile = React.createClass({
 	handleCollection: function(e){
 		e.preventDefault();
 
-		this.history.replace({
+		this.history.push({
       pathname: this.props.location.pathname,
       state: {modal: true, returnTo: this.props.location.pathname, action: "new_collection"}
     });

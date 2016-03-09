@@ -37,8 +37,8 @@ var CollectionActions = {
 		})
 	},
 
-	createCollection: function(params, successRedirect){
-		ApiUtil.createCollection(params, this.receiveCollections, successRedirect);
+	createCollection: function(params, successRedirect, errorCallback){
+		ApiUtil.createCollection(params, this.receiveCollections, successRedirect, errorCallback);
 	},
 
 

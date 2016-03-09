@@ -58,11 +58,14 @@ imageURLs = [
   "http://i.imgur.com/OIOOtKc.jpg",
   "http://i.imgur.com/Wb1t8wP.jpg",
   "http://i.imgur.com/y3PuWIf.jpg",
-  "http://imgur.com/YBX6uEG",
+  "http://i.imgur.com/YBX6uEG.jpg?1",
   "http://i.imgur.com/fZx1Sct.jpg",
   "https://i.imgur.com/OmHviNk.jpg",
-  "http://imgur.com/HOSg2FC",
-  "https://www.reddit.com/r/EarthPorn/"
+  "http://i.imgur.com/HOSg2FC.jpg",
+  "http://www.mrwallpaper.com/wallpapers/surfer-summer.jpg",
+  "http://echoba.se/wp-content/uploads/2015/10/STEVE-McQUEEN.jpg",
+  "http://photo.elsoar.com/wp-content/images/Attractive-Man.jpg",
+  "http://cos.h-cdn.co/assets/15/02/1600x800/landscape_nrm_1420743157-bond.jpg"
 ]
 
 imageURLs.shuffle!
@@ -85,6 +88,33 @@ tags = [
   "awesome"
 ]
 
+comments = [
+  "Great photo!",
+  "What kind of camera did you use?",
+  "Awesome!",
+  "Wow!",
+  "Really nice shot",
+  "Where did you take this?",
+  "Beautiful",
+  "Keep these kind of photos coming!",
+  "You really have talent",
+  "Can you tell me what kind of lens you used?",
+  "This is amazing!",
+  "Keep it up!",
+  "I need to get a shot like this",
+  "Perfectly framed",
+  "Awesome coloring!",
+  "Was this on with the f-stop at 1.8?",
+  "What ISO was this?",
+  "You gotta teach me the ways!",
+  "How did you get that color?",
+  "The focus is perfectly done",
+  "Beautiful photo",
+  "Holy crap! Awesome!",
+  "How did you get this shot!?",
+  "Stunning"
+]
+
 tags.length.times do |i|
   Tag.create!(title: tags[i])
 end
@@ -102,10 +132,12 @@ end
 end
 
 
-50.times do |i|
+80.times do |i|
+  val = i % comments.length
+  comment = comments[val]
   photo_id = (1..imageURLs.length).to_a.sample
   user_id = (1..11).to_a.sample
-  Comment.create!(content: Faker::Hipster.sentence, photo_id: photo_id, user_id: user_id)
+  Comment.create!(content: comment, photo_id: photo_id, user_id: user_id)
 end
 
 

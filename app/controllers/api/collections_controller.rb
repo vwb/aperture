@@ -14,19 +14,16 @@ class Api::CollectionsController < ApplicationController
 
     @collections = Collection.new(collection_params)
     @collections.user = current_user
-    @collections.save!
-
-    # if params[:collection][:tags]
-    #   tag_ids = Tag.find_ids(params[:collection][:tags])
-    #   @collections.tag_ids = tag_ids
-    # end
-
-    if params[:collection][:photos]
-      @collections.photo_ids = params[:collection][:photos].map { |id| id.to_i }
+    
+    if @collections.save
+      if params[:collection][:photos]
+        @collections.photo_ids = params[:collection][:photos].map { |id| id.to_i }
+      end
+      render :show
+    else
+      @errors = @collections.errors.full_messages
+      render :errors
     end
-    
-    render :show
-    
   end
 
   def index
