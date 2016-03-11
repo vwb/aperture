@@ -2,6 +2,8 @@
 
 [heroku]: http://aperture.pw
 
+![Aperture HomePage](http://res.cloudinary.com/dpxg23zze/image/upload/v1457674960/Screen_Shot_2016-03-10_at_9.41.17_PM_kf7qlf.png)
+
 ### Description:
 
 Aperture is a web application inspired by 500px built using Ruby on Rails
@@ -14,6 +16,10 @@ Aperture incorporates the following javascript libraries:
 * React
 * Masonry
 * Boron
+* Cloudinary
+* Flux
+* BCrypt
+* Material Design Elements
 
 ### Implementation Details
 
