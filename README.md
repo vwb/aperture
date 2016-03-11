@@ -7,8 +7,8 @@
 ### Description:
 
 Aperture is a web application inspired by 500px built using Ruby on Rails
-and React.js. It features a fully hand rolled user authentication system, photo
-uploading via cloudinary, and live tag based search.
+and React.js. It features live tag based search, a fully hand rolled user authentication system, multiple photo
+uploading via cloudinary, and a fully responsive grid layout.
 
 ### Libraries
 
@@ -20,6 +20,7 @@ Aperture incorporates the following javascript libraries:
 * Flux
 * BCrypt
 * Material Design Elements
+* Figaro
 
 ### Implementation Details
 
