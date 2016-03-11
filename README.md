@@ -15,14 +15,13 @@ Aperture incorporates the following javascript libraries:
 * Masonry
 * Boron
 
-#### Implementation Details
+### Implementation Details
 
 ##### ModalWrapper
 
 To allow the ability to call modals from deeply nested rountes or arbitrary locations implemented a "modal wrapper" that allowed me to simply make a push request from anywhere in the application to cause a modal to appear. 
-  > Within the application's container when it receives new props if the state includes "modal: true" then render the children within a "ModalWrapper" class passing along the modal action saved within the state.
-
-  > The modal wrapper then renders the content dynamically specified via the state passed along to by the App component.
+  * Within the application's container when it receives new props if the state includes "modal: true" then render the children within a "ModalWrapper" class passing along the modal action saved within the state.
+  * The modal wrapper then renders the content dynamically specified via the state passed along to by the App component.
 
 ## Design Docs
 * [View Wireframes][views]
