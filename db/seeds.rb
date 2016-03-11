@@ -19,53 +19,53 @@ User.create!(email: "test9@email.com", password: "password", username: "MK");
 User.create!(email: "test10@email.com", password: "password", username: "Sara");
 
 imageURLs = [
-  "http://proof.nationalgeographic.com/files/2015/07/NationalGeographic_1203310.jpg",
-  "http://proof.nationalgeographic.com/files/2015/04/150501-bestpod-volcANO.jpg",
-  "https://farm1.staticflickr.com/691/20664938416_4e4b224684_h.jpg",
-  "http://i.imgur.com/bcvSSgM.jpg",
-  "http://i.imgur.com/1SHZTmz.jpg",
-  "http://i.imgur.com/yK3VDgP.jpg",
-  "http://i.imgur.com/aszTgRJ.jpg",
-  "https://c1.staticflickr.com/9/8668/16493978338_14fd41834b_k.jpg",
-  "http://i.imgur.com/KuuXhnf.jpg",
-  "http://i.imgur.com/mUahqUu.jpg",
-  "https://farm2.staticflickr.com/1715/24095017555_2458b2270c_b.jpg",
-  "http://cdn.theatlantic.com/assets/media/img/photo/2015/11/images-from-the-2016-sony-world-pho/s04_130921483988443532/main_1500.jpg",
-  "http://i.imgur.com/qFFh3YV.jpg",
-  "https://c1.staticflickr.com/9/8611/16457479519_71367787fa_o.jpg",
-  "http://i.imgur.com/M1n9KtF.jpg",
-  "https://farm8.staticflickr.com/7471/15600704708_2b0066defa_o.jpg",
-  "http://i.imgur.com/2GmDJD1.jpg?1",
-  "http://i.imgur.com/9lDdLYR.jpg",
-  "https://c2.staticflickr.com/8/7170/6837511573_b36f2798ea_b.jpg",
-  "http://i.imgur.com/KFuI29B.jpg",
-  "https://c1.staticflickr.com/9/8460/7958523808_02ce5acaf9_b.jpg",
-  "http://proof.nationalgeographic.com/files/2015/07/prod-yourshot-345431-6054565.jpg",
-  "https://images.unsplash.com/photo-1447877085163-3cce903855cd?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
-  "https://images.unsplash.com/photo-1453282716202-de94e528067c?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
-  "https://images.unsplash.com/photo-1442473483905-95eb436675f1?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
-  "https://images.unsplash.com/photo-1440589473619-3cde28941638?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
-  "https://images.unsplash.com/photo-1453743327117-664e2bf4e951?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
-  "https://images.unsplash.com/photo-1452800185063-6db5e12b8e2e?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
-  "https://images.unsplash.com/photo-1452716726610-30ed68426a6b?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
-  "https://images.unsplash.com/photo-1451188502541-13943edb6acb?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
-  "https://images.unsplash.com/photo-1451337516015-6b6e9a44a8a3?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
-  "https://images.unsplash.com/photo-1443890484047-5eaa67d1d630?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
-  "https://images.unsplash.com/photo-1448518184296-a22facb4446f?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
-  "https://images.unsplash.com/photo-1451186859696-371d9477be93?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
-  "https://images.unsplash.com/photo-1448960968772-b63b3f40dfc1?crop=entropy&fit=crop&fm=jpg&h=950&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1025",
-  "http://i.imgur.com/BymaSga.jpg",
-  "http://i.imgur.com/OIOOtKc.jpg",
-  "http://i.imgur.com/Wb1t8wP.jpg",
-  "http://i.imgur.com/y3PuWIf.jpg",
-  "http://i.imgur.com/YBX6uEG.jpg?1",
-  "http://i.imgur.com/fZx1Sct.jpg",
-  "https://i.imgur.com/OmHviNk.jpg",
-  "http://i.imgur.com/HOSg2FC.jpg",
-  "http://www.mrwallpaper.com/wallpapers/surfer-summer.jpg",
-  "http://echoba.se/wp-content/uploads/2015/10/STEVE-McQUEEN.jpg",
-  "http://photo.elsoar.com/wp-content/images/Attractive-Man.jpg",
-  "http://cos.h-cdn.co/assets/15/02/1600x800/landscape_nrm_1420743157-bond.jpg"
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661062/NationalGeographic_1203310_zrgfit.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661075/150501-bestpod-volcANO_xgdcma.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661089/20664938416_4e4b224684_h_n2ifi6.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661105/bcvSSgM_odg9sb.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661116/1SHZTmz_ggwsom.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661123/yK3VDgP_eyxzz9.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661141/16493978338_14fd41834b_k_fliej8.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661131/aszTgRJ_gmqeca.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661150/KuuXhnf_iab4q8.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661159/mUahqUu_vmpyjy.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661170/24095017555_2458b2270c_b_iyvp2s.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661178/main_1500_llkyb9.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661188/qFFh3YV_uoziuk.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661200/16457479519_71367787fa_o_zpxhhe.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661208/M1n9KtF_clbtz8.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661217/15600704708_2b0066defa_o_yc1rwp.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661225/2GmDJD1_molqyz.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661234/9lDdLYR_eeddqc.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661242/6837511573_b36f2798ea_b_qwwxna.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661254/KFuI29B_rp0bm9.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661262/7958523808_02ce5acaf9_b_e049dq.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661270/prod-yourshot-345431-6054565_rywv0c.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661278/photo-1447877085163-3cce903855cd_qfipfc.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661288/photo-1453282716202-de94e528067c_mtrksq.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661298/photo-1442473483905-95eb436675f1_vmfnrv.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661308/photo-1440589473619-3cde28941638_nxjjsh.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661318/photo-1453743327117-664e2bf4e951_cvb6rz.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661327/photo-1452800185063-6db5e12b8e2e_gif9lw.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661336/photo-1452716726610-30ed68426a6b_lkgfig.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661346/photo-1451188502541-13943edb6acb_zdu9qo.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661355/photo-1451337516015-6b6e9a44a8a3_sitza8.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661364/photo-1443890484047-5eaa67d1d630_vs2gpb.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661372/photo-1448518184296-a22facb4446f_lzeaq6.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661388/photo-1451186859696-371d9477be93_xjz2dz.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661401/photo-1448960968772-b63b3f40dfc1_b9jiet.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661406/BymaSga_k6zhri.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661414/OIOOtKc_ez9whd.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661421/Wb1t8wP_dzerkk.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661428/y3PuWIf_r6xeeu.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661435/YBX6uEG_wpfcjy.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661443/fZx1Sct_mpaqvk.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661450/OmHviNk_fwas4y.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661457/HOSg2FC_xbmxo9.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661467/surfer-summer_dqrr1e.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661476/STEVE-McQUEEN_pbuhmo.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661482/Attractive-Man_dpufor.jpg",
+  "http://res.cloudinary.com/dpxg23zze/image/upload/v1457661490/landscape_nrm_1420743157-bond_dop2ob.jpg"
 ]
 
 imageURLs.shuffle!
@@ -121,14 +121,14 @@ end
 
 imageURLs.length.times do |i|
   user_id = (1..11).to_a.sample
-  p = Photo.create!(url: imageURLs[i], user_id: user_id, title: Faker::Hipster.word)
-  p.tag_ids = (1..8).to_a.sample(3)
+  p = Photo.create!(url: imageURLs[i], user_id: user_id, title: Faker::Book.title)
+  p.tag_ids = (1..15).to_a.sample(4)
 end
 
 10.times do |i|
   a = Collection.create!(title: "Favorites", user_id: i+1)
   length = imageURLs.length
-  a.photo_ids = (1..length).to_a.sample(6)
+  a.photo_ids = (1..length).to_a.sample(10)
 end
 
 

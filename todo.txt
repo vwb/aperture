@@ -3,8 +3,6 @@ TASKS FOR TOMORROW:
 		detail -> search by tag -> homescreen formatting fucks up!
 		collections after an error, creation not working
 
-		dependent destroy tags
-
 		some kind of guiding
 		infinite scroll
 		lower the resolutions.

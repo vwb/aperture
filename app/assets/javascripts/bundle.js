@@ -31471,11 +31471,21 @@
 			}
 		},
 	
+		generateURL: function () {
+	
+			var url = this.props.photo.url;
+			var modified = url.split("upload/");
+			modified[1] = "q_30/" + modified[1];
+			url = modified.join("upload/");
+	
+			return url;
+		},
+	
 		render: function () {
 			return React.createElement(
 				'div',
 				{ className: this.props.cName + "  fade-in photo-index-item" },
-				React.createElement('img', { onClick: this.handleClick, src: this.props.photo.url }),
+				React.createElement('img', { onClick: this.handleClick, src: this.generateURL() }),
 				this.indexCheck()
 			);
 		}
