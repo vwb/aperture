@@ -23,15 +23,7 @@ To allow the ability to call modals from deeply nested rountes or arbitrary loca
   * Within the application's container when it receives new props if the state includes "modal: true" then render the children within a "ModalWrapper" class passing along the modal action saved within the state.
   * The modal wrapper then renders the content dynamically specified via the state passed along to by the App component.
 
-## Design Docs
-* [View Wireframes][views]
-* [React Components][components]
-* [Flux Stores][stores]
-* [API endpoints][api-endpoints]
-* [DB schema][schema]
+##### Live Search
 
-[views]: ./docs/views.md
-[components]: ./docs/components.md
-[stores]: ./docs/stores.md
-[api-endpoints]: ./docs/api-endpoints.md
-[schema]: ./docs/schema.md
+Search bar live filters through available tags, upon only one remaining automatically makes a request for images of that tag.
+* Utilizes componentDidUpdate to receive the updated state of the search bar with each input. If only one possible tag remains, it then automatically performs a request for images containing that tag.
