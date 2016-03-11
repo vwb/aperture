@@ -1,8 +1,13 @@
 TASKS FOR TOMORROW:
 
-		seed data 
-			> use real sentences -> not faker hipster
-			> add beautiful men (maybe remove some of the more risque women)
+		detail -> search by tag -> homescreen formatting fucks up!
+		collections after an error, creation not working
+
+		dependent destroy tags
+
+		some kind of guiding
+		infinite scroll
+		lower the resolutions.
 
 		guest login fix
 			> two guest accounts using at the same time freaks it out
