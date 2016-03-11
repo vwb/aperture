@@ -25,5 +25,5 @@ To allow the ability to call modals from deeply nested rountes or arbitrary loca
 
 ##### Live Search
 
-Search bar live filters through available tags, upon only one remaining automatically makes a request for images of that tag.
+Photos are automatically searched by tag as user enters input.
 * Utilizes componentDidUpdate to receive the updated state of the search bar with each input. If only one possible tag remains, it then automatically performs a request for images containing that tag.
