@@ -22,31 +22,27 @@ var UserProfile = React.createClass({
 
 	getInitialState: function(){
 		return {
-			user: UserStore.user()
+			user: UserStore.findUserById(parseInt(this.props.params.id))
 		};
 	},
 
 	componentDidMount: function(){
 		this.userToke = UserStore.addListener(this._onChange);
-		ApiUtil.fetchUser(parseInt(this.props.params.id));
+		if (!this.state.user){
+			ApiUtil.fetchAllUsers();
+		}
+	},
+
+	componentWillReceiveProps: function(newProps){
+		this.setState({user: UserStore.findUserById(parseInt(newProps.params.id))})
 	},
 
 	_onChange: function(){
-		this.setState({user: UserStore.user()})
+		this.setState({user: UserStore.findUserById(parseInt(this.props.params.id))})
 	},
 
 	componentWillUnmount: function(){
 		this.userToke.remove();
-	},
-
-	generateUserCollections: function(){
-
-		if (this._userPresent()){
-			return this.state.user.collections.map(function(collection, key){
-				return (<div key={key}> <Link to={"collections/"+collection.id}> {collection.title} </Link> </div>)
-			});
-		}
-
 	},
 
 	generatePhotoItems: function(){
@@ -60,7 +56,7 @@ var UserProfile = React.createClass({
 	},
 
 	_userPresent: function(){
-		if (this.state.user.email){
+		if (this.state.user && this.state.user.email){
 			return true;
 		} else {
 			return false;
@@ -98,10 +94,18 @@ var UserProfile = React.createClass({
 
 
 	render: function() {
-		var current;
+		var current, 
+				collections,
+				username,
+				avatar,
+				email;
 
-		if (this._userPresent() && this.props.current){
-			if (this.state.user.id === this.props.current.id) {
+		if (this._userPresent()){
+			collections = this.state.user.collections
+			username = this.state.user.username
+			avatar = this.state.user.avatar
+			email = this.state.user.email
+			if (this.props.current && this.state.user.id === this.props.current.id) {
 				current = (
 					<div className="user-options">
 
@@ -122,9 +126,7 @@ var UserProfile = React.createClass({
 					</div>
 				)
 			}
-		} else {
-			current = "";
-		}
+		} 
 		return (
 			<div className="parallax">
 
@@ -138,11 +140,11 @@ var UserProfile = React.createClass({
 
 						<div className="user-profile-header">
 							<div className="profile-picture circle"> 
-								<img src={this.state.user.avatar} />
+								<img src={avatar} />
 							</div>
 
 							<div className="profile-info"> 
-								{this.state.user.username} 
+								{username} 
 							</div>
 
 							<div className="profile-actions"> 
@@ -156,7 +158,7 @@ var UserProfile = React.createClass({
 								<h3> Collections </h3>
 							</div>
 
-							<CollectionIndex collections={this.state.user.collections}/>
+							<CollectionIndex collections={collections}/>
 						</section>
 
 					{/* USER PHOTOS CAN BE FACTORED OUT */}

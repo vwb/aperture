@@ -12,7 +12,7 @@ UserStore.user = function(){
 };
 
 UserStore.findUserById = function(id){
-	return _users[5]
+	return _users[id]
 };
 
 UserStore.all = function(){
@@ -27,7 +27,7 @@ UserStore.__onDispatch = function(payload){
 			break;
 		case UserConstants.RECEIVE_ALL_USERS:
 			setAllUsers(payload.users);
-			UserStore.__emitChange
+			UserStore.__emitChange();
 			break;
 	}
 };

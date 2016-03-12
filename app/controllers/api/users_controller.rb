@@ -46,7 +46,7 @@ class Api::UsersController < ApplicationController
   end
 
   def index
-    @users = User.all
+    @users = User.includes(:photos, collections: :photos).all
     render :index
   end
 

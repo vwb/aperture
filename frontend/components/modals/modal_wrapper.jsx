@@ -6,6 +6,7 @@ var EditProfileForm = require('../user/edit_profile');
 var NewCollectionForm = require('../collections/collection_form');
 var ModalStyles = require('../../constants/modal_styles');
 var Modal = require('boron/OutlineModal');
+var ModalActions = require('../../actions/modal_actions');
 
 
 var ModalWrapper = React.createClass({
@@ -22,7 +23,8 @@ var ModalWrapper = React.createClass({
   },
 
   hideModal: function(){
-    this.refs.modal.hide();
+  	this.refs.modal.hide();
+  	ModalActions.hideModal();
   },
 
   renderModal: function(path){
@@ -81,7 +83,8 @@ var ModalWrapper = React.createClass({
           ref="modal"
           modalStyle={this.state.modalAppliedStyle.modalStyle}
           contentStyle={this.state.modalAppliedStyle.contentStyle}
-          className="noSelect">
+          className="noSelect"
+          >
 
           <div className="modal-close-button-container">
             <button 

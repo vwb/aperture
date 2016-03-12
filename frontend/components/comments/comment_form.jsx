@@ -2,6 +2,7 @@ var React = require('react')
 var LinkedStateMixin = require('react-addons-linked-state-mixin');
 var History = require('react-router').History;
 var CommentActions = require('../../actions/comment_actions');
+var ModalActions = require('../../actions/modal_actions');
 
 var CommentForm = React.createClass({
 
@@ -29,6 +30,15 @@ var CommentForm = React.createClass({
 		CommentActions.createComment(params);
 	},
 
+	handleClick: function(e){
+
+		if (!this.props.current){
+			e.preventDefault()
+			ModalActions.showModal("sign_in")
+		}
+
+	},
+
 	render: function() {
 
 		return (
@@ -38,7 +48,7 @@ var CommentForm = React.createClass({
 			<div className="comment-form">
 				<form onSubmit={this.handleSubmit}>
 
-					<div className="comment-input">
+					<div className="comment-input" onClick={this.handleClick}>
 						<input
 							type="text"
 							valueLink={this.linkState("content")}

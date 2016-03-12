@@ -1,32 +1,29 @@
 TASKS FOR TOMORROW:
 
-		detail -> search by tag -> homescreen formatting fucks up!
-		collections after an error, creation not working
+		BUGS::
+		
+			detail -> search by tag -> homescreen formatting fucks up!
 
-		some kind of guiding
-		infinite scroll
-		lower the resolutions.
+			collections after an error, creation not working
 
-		guest login fix
-			> two guest accounts using at the same time freaks it out
+		FEATURES::
+			Disappearing navbar
 
-		comments
-			> when logged out prompt a log in if user tries to comment.
+			infinite scroll
 
-		modals
-			> on going back causes modal to pop up, then back to homescreen
-			> zero in on this bug
-			
+			ability to scroll through photos on the detail view
 
-		Infinite scroll
-		Make a splash page
-		Disappearing navbar
+			prompt login modal from within the detail page if attempting to comment or add to collection
+			padding onto the search bar
+			appropriate seed data -> all user profiles should have a standard pretty photo
 
-		Optmimize database access/data flow
+			some kind of guiding
+			Make a splash page
+			Allow counting of views, collection view page of some kind. (see all collections an image is in)
+			Add Edit collection form
 
-		Allow counting of views, collection view page of some kind. (see all collections an image is in)
+			comments
+				> when logged out prompt a log in if user tries to comment.
 
-
-		Add Edit collection form
-
-		scale for larger amounts of images
+			guest login fix
+				> two guest accounts using at the same time freaks it out

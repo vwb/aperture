@@ -10,23 +10,35 @@ var Comments = require('../comments/comments');
 var TagItems = require('../tags/tag_items');
 var UserDetail = require('../user/user_detail');
 var CloseButton = require('../util/close_button');
+var ModalWrapper = require('../modals/modal_wrapper');
+var ModalStore = require('../../stores/modal_store');
 
 var PhotoDetail = React.createClass({
 
 	getInitialState: function(){
 		return{
 			photo: "",
-			current: SessionStore.currentUser()
+			current: SessionStore.currentUser(),
+			modal: {show: false}
 		};
 	},
 
 	componentDidMount: function(){
 		this.toke = PhotoStore.addListener(this._onChange);
 		this.sessionToke = SessionStore.addListener(this._onSessionChange);
+		this.modalToke = ModalStore.addListener(this._onModalChange);
+
+
 		$(document.body).on('keydown', this.handleKey);
 
 		if (!this.state.current){
 			SessionUtil.fetchCurrent();
+		}
+	},
+
+	componentWillReceiveProps: function(newProps){
+		if((newProps.modal)){
+			this.setState({modal: newProps.modal})
 		}
 	},
 
@@ -38,11 +50,15 @@ var PhotoDetail = React.createClass({
 		this.setState({current: SessionStore.currentUser()})
 	},
 
+	_onModalChange: function(){
+		this.setState({modal: ModalStore.modal()})
+	},
+
 	componentWillUnmount: function(){
 		this.toke.remove();
 		this.sessionToke.remove();
+		this.modalToke.remove();
 		$(document.body).off('keydown', this.handleKey);
-
 	},
 
 	_photoPresenceCheck: function(){
@@ -93,23 +109,21 @@ var PhotoDetail = React.createClass({
 		var editCheck = "";
 		var collectionCheck = "";
 
+		var isModal = this.state.modal.show;
+
 		this._photoPresenceCheck();
 
 		if (this.havePhoto){
 
-			if (this.state.current){
-				collectionCheck = (<CollectionToggle photo={this.state.photo} currentUser={this.state.current} />)
+			if (this.state.current && this.state.photo.user_id === this.state.current.id){
+				editCheck = (
+					<button 
+						className="mdl-button mdl-js-button mdl-button--colored"
+						onClick={this.handleEdit}> 
+							Edit Image 
+					</button>);
+			} 		
 
-
-				if (this.state.photo.user_id === this.state.current.id){
-					editCheck = (
-						<button 
-							className="mdl-button mdl-js-button mdl-button--colored"
-							onClick={this.handleEdit}> 
-								Edit Image 
-						</button>);
-				} 
-			}		
 			return (
 
 				<div className="photo-detail-cotainer group fade-in" tabIndex="1">
@@ -133,7 +147,7 @@ var PhotoDetail = React.createClass({
 							<TagItems tags={this.state.photo.tags} clickHandler={this.tagSearch}/>
 						</section>
 
-						{collectionCheck}
+						<CollectionToggle photo={this.state.photo} currentUser={this.state.current}/>
 
 						{editCheck}
 
@@ -142,6 +156,12 @@ var PhotoDetail = React.createClass({
 						<Comments photo={this.state.photo} current={this.state.current}/>
 						
 					</section>
+
+					{isModal && (
+						<ModalWrapper action={this.state.modal.action} user={this.state.current}>
+							{this.props.children}
+						</ModalWrapper>
+					)}
 
 				</div>
 			);

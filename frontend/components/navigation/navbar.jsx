@@ -3,6 +3,7 @@ var NavBarSearch = require('./navbar_search');
 var History = require('react-router').History;
 var SessionUtil = require('../../util/sessions_util');
 var ApiUtil = require('../../util/api_util');
+var ModalActions = require('../../actions/modal_actions');
 
 var NavBar = React.createClass({
 
@@ -33,20 +34,21 @@ var NavBar = React.createClass({
         pathname: "/"
       })
     } else {
-      this.history.push({
-        pathname: this.props.pathname,
-        state: {modal: true, returnTo: this.props.pathname, action: "sign_in"}
-      });
+      ModalActions.showModal("sign_in")
+      // this.history.push({
+      //   pathname: this.props.pathname,
+      //   state: {modal: true, returnTo: this.props.pathname, action: "sign_in"}
+      // });
     }
   },
 
   handleUpload: function(){
-    debugger;
+    ModalActions.showModal("upload");
 
-    this.history.push({
-      pathname: this.props.pathname,
-      state: {modal: true, returnTo: this.props.pathname, action: "upload"}
-    });
+    // this.history.push({
+    //   pathname: this.props.pathname,
+    //   state: {modal: true, returnTo: this.props.pathname, action: "upload"}
+    // });
   },
 
   profileLink: function(){
@@ -56,7 +58,6 @@ var NavBar = React.createClass({
   renderIndex: function(e){
     e.preventDefault();
     this.history.push("/");
-    // ApiUtil.fetchAllPhotos();
     this.setState({query: ""})
   },
 
@@ -76,7 +77,7 @@ var NavBar = React.createClass({
 
     return (
 
-      <div>
+      <div className="navbar-wrapper">
         <header className="navbar-header">
           <div className="header-inner">
             <div className="logo">

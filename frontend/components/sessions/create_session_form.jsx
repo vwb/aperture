@@ -3,6 +3,7 @@ var LinkedStateMixin = require('react-addons-linked-state-mixin');
 var SessionUtil = require('../../util/sessions_util');
 var History = require('react-router').History;
 var ErrorIndex = require('../util/error_index');
+var ModalActions = require('../../actions/modal_actions');
 
 
 var Modal = require('boron/OutlineModal');
@@ -51,11 +52,12 @@ var SignInForm = React.createClass({
 
 	handleSignUp: function(e){
 		e.preventDefault();
+		ModalActions.showModal("sign_up")
 
-		this.history.replace({
-        pathname: this.props.pathname,
-        state: {modal: true, returnTo: this.props.pathname, action: "sign_up"}
-     });
+		// this.history.replace({
+  //       pathname: this.props.pathname,
+  //       state: {modal: true, returnTo: this.props.pathname, action: "sign_up"}
+  //    });
 	},
 
 	successRedirect: function(){
@@ -72,10 +74,6 @@ var SignInForm = React.createClass({
 	},
 
 	render: function() {
-
-		// if (this.state.typist){
-		// 	return (<TypistForm />)
-		// } else {
 			
 			return (
 

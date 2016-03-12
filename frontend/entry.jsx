@@ -18,31 +18,37 @@ var SessionUtil = require('./util/sessions_util');
 var CreateUserForm = require('./components/sessions/create_user_form');
 
 var ModalWrapper = require('./components/modals/modal_wrapper');
-
-require('./util/api_util');
-
+var ModalStore = require('./stores/modal_store');
 
 var App = React.createClass({
 
 	getInitialState: function(){
 		return {
-			current: SessionStore.currentUser()
+			current: SessionStore.currentUser(),
+			modal: {show: false}
 		};
 	},
 
 	componentWillReceiveProps: function(nextProps){
-		if ((
-      nextProps.location.key !== this.props.location.key &&
-      nextProps.location.state &&
-      nextProps.location.state.modal
-    )) {
-      this.previousChildren = this.props.children;
-    }
+
+		if((nextProps.location.key !== this.props.location.key)){
+			this.setState({modal: {show: false}})
+		}
+
+		if((nextProps.modal)){
+			this.setState({modal: nextProps.modal})
+		}
+
 	},
 
 	componentDidMount: function(){
 		this.toke = SessionStore.addListener(this._onChange);
+		this.modalToke = ModalStore.addListener(this._onModalChange);
 		SessionUtil.fetchCurrent();
+	},
+
+	_onModalChange: function(){
+		this.setState({modal: ModalStore.modal()})
 	},
 
 	_onChange: function(){
@@ -51,31 +57,29 @@ var App = React.createClass({
 
 	componentWillUnmount: function(){
 		this.toke.remove();
+		this.modalToke.remove();
 	},
 
   render: function() {
-
-
-  	var location = this.props.location;
-
-  	var isModal = (
-  		location.state && location.state.modal && this.previousChildren
-  	);
 
   	if (location.state && location.state.query){
   		var query = location.state.query;
   	}
 
+  	var isModal = this.state.modal.show
+
 	  return (
 	      <div>
 	      	<NavBar current={this.state.current} pathname={location.pathname} query={query}/>
 
-	      	{isModal ?
+	      	{/*isModal ?
 	      		this.previousChildren && React.cloneElement(this.previousChildren, {current: this.state.current}) :
-	      		this.props.children && React.cloneElement(this.props.children, {current: this.state.current}) }
+	      		this.props.children && React.cloneElement(this.props.children, {current: this.state.current}) */}
+
+	      	{this.props.children && React.cloneElement(this.props.children, {current: this.state.current})}
 
 	      	{isModal && (
-	      		<ModalWrapper returnTo={location.state.returnTo} action={location.state.action} user={location.state.user}>
+	      		<ModalWrapper action={this.state.modal.action} user={this.state.current}>
 	      			{this.props.children}
 	      		</ModalWrapper>
 	      	)}

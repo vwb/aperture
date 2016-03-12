@@ -3,6 +3,7 @@ var CollectionList = require('./collection_list');
 var RaisedButton = require('material-ui').RaisedButton;
 var CollectionActions = require('../../actions/collection_actions');
 var CollectionStore = require('../../stores/collection_store');
+var ModalActions = require('../../actions/modal_actions');
 
 var CollectionToggle = React.createClass({
 
@@ -33,7 +34,11 @@ var CollectionToggle = React.createClass({
 	},
 
 	handleClick: function(){
-		this.toggle();
+		if (this.props.currentUser){
+			this.toggle();
+		} else {
+			ModalActions.showModal("sign_in");
+		}
 	},
 
 	componentWillUnmount: function(){
