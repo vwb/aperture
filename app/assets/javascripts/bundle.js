@@ -72330,8 +72330,6 @@
 		},
 	
 		render: function () {
-			debugger;
-	
 			var current, collections, username, avatar, email;
 	
 			if (this._userPresent()) {

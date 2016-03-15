@@ -91,8 +91,6 @@ var UserProfile = React.createClass({
 	},
 
 	render: function() {
-		debugger;
-
 		var current, 
 				collections,
 				username,
