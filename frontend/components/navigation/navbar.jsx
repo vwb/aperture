@@ -37,8 +37,6 @@ var NavBar = React.createClass({
   handleScroll: function(e){
 
     if ($(window).scrollTop() > 70){
-      //just grab the classname here rather than triggering a whole state reset
-      // debugger;
       this.refs.navbar.className = "navbar-wrapper navbar-header hide"
     }
 
@@ -74,12 +72,28 @@ var NavBar = React.createClass({
     var upload;
 
     if (this.props.current){
-      text = <i className="material-icons">power_settings_new</i>;
+      text = (<li onClick={this.handleClick} className="header-li hvr-underline-from-left" id="sign-in">
+               <i className="material-icons">power_settings_new</i>
+               <span className="link-info"> log out </span> 
+             </li>);
       profile = (
-        <li className="header-li hvr-underline-from-left" onClick={this.profileLink}> <i className="material-icons">account_circle</i> </li> );
-      upload = (<i className="material-icons" onClick={this.handleUpload}>add_a_photo</i>);
+        <li className="header-li hvr-underline-from-left" onClick={this.profileLink}> 
+          <i className="material-icons">account_circle</i>
+          <span className="link-info"> profile </span> 
+         </li> );
+      upload = (
+        <li className="header-li hvr-underline-from-left">
+          <i className="material-icons" onClick={this.handleUpload}>add_a_photo</i>
+          <span className="link-info"> upload </span> 
+        </li>
+        );
     } else {
-      text = <i className="material-icons">person_add</i>;
+      text = (
+        <li onClick={this.handleClick} className="header-li hvr-underline-from-left" id="sign-in">
+          <i className="material-icons">person_add</i>
+          <span className="link-info"> sign in </span> 
+        </li>
+      );
       profile = "";
     }
 
@@ -99,13 +113,9 @@ var NavBar = React.createClass({
 
             <ul className="header-ul group">
 
-              <li className="header-li hvr-underline-from-left">
-                {upload}
-              </li>
+              {upload}
 
-              <li onClick={this.handleClick} className="header-li hvr-underline-from-left" id="sign-in">
-                {text}
-              </li>
+              {text}
 
               {profile}
 

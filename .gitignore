@@ -22,3 +22,5 @@ node_modules
 /config/application.yml
 
 ApLogo.png
+
+.DS_Store

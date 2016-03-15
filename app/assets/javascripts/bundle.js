@@ -34843,7 +34843,7 @@
 			} else {
 				return React.createElement(
 					'div',
-					{ 'class': 'loader' },
+					{ className: 'loader' },
 					'Loading...'
 				);
 			}
@@ -71832,8 +71832,6 @@
 	  handleScroll: function (e) {
 	
 	    if ($(window).scrollTop() > 70) {
-	      //just grab the classname here rather than triggering a whole state reset
-	      // debugger;
 	      this.refs.navbar.className = "navbar-wrapper navbar-header hide";
 	    }
 	
@@ -71870,31 +71868,61 @@
 	
 	    if (this.props.current) {
 	      text = React.createElement(
-	        'i',
-	        { className: 'material-icons' },
-	        'power_settings_new'
+	        'li',
+	        { onClick: this.handleClick, className: 'header-li hvr-underline-from-left', id: 'sign-in' },
+	        React.createElement(
+	          'i',
+	          { className: 'material-icons' },
+	          'power_settings_new'
+	        ),
+	        React.createElement(
+	          'span',
+	          { className: 'link-info' },
+	          ' log out '
+	        )
 	      );
 	      profile = React.createElement(
 	        'li',
 	        { className: 'header-li hvr-underline-from-left', onClick: this.profileLink },
-	        ' ',
 	        React.createElement(
 	          'i',
 	          { className: 'material-icons' },
 	          'account_circle'
 	        ),
-	        ' '
+	        React.createElement(
+	          'span',
+	          { className: 'link-info' },
+	          ' profile '
+	        )
 	      );
 	      upload = React.createElement(
-	        'i',
-	        { className: 'material-icons', onClick: this.handleUpload },
-	        'add_a_photo'
+	        'li',
+	        { className: 'header-li hvr-underline-from-left' },
+	        React.createElement(
+	          'i',
+	          { className: 'material-icons', onClick: this.handleUpload },
+	          'add_a_photo'
+	        ),
+	        React.createElement(
+	          'span',
+	          { className: 'link-info' },
+	          ' upload '
+	        )
 	      );
 	    } else {
 	      text = React.createElement(
-	        'i',
-	        { className: 'material-icons' },
-	        'person_add'
+	        'li',
+	        { onClick: this.handleClick, className: 'header-li hvr-underline-from-left', id: 'sign-in' },
+	        React.createElement(
+	          'i',
+	          { className: 'material-icons' },
+	          'person_add'
+	        ),
+	        React.createElement(
+	          'span',
+	          { className: 'link-info' },
+	          ' sign in '
+	        )
 	      );
 	      profile = "";
 	    }
@@ -71925,16 +71953,8 @@
 	          React.createElement(
 	            'ul',
 	            { className: 'header-ul group' },
-	            React.createElement(
-	              'li',
-	              { className: 'header-li hvr-underline-from-left' },
-	              upload
-	            ),
-	            React.createElement(
-	              'li',
-	              { onClick: this.handleClick, className: 'header-li hvr-underline-from-left', id: 'sign-in' },
-	              text
-	            ),
+	            upload,
+	            text,
 	            profile
 	          )
 	        )
