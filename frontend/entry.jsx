@@ -61,9 +61,9 @@ var App = React.createClass({
 	},
 
   render: function() {
-
-  	if (location.state && location.state.query){
-  		var query = location.state.query;
+  	var location = this.props.location;
+  	if (location.state && location.state.val){
+  		var query = location.state.val;
   	}
 
   	var isModal = this.state.modal.show
@@ -71,10 +71,6 @@ var App = React.createClass({
 	  return (
 	      <div>
 	      	<NavBar current={this.state.current} pathname={location.pathname} query={query}/>
-
-	      	{/*isModal ?
-	      		this.previousChildren && React.cloneElement(this.previousChildren, {current: this.state.current}) :
-	      		this.props.children && React.cloneElement(this.props.children, {current: this.state.current}) */}
 
 	      	{this.props.children && React.cloneElement(this.props.children, {current: this.state.current})}
 

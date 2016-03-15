@@ -3,6 +3,7 @@ var CollectionStore = require('../../stores/collection_store');
 var CollectionActions = require('../../actions/collection_actions');
 var Masonry = require('react-masonry-component');
 var PhotoIndexItem = require('../photos/photos_index_item');
+var PhotoActions = require('../../actions/photo_actions');
 
 var masonryOptions = {
 	transitionDuration: 0,
@@ -27,7 +28,8 @@ var CollectionDetail = React.createClass({
 	},
 
 	_onChange: function(){
-		this.setState({collection: CollectionStore.collection()})
+		var col = CollectionStore.collection()
+		this.setState({collection: col})
 	},
 
 	generatePhotoItems: function(){
@@ -39,8 +41,9 @@ var CollectionDetail = React.createClass({
 				return <PhotoIndexItem
 									key={ind}
 									photo={photo}
-									cName={cName}/>
-			})
+									cName={cName}
+									photos={this.state.collection.photos}/>
+			}.bind(this));
 		}
 	},
 
@@ -72,13 +75,11 @@ var CollectionDetail = React.createClass({
 					<div className="collection-container">
 
 						<section className="collection-header">
-							{/*<CollectionDetailHeader collection={this.state.collection}/>*/}
-							<h3> {title} </h3>
+							<h3 className="styled-header"> {title} </h3>
 						</section>
 
 						<section className="collection-body">
 
-							{/*<CollectionDetailBody collection={this.state.collection}/>*/}
 
 							<Masonry
 								className={'grid'}

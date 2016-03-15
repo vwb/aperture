@@ -108,9 +108,9 @@
 		},
 	
 		render: function () {
-	
-			if (location.state && location.state.query) {
-				var query = location.state.query;
+			var location = this.props.location;
+			if (location.state && location.state.val) {
+				var query = location.state.val;
 			}
 	
 			var isModal = this.state.modal.show;
@@ -24261,8 +24261,9 @@
 					photo: photo,
 					className: 'photo-index-item',
 					cName: cName,
-					index: true });
-			});
+					index: true,
+					photos: this.state.photos });
+			}.bind(this));
 		},
 	
 		componentWillUnmount: function () {
@@ -24312,6 +24313,7 @@
 	};
 	
 	PhotoStore.__onDispatch = function (payload) {
+	
 		switch (payload.actionType) {
 			case PhotoConstants.RECEIVE_ALL_PHOTOS:
 				resetPhotos(payload.photos);
@@ -24340,9 +24342,24 @@
 		}
 	};
 	
-	PhotoStore.fetchPhoto = function () {
-		var copy = Object.assign({}, _photo);
-		return copy;
+	PhotoStore.grabNext = function (photo) {
+		debugger;
+		var ind = _photos.indexOf(photo);
+	
+		if (ind + 1 < _photos.length) {
+			return _photos[ind + 1];
+		} else {
+			return _photos[0];
+		}
+	};
+	
+	PhotoStore.grabPrevious = function (photo) {
+		var ind = _photos.indexOf(photo);
+		if (ind - 1 >= 0) {
+			return _photos[ind - 1];
+		} else {
+			return _photos[_photos.length - 1];
+		}
 	};
 	
 	function resetPhotos(photos) {
@@ -31317,8 +31334,8 @@
 					if (data.error) {
 						errorCallBack(data);
 					} else {
-						callback(collections);
-						successRedirect(collections.id);
+						callback(data);
+						successRedirect(data.id);
 					}
 				}
 			});
@@ -31357,6 +31374,7 @@
 	var PhotoConstants = __webpack_require__(231);
 	
 	var PhotoActions = {
+	
 		receivePhotos: function (photos) {
 			AppDispatcher.dispatch({
 				actionType: PhotoConstants.RECEIVE_ALL_PHOTOS,
@@ -31384,6 +31402,7 @@
 				photo: photo
 			});
 		}
+	
 	};
 	
 	module.exports = PhotoActions;
@@ -31450,9 +31469,18 @@
 				this.history.push("users/" + this.props.photo.user.id);
 				e.stopPropagation();
 			} else {
-				this.history.push("photos/" + this.props.photo.id);
+				var ids = this.grabIds();
+				this.history.pushState({ photos: ids }, "photos/" + this.props.photo.id);
 				e.stopPropagation();
 			}
+		},
+	
+		grabIds: function () {
+			var result = [];
+			for (var i = 0; i < this.props.photos.length; i++) {
+				result.push(this.props.photos[i].id);
+			}
+			return result;
 		},
 	
 		indexCheck: function () {
@@ -31472,6 +31500,13 @@
 						{ className: 'index-user-info' },
 						' ',
 						this.props.photo.user.username,
+						' '
+					),
+					React.createElement(
+						'span',
+						{ className: 'index-photo-title' },
+						' ',
+						this.props.photo.title,
 						' '
 					)
 				);
@@ -34603,6 +34638,7 @@
 	var CloseButton = __webpack_require__(257);
 	var ModalWrapper = __webpack_require__(283);
 	var ModalStore = __webpack_require__(380);
+	var History = __webpack_require__(159).History;
 	
 	var PhotoDetail = React.createClass({
 		displayName: 'PhotoDetail',
@@ -34635,7 +34671,7 @@
 		},
 	
 		_onChange: function () {
-			this.setState({ photo: PhotoStore.fetchPhoto() });
+			this.setState({ photo: PhotoStore.find_by_id(parseInt(this.props.params.id)) });
 		},
 	
 		_onSessionChange: function () {
@@ -34658,7 +34694,7 @@
 				this.havePhoto = true;
 			} else {
 				this.havePhoto = false;
-				ApiUtil.fetchPhoto(this.props.params.id);
+				ApiUtil.fetchAllPhotos();
 			}
 		},
 	
@@ -34686,14 +34722,49 @@
 			if (e.which === 27) {
 				this.closeDetail();
 			}
+	
+			if (e.which === 37) {
+				this.grabSequential("prev");
+			} else if (e.which === 39) {
+				this.grabSequential("next");
+			}
+		},
+	
+		grabSequential: function (action) {
+	
+			var ind;
+			var next;
+			var prev;
+	
+			if (this.props.location.state && this.props.location.state.photos) {
+				var photos = this.props.location.state.photos;
+				ind = photos.indexOf(this.state.photo.id);
+				next = (ind + 1) % photos.length;
+				if (ind - 1 < 0) {
+					prev = photos.length - 1;
+				} else {
+					prev = ind - 1;
+				}
+			}
+	
+			switch (action) {
+				case "prev":
+					this.setState({ photo: PhotoStore.find_by_id(photos[prev]) });
+					break;
+				case "next":
+					this.setState({ photo: PhotoStore.find_by_id(photos[next]) });
+					break;
+			}
 		},
 	
 		closeDetail: function () {
+			debugger;
+	
 			this.props.history.goBack();
 		},
 	
 		tagSearch: function (tag) {
-			this.props.history.push({ path: "/", state: { query: tag } });
+			this.props.history.push({ path: "/", state: { val: tag } });
 		},
 	
 		render: function () {
@@ -34707,7 +34778,7 @@
 	
 			if (this.havePhoto) {
 	
-				if (this.state.current && this.state.photo.user_id === this.state.current.id) {
+				if (this.state.current && this.state.photo.user.id === this.state.current.id) {
 					editCheck = React.createElement(
 						'button',
 						{
@@ -34729,7 +34800,7 @@
 						'section',
 						{ className: 'photo-info' },
 						React.createElement(CloseButton, { action: this.closeDetail }),
-						React.createElement(UserDetail, { userId: this.state.photo.user_id }),
+						React.createElement(UserDetail, { user: this.state.photo.user }),
 						React.createElement(
 							'div',
 							{ className: 'info' },
@@ -35560,21 +35631,17 @@
 	
 	  mixins: [History],
 	
-	  getInitialState: function () {
-	    var query = "";
-	    if (this.props.query) {
-	      query = this.props.query;
-	    }
-	
-	    return {
-	      query: query
-	    };
+	  componentDidMount: function () {
+	    window.addEventListener('scroll', this.handleScroll);
+	    this.determineVisible(this.props);
 	  },
 	
 	  componentWillReceiveProps: function (newProps) {
-	    if (newProps.query) {
-	      this.setState({ query: newProps.query });
-	    }
+	    this.determineVisible(newProps);
+	  },
+	
+	  componentWillUnmount: function () {
+	    window.removeEventListener('scroll', this.handleScroll);
 	  },
 	
 	  handleClick: function (e) {
@@ -35586,20 +35653,24 @@
 	      });
 	    } else {
 	      ModalActions.showModal("sign_in");
-	      // this.history.push({
-	      //   pathname: this.props.pathname,
-	      //   state: {modal: true, returnTo: this.props.pathname, action: "sign_in"}
-	      // });
+	    }
+	  },
+	
+	  handleScroll: function (e) {
+	
+	    if ($(window).scrollTop() > 70) {
+	      //just grab the classname here rather than triggering a whole state reset
+	      // debugger;
+	      this.refs.navbar.className = "navbar-wrapper navbar-header hide";
+	    }
+	
+	    if ($(window).scrollTop() <= 70) {
+	      this.refs.navbar.className = "navbar-wrapper navbar-header";
 	    }
 	  },
 	
 	  handleUpload: function () {
 	    ModalActions.showModal("upload");
-	
-	    // this.history.push({
-	    //   pathname: this.props.pathname,
-	    //   state: {modal: true, returnTo: this.props.pathname, action: "upload"}
-	    // });
 	  },
 	
 	  profileLink: function () {
@@ -35608,14 +35679,22 @@
 	
 	  renderIndex: function (e) {
 	    e.preventDefault();
-	    this.history.push("/");
-	    this.setState({ query: "" });
+	    this.history.push({ path: "/", state: { val: "_clearSearch" } });
+	  },
+	
+	  determineVisible: function (props) {
+	    if (props.pathname.indexOf("users") > -1 || props.pathname.indexOf("collections") > -1) {
+	      this.refs.navbar.className = "navbar-wrapper navbar-header hide";
+	    } else {
+	      this.refs.navbar.className = "navbar-wrapper navbar-header";
+	    }
 	  },
 	
 	  render: function () {
 	    var text;
 	    var profile;
 	    var upload;
+	
 	    if (this.props.current) {
 	      text = React.createElement(
 	        'i',
@@ -35649,10 +35728,10 @@
 	
 	    return React.createElement(
 	      'div',
-	      { className: 'navbar-wrapper' },
+	      null,
 	      React.createElement(
 	        'header',
-	        { className: 'navbar-header' },
+	        { ref: 'navbar', className: 'navbar-wrapper navbar-header' },
 	        React.createElement(
 	          'div',
 	          { className: 'header-inner' },
@@ -35668,7 +35747,7 @@
 	          React.createElement(
 	            'div',
 	            { className: 'search-container' },
-	            React.createElement(NavBarSearch, { query: this.state.query })
+	            React.createElement(NavBarSearch, { query: this.props.query })
 	          ),
 	          React.createElement(
 	            'ul',
@@ -35712,9 +35791,12 @@
 	
 		getInitialState: function () {
 			var query;
-	
 			if (this.props.query) {
-				query = this.props.query;
+				if (this.props.query === "_clearSearch") {
+					query = "";
+				} else {
+					query = this.props.query;
+				}
 			} else {
 				query = "";
 			}
@@ -35742,12 +35824,18 @@
 	
 		componentWillReceiveProps: function (newProps) {
 			if (newProps.query) {
-				this.setState({ query: newProps.query });
-			} else {
-				this.setState({ query: "" });
+				if (newProps.query === "_clearSearch") {
+					this._findMatching("");
+				} else {
+					this._findMatching(newProps.query);
+				}
 			}
+		},
 	
-			this._findMatching(newProps.query);
+		componentWillUpdate: function (nextState, newProps) {
+			if (this.state.filteredTags.length === 1) {
+				nextState.query = this.state.query;
+			}
 		},
 	
 		tagSuccessCallback: function () {
@@ -35787,7 +35875,7 @@
 	
 		handleSubmit: function (e) {
 			e.preventDefault();
-			this.history.push({ path: "/", state: { query: this.state.query } });
+			this.history.push({ path: "/", state: { val: this.state.query } });
 		},
 	
 		searchTags: function () {
@@ -35795,11 +35883,9 @@
 			if (this.state.filteredTags.length === 1) {
 				var params = { tag: this.state.filteredTags[0] };
 				ApiUtil.fetchRelevantPhotos(params);
-				// this.history.push("/")
 			} else if (this.state.query === "") {
-					ApiUtil.fetchAllPhotos();
-					// this.history.push('/')
-				}
+				ApiUtil.fetchAllPhotos();
+			}
 		},
 	
 		render: function () {
@@ -36026,6 +36112,7 @@
 		},
 	
 		successRedirect: function (id) {
+			this.props.closeModal();
 			this.history.push("/collections/" + id);
 		},
 	
@@ -36249,10 +36336,10 @@
 	var AppDispatcher = __webpack_require__(210);
 	var ApiUtil = __webpack_require__(232);
 	var CollectionConstants = __webpack_require__(274);
+	var PhotoActions = __webpack_require__(233);
 	
 	var CollectionActions = {
 	
-		//sends addition request to the backend
 		addPhoto: function (collectionId, photoId) {
 			var params = {
 				photo_id: photoId
@@ -36275,13 +36362,20 @@
 		},
 	
 		fetchCollection: function (collectionID) {
-			ApiUtil.fetchCollection(collectionID, this.receiveCollections);
+			ApiUtil.fetchCollection(collectionID, this.receiveCollection);
 		},
 	
 		receiveCollections: function (collections) {
 			AppDispatcher.dispatch({
 				actionType: CollectionConstants.RECEIVE_COLLECTIONS,
 				collections: collections
+			});
+		},
+	
+		receiveCollection: function (collection) {
+			AppDispatcher.dispatch({
+				actionType: CollectionConstants.RECEIVE_COLLECTIONS,
+				collections: collection
 			});
 		},
 	
@@ -36344,6 +36438,7 @@
 	var CollectionActions = __webpack_require__(273);
 	var Masonry = __webpack_require__(238);
 	var PhotoIndexItem = __webpack_require__(236);
+	var PhotoActions = __webpack_require__(233);
 	
 	var masonryOptions = {
 		transitionDuration: 0,
@@ -36370,7 +36465,8 @@
 		},
 	
 		_onChange: function () {
-			this.setState({ collection: CollectionStore.collection() });
+			var col = CollectionStore.collection();
+			this.setState({ collection: col });
 		},
 	
 		generatePhotoItems: function () {
@@ -36382,8 +36478,9 @@
 					return React.createElement(PhotoIndexItem, {
 						key: ind,
 						photo: photo,
-						cName: cName });
-				});
+						cName: cName,
+						photos: this.state.collection.photos });
+				}.bind(this));
 			}
 		},
 	
@@ -36422,7 +36519,7 @@
 							{ className: 'collection-header' },
 							React.createElement(
 								'h3',
-								null,
+								{ className: 'styled-header' },
 								' ',
 								title,
 								' '
@@ -36512,6 +36609,7 @@
 	var Link = __webpack_require__(159).Link;
 	var CollectionIndex = __webpack_require__(279);
 	var History = __webpack_require__(159).History;
+	var ModalActions = __webpack_require__(268);
 	
 	//APP-TODO: possibly refactor the presentation of the photo index
 	//into a nested route that can then switch between the galleries and photos
@@ -36556,8 +36654,13 @@
 			if (this._userPresent()) {
 	
 				return this.state.user.photos.map(function (photo, key) {
-					return React.createElement(PhotoIndexItem, { key: key, photo: photo, cName: 'grid-item profile-image', className: 'photo-index-item' });
-				});
+					return React.createElement(PhotoIndexItem, {
+						key: key,
+						photo: photo,
+						cName: 'grid-item profile-image',
+						className: 'photo-index-item',
+						photos: this.state.user.photos });
+				}.bind(this));
 			}
 		},
 	
@@ -36582,19 +36685,13 @@
 		handleEdit: function (e) {
 			e.preventDefault();
 	
-			this.history.push({
-				pathname: this.props.location.pathname,
-				state: { modal: true, returnTo: this.props.location.pathname, action: "edit_profile", user: this.state.user }
-			});
+			ModalActions.showModal("edit_profile");
 		},
 	
 		handleCollection: function (e) {
 			e.preventDefault();
 	
-			this.history.push({
-				pathname: this.props.location.pathname,
-				state: { modal: true, returnTo: this.props.location.pathname, action: "new_collection" }
-			});
+			ModalActions.showModal("new_collection");
 		},
 	
 		render: function () {
@@ -36605,6 +36702,7 @@
 				username = this.state.user.username;
 				avatar = this.state.user.avatar;
 				email = this.state.user.email;
+	
 				if (this.props.current && this.state.user.id === this.props.current.id) {
 					current = React.createElement(
 						'div',
@@ -36674,7 +36772,7 @@
 								{ className: 'header-spacer' },
 								React.createElement(
 									'h3',
-									null,
+									{ className: 'styled-header' },
 									' Collections '
 								)
 							),
@@ -36685,10 +36783,10 @@
 							{ className: 'user-photos' },
 							React.createElement(
 								'div',
-								{ className: 'header-spacer' },
+								{ className: 'header-spacer ' },
 								React.createElement(
 									'h3',
-									null,
+									{ className: 'styled-header' },
 									' Photos '
 								)
 							),
@@ -72204,16 +72302,9 @@
 	
 		getInitialState: function () {
 			return {
-				comments: "",
-				photo: ""
+				comments: this.props.photo.comments,
+				photo: this.props.photo
 			};
-		},
-	
-		componentWillReceiveProps: function (newProps) {
-			this.setState({
-				photo: newProps.photo,
-				comments: newProps.photo.comments
-			});
 		},
 	
 		generateComments: function () {
@@ -72412,52 +72503,8 @@
 	
 		mixins: [History],
 	
-		getInitialState: function () {
-	
-			return {
-				user: UserStore.user()
-			};
-		},
-	
-		componentDidMount: function () {
-			this.toke = UserStore.addListener(this._onChange);
-			ApiUtil.fetchUser(this.props.userId);
-		},
-	
-		componentWillUnmount: function () {
-			this.toke.remove();
-		},
-	
-		_onChange: function () {
-			this.setState({ user: UserStore.user() });
-		},
-	
-		_userPresent: function () {
-			if (Object.keys(this.state.user).length > 0) {
-				return true;
-			} else {
-				return false;
-			}
-		},
-	
-		renderURL: function () {
-			if (this._userPresent()) {
-				return this.state.user.avatar;
-			} else {
-				return "";
-			}
-		},
-	
-		renderName: function () {
-			if (this._userPresent()) {
-				return this.state.user.username;
-			} else {
-				return "";
-			}
-		},
-	
 		handleClick: function () {
-			this.history.push("users/" + this.state.user.id);
+			this.history.push("users/" + this.props.user.id);
 		},
 	
 		render: function () {
@@ -72467,12 +72514,12 @@
 				React.createElement(
 					'section',
 					{ className: 'img-container' },
-					React.createElement('img', { onClick: this.handleClick, src: this.renderURL() })
+					React.createElement('img', { onClick: this.handleClick, src: this.props.user.avatar })
 				),
 				React.createElement(
 					'section',
 					{ onClick: this.handleClick, className: 'user-info' },
-					this.renderName()
+					this.props.user.username
 				)
 			);
 		}

@@ -16,6 +16,8 @@ class Tag < ActiveRecord::Base
 
   def self.find_ids(titles)
 
+    # titles = titles.map {|title| title.downcase}
+
     results = []
 
     relation = Tag.where(title: titles)

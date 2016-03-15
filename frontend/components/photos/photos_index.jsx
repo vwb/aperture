@@ -38,8 +38,9 @@ var PhotoIndex = React.createClass({
 								photo={photo} 
 								className="photo-index-item" 
 								cName={cName}
-								index={true}/>
-		});
+								index={true}
+								photos={this.state.photos}/>
+		}.bind(this));
 	},
 
 	componentWillUnmount: function(){

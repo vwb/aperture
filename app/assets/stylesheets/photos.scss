@@ -139,6 +139,10 @@
 .photo-index-item {
 	overflow: hidden;
 
+	* {
+		font-family: "Quicksand";
+	}
+
 	.index-detail-item {
     display: inline-block;
     z-index: 1;
@@ -173,6 +177,12 @@
 			display: inline;
 			left: 20px;
 			bottom: -7px;
+		}
+
+		.index-photo-title {
+			float: right;
+			position: relative;
+			padding: 10px 15px 0 0;
 		}
 	}
 }

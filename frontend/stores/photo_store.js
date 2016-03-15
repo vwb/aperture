@@ -12,6 +12,7 @@ PhotoStore.all = function(){
 };
 
 PhotoStore.__onDispatch = function(payload){
+	
 	switch (payload.actionType){
 		case PhotoConstants.RECEIVE_ALL_PHOTOS:
 			resetPhotos(payload.photos);
@@ -40,10 +41,25 @@ PhotoStore.find_by_id = function(id){
 	}
 };
 
-PhotoStore.fetchPhoto = function(){
-	var copy = Object.assign({}, _photo)
-	return copy
-}
+PhotoStore.grabNext = function(photo){
+	debugger;
+	var ind = _photos.indexOf(photo);
+
+	if ((ind+1) < _photos.length){
+		return _photos[ind+1]
+	} else {
+		return _photos[0]
+	}
+};
+
+PhotoStore.grabPrevious = function(photo){
+	var ind = _photos.indexOf(photo);
+	if ((ind-1) >= 0){
+		return _photos[ind-1]
+	} else {
+		return _photos[_photos.length-1]
+	}
+};
 
 function resetPhotos(photos){
 	_photos = photos;

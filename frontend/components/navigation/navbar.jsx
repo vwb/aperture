@@ -9,21 +9,17 @@ var NavBar = React.createClass({
 
   mixins: [History],
 
-  getInitialState: function(){
-    var query = ""
-    if (this.props.query){
-      query = this.props.query
-    }
-
-    return {
-      query: query
-    }
+  componentDidMount: function(){
+    window.addEventListener('scroll', this.handleScroll);
+    this.determineVisible(this.props)
   },
 
   componentWillReceiveProps: function(newProps){
-    if (newProps.query){
-      this.setState({query: newProps.query})
-    }
+    this.determineVisible(newProps);
+  },
+
+  componentWillUnmount: function(){
+    window.removeEventListener('scroll', this.handleScroll)
   },
 
   handleClick: function(e){
@@ -35,20 +31,24 @@ var NavBar = React.createClass({
       })
     } else {
       ModalActions.showModal("sign_in")
-      // this.history.push({
-      //   pathname: this.props.pathname,
-      //   state: {modal: true, returnTo: this.props.pathname, action: "sign_in"}
-      // });
+    }
+  },
+
+  handleScroll: function(e){
+
+    if ($(window).scrollTop() > 70){
+      //just grab the classname here rather than triggering a whole state reset
+      // debugger;
+      this.refs.navbar.className = "navbar-wrapper navbar-header hide"
+    }
+
+    if ($(window).scrollTop() <= 70){
+      this.refs.navbar.className = "navbar-wrapper navbar-header"
     }
   },
 
   handleUpload: function(){
     ModalActions.showModal("upload");
-
-    // this.history.push({
-    //   pathname: this.props.pathname,
-    //   state: {modal: true, returnTo: this.props.pathname, action: "upload"}
-    // });
   },
 
   profileLink: function(){
@@ -57,14 +57,22 @@ var NavBar = React.createClass({
 
   renderIndex: function(e){
     e.preventDefault();
-    this.history.push("/");
-    this.setState({query: ""})
+    this.history.push({path: "/", state: {val: "_clearSearch"}});
+  },
+
+  determineVisible: function(props){
+    if (props.pathname.indexOf("users") > -1 || props.pathname.indexOf("collections") > -1){
+      this.refs.navbar.className = "navbar-wrapper navbar-header hide"
+    } else {
+      this.refs.navbar.className = "navbar-wrapper navbar-header"
+    }
   },
 
   render: function() {
     var text;
     var profile;
     var upload;
+
     if (this.props.current){
       text = <i className="material-icons">power_settings_new</i>;
       profile = (
@@ -77,15 +85,16 @@ var NavBar = React.createClass({
 
     return (
 
-      <div className="navbar-wrapper">
-        <header className="navbar-header">
+
+      <div>
+        <header ref="navbar" className="navbar-wrapper navbar-header">
           <div className="header-inner">
             <div className="logo">
               <a href="#" onClick={this.renderIndex}><img src="../../assets/Aperture" alt="Aperture"/></a>
             </div>
 
             <div className="search-container">
-              <NavBarSearch query={this.state.query}/>
+              <NavBarSearch query={this.props.query}/>
             </div>
 
             <ul className="header-ul group">

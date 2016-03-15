@@ -12,6 +12,7 @@ var UserDetail = require('../user/user_detail');
 var CloseButton = require('../util/close_button');
 var ModalWrapper = require('../modals/modal_wrapper');
 var ModalStore = require('../../stores/modal_store');
+var History = require('react-router').History
 
 var PhotoDetail = React.createClass({
 
@@ -43,7 +44,7 @@ var PhotoDetail = React.createClass({
 	},
 
 	_onChange: function(){
-		this.setState({photo: PhotoStore.fetchPhoto()})
+		this.setState({photo: PhotoStore.find_by_id(parseInt(this.props.params.id))})
 	},
 
 	_onSessionChange: function(){
@@ -66,7 +67,7 @@ var PhotoDetail = React.createClass({
 			this.havePhoto = true;
 		} else {
 			this.havePhoto = false;
-			ApiUtil.fetchPhoto(this.props.params.id);
+			ApiUtil.fetchAllPhotos();
 		}
 	},
 
@@ -94,14 +95,51 @@ var PhotoDetail = React.createClass({
 		if (e.which === 27){
 			this.closeDetail();
 		}
+
+		if (e.which === 37){
+			this.grabSequential("prev")
+		} else if (e.which === 39){
+			this.grabSequential("next")
+		}
+	},
+
+	grabSequential: function(action){
+
+		var ind;
+		var next;
+		var prev;
+
+		if (this.props.location.state && this.props.location.state.photos){
+			var photos = this.props.location.state.photos
+			ind = photos.indexOf(this.state.photo.id)
+			next = (ind + 1) % photos.length
+			if (ind-1 < 0){
+				prev = photos.length - 1
+			} else {
+				prev = ind - 1
+			}			
+		} 
+
+		switch (action){
+			case "prev":
+				this.setState({photo: PhotoStore.find_by_id(photos[prev])});
+				break;
+			case "next":
+				this.setState({photo: PhotoStore.find_by_id(photos[next])})
+				break;
+		}
 	},
 
 	closeDetail: function(){
+		debugger;
+
 		this.props.history.goBack()
+
+
 	},
 
 	tagSearch: function(tag){
-		this.props.history.push({path: "/", state: {query: tag}})
+		this.props.history.push({path: "/", state: {val: tag}})
 	},
 
 	render: function() {
@@ -115,7 +153,7 @@ var PhotoDetail = React.createClass({
 
 		if (this.havePhoto){
 
-			if (this.state.current && this.state.photo.user_id === this.state.current.id){
+			if (this.state.current && this.state.photo.user.id === this.state.current.id){
 				editCheck = (
 					<button 
 						className="mdl-button mdl-js-button mdl-button--colored"
@@ -135,7 +173,7 @@ var PhotoDetail = React.createClass({
 					<section className="photo-info">
 
 						<CloseButton action={this.closeDetail} />
-	          <UserDetail userId={this.state.photo.user_id}/>
+	          <UserDetail user={this.state.photo.user}/>
 
 	          <div className="info">
 	          	<div className="detail-title"> {this.state.photo.title} </div>

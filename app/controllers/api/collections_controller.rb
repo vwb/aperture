@@ -1,7 +1,7 @@
 class Api::CollectionsController < ApplicationController
 
   def show
-    @collections = Collection.includes(:photos).find(params[:id])
+    @collections = Collection.includes(:photos, photos: :comments).find(params[:id])
     render :show
   end
 

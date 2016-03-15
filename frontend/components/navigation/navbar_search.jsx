@@ -12,9 +12,12 @@ var NavBarSearch = React.createClass({
 
 	getInitialState: function(){
 		var query;
-
 		if (this.props.query){
-			query = this.props.query
+			if (this.props.query === "_clearSearch"){
+				query = ""
+			} else {
+				query = this.props.query
+			}
 		} else {
 			query = ""
 		}
@@ -42,12 +45,18 @@ var NavBarSearch = React.createClass({
 
 	componentWillReceiveProps: function(newProps){
 		if (newProps.query){
-			this.setState({query: newProps.query})
-		} else {
-			this.setState({query: ""})
+			if (newProps.query === "_clearSearch"){
+				this._findMatching("");
+			} else {
+				this._findMatching(newProps.query)
+			} 
 		}
+	},
 
-		this._findMatching(newProps.query);
+	componentWillUpdate: function(nextState, newProps){
+		if (this.state.filteredTags.length === 1){
+			nextState.query = this.state.query
+		}
 	},
 
 	tagSuccessCallback: function(){
@@ -87,7 +96,7 @@ var NavBarSearch = React.createClass({
 
 	handleSubmit: function(e){
 		e.preventDefault();
-		this.history.push({path: "/", state: {query: this.state.query}})
+		this.history.push({path: "/", state: {val: this.state.query}})
 	},
 
 	searchTags: function(){
@@ -95,10 +104,8 @@ var NavBarSearch = React.createClass({
 		if (this.state.filteredTags.length === 1){
 			var params = {tag: this.state.filteredTags[0]}
 			ApiUtil.fetchRelevantPhotos(params);
-			// this.history.push("/")
 		} else if (this.state.query === ""){
 			ApiUtil.fetchAllPhotos();
-			// this.history.push('/')
 		} 
 
 	},

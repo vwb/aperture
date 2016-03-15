@@ -1,19 +1,22 @@
 TASKS FOR TOMORROW:
 
-		BUGS::
-		
-			detail -> search by tag -> homescreen formatting fucks up!
+ISSUE:
 
-			collections after an error, creation not working
+		BUGS::
+
+			navbar buttons add small descriptions (logout, upload, profile)
+
+			if list of photos less than a certain amount change width to fill screen
+
+			detail -> search by tag -> homescreen formatting fucks up!
+				> react attempts to render only the new photos from the photostore, but this causes masonry to freak the fuck out!
+
+			turn all tags to lowercase on the backendx
 
 		FEATURES::
-			Disappearing navbar
 
 			infinite scroll
 
-			ability to scroll through photos on the detail view
-
-			prompt login modal from within the detail page if attempting to comment or add to collection
 			padding onto the search bar
 			appropriate seed data -> all user profiles should have a standard pretty photo
 
@@ -21,9 +24,6 @@ TASKS FOR TOMORROW:
 			Make a splash page
 			Allow counting of views, collection view page of some kind. (see all collections an image is in)
 			Add Edit collection form
-
-			comments
-				> when logged out prompt a log in if user tries to comment.
 
 			guest login fix
 				> two guest accounts using at the same time freaks it out

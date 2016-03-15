@@ -34,7 +34,6 @@ class Api::UsersController < ApplicationController
 
   def update
     @user = User.find(params[:id])
-    debugger
     if @user.update(user_params)
       @user.avatar = params[:user][:avatar]
       render :show

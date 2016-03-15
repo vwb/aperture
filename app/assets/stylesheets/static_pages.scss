@@ -84,6 +84,7 @@
 
 header {
 	width: 100%;
+	min-width: 600px;
 	height: auto;
 	position: fixed;
 	top: 0;
@@ -92,6 +93,7 @@ header {
 	background: #fff;
 	border-bottom: thin solid #ededed;
 	z-index: 1;
+	transition: 0.3s;
 }
 
 header .header-inner {
@@ -184,11 +186,11 @@ header .header-li > i {
 	transform: translateX(-40%);
 	top: 25%;
 	margin: 0 auto;
-	width: 300px;
+	width: 215px;
 }
 
 .search-input-container > .search-input {
-  font-size: 19px;
+  font-size: 17px;
   font-weight: 200;
   color: gray;
   border-bottom: 1px solid #d3d3d3;
@@ -248,11 +250,7 @@ header .header-li > i {
     -moz-transition: color .25s ease-in-out;
     -webkit-transition: color .25s ease-in-out;
 	}
-
-
-
 }
-
 
 .selected {
 	border: 1px solid white;
@@ -271,9 +269,11 @@ header .header-li > i {
 
 .hide {
 	opacity: 0;
+	transition: 0.5s
 }
-//COLLECTIONS
 
-//adding-collections
+.hide:hover{
+	opacity: 1;
+}
 
 

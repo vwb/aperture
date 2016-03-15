@@ -1,10 +1,10 @@
 var AppDispatcher = require('../dispatcher');
 var ApiUtil = require('../util/api_util');
 var CollectionConstants = require('../constants/collection_constants');
+var PhotoActions = require('../actions/photo_actions');
 
 var CollectionActions = {
 
-	//sends addition request to the backend
 	addPhoto: function(collectionId, photoId){
 		var params = {
 			photo_id: photoId
@@ -27,13 +27,20 @@ var CollectionActions = {
 	},
 
 	fetchCollection: function(collectionID){
-		ApiUtil.fetchCollection(collectionID, this.receiveCollections);
+		ApiUtil.fetchCollection(collectionID, this.receiveCollection);
 	},
 	
 	receiveCollections: function(collections){
 		AppDispatcher.dispatch({
 			actionType: CollectionConstants.RECEIVE_COLLECTIONS,
 			collections: collections
+		})
+	},
+
+	receiveCollection: function(collection){
+		AppDispatcher.dispatch({
+			actionType: CollectionConstants.RECEIVE_COLLECTIONS,
+			collections: collection
 		})
 	},
 

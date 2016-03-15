@@ -6,16 +6,9 @@ var Comments = React.createClass({
 
 	getInitialState: function(){
 		return {
-			comments: "",
-			photo: ""
+			comments: this.props.photo.comments,
+			photo: this.props.photo
 		};
-	},
-
-	componentWillReceiveProps: function(newProps){
-		this.setState({
-			photo: newProps.photo,
-			comments: newProps.photo.comments
-		})
 	},
 
 	generateComments: function(){

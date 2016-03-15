@@ -34,6 +34,7 @@ var CollectionForm = React.createClass({
 	},
 
 	successRedirect: function(id){
+		this.props.closeModal();
 		this.history.push("/collections/"+id)
 	},
 

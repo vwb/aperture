@@ -6,6 +6,7 @@ var PhotoIndexItem = require('../photos/photos_index_item');
 var Link = require('react-router').Link;
 var CollectionIndex = require('../collections/collection_index');
 var History = require('react-router').History;
+var ModalActions = require('../../actions/modal_actions');
 
 
 //APP-TODO: possibly refactor the presentation of the photo index 
@@ -49,8 +50,13 @@ var UserProfile = React.createClass({
 		if (this._userPresent()){
 
 			return this.state.user.photos.map(function(photo, key){
-				return <PhotoIndexItem key={key} photo={photo} cName="grid-item profile-image" className="photo-index-item"/>
-			})
+				return <PhotoIndexItem 
+								key={key} 
+								photo={photo} 
+								cName="grid-item profile-image" 
+								className="photo-index-item"
+								photos={this.state.user.photos}/>
+			}.bind(this))
 		}
 
 	},
@@ -76,22 +82,14 @@ var UserProfile = React.createClass({
 	handleEdit: function(e){
 		e.preventDefault();
 
-	   this.history.push({
-      pathname: this.props.location.pathname,
-      state: {modal: true, returnTo: this.props.location.pathname, action: "edit_profile", user: this.state.user}
-    });
+		ModalActions.showModal("edit_profile")
 	},
 
 	handleCollection: function(e){
 		e.preventDefault();
 
-		this.history.push({
-      pathname: this.props.location.pathname,
-      state: {modal: true, returnTo: this.props.location.pathname, action: "new_collection"}
-    });
+		ModalActions.showModal("new_collection")
 	},
-
-
 
 	render: function() {
 		var current, 
@@ -105,6 +103,7 @@ var UserProfile = React.createClass({
 			username = this.state.user.username
 			avatar = this.state.user.avatar
 			email = this.state.user.email
+
 			if (this.props.current && this.state.user.id === this.props.current.id) {
 				current = (
 					<div className="user-options">
@@ -155,7 +154,7 @@ var UserProfile = React.createClass({
 						<section className="user-prof-collection">
 
 							<div className="header-spacer">
-								<h3> Collections </h3>
+								<h3 className="styled-header"> Collections </h3>
 							</div>
 
 							<CollectionIndex collections={collections}/>
@@ -164,8 +163,8 @@ var UserProfile = React.createClass({
 					{/* USER PHOTOS CAN BE FACTORED OUT */}
 
 						<section className="user-photos">
-							<div className="header-spacer"> 
-								<h3> Photos </h3>
+							<div className="header-spacer "> 
+								<h3 className="styled-header"> Photos </h3>
 							</div>
 
 							<Masonry

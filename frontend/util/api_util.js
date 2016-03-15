@@ -167,8 +167,8 @@ var ApiUtil = {
 				if (data.error){
 					errorCallBack(data)
 				} else {
-					callback(collections)
-					successRedirect(collections.id)
+					callback(data)
+					successRedirect(data.id)
 				}
 			}
 		});

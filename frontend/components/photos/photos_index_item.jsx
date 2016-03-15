@@ -13,9 +13,18 @@ var PhotoIndexItem = React.createClass({
 			this.history.push("users/"+this.props.photo.user.id);
 			e.stopPropagation();
 		} else {
-			this.history.push("photos/"+this.props.photo.id);
+			var ids = this.grabIds();
+			this.history.pushState({photos: ids}, "photos/"+this.props.photo.id);
 			e.stopPropagation();
 		}
+	},
+
+	grabIds: function(){
+		var result = [];
+		for (var i = 0; i < this.props.photos.length; i++) {
+			result.push(this.props.photos[i].id)
+		}
+		return result
 	},
 
 	indexCheck: function(){
@@ -24,6 +33,7 @@ var PhotoIndexItem = React.createClass({
 				<section className="index-detail-item" onClick={this.handleClick}>
 					<span className="index-img-container"> <img src={this.props.photo.user.avatar} /> </span>
 					<span className="index-user-info"> {this.props.photo.user.username} </span>
+					<span className="index-photo-title"> {this.props.photo.title} </span>
 				</section>
 			)
 		} else {

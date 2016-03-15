@@ -38,6 +38,12 @@ h1, h2, h3, h4, h5, h6 {
 	font-family: 'Roboto', sans-serif;
 }
 
+
+
+.styled-header, .styled-header * {
+  font-family: "Quicksand";
+}
+
 ::-webkit-input-placeholder {
    font-family: 'Roboto', sans-serif;
 }
@@ -91,5 +97,7 @@ body {
   color: green !important;
   font-size: 14px;
 }
+
+
 
 
