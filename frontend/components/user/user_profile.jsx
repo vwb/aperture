@@ -91,6 +91,8 @@ var UserProfile = React.createClass({
 	},
 
 	render: function() {
+		debugger;
+
 		var current, 
 				collections,
 				username,
@@ -129,7 +131,7 @@ var UserProfile = React.createClass({
 			<div className="parallax">
 
 				<div className="parallax__layer parallax__layer--back background">
-					<img src={this.handleBackgroundImage()}/>
+					{this.state.user ? (<img src={this.handleBackgroundImage()}/>) : (<div className="loader">Loading...</div>)}
 				</div>
 
 				<div className="parallax__layer parallax__layer--base group">

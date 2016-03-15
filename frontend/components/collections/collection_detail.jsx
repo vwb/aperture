@@ -21,6 +21,7 @@ var CollectionDetail = React.createClass({
 
 	componentDidMount: function(){
 		this.toke = CollectionStore.addListener(this._onChange);
+
 		CollectionActions.fetchCollection(parseInt(this.props.params.id));
 	},
 
@@ -55,11 +56,12 @@ var CollectionDetail = React.createClass({
 			} else {
 				return this.state.collection.cover_photo
 			}
-		};
+		}
 	},
 
 
 	render: function() {
+		debugger;
 		var title;
 		if (this.state.collection){
 			title = this.state.collection.title;
@@ -69,7 +71,7 @@ var CollectionDetail = React.createClass({
 			<div className="parallax">
 
 				<div className="parallax__layer parallax__layer--back background">
-					<img src={this.handleBackgroundImage()}/>
+					{this.state.collection ? (<img src={this.handleBackgroundImage()}/>) : (<div className="loader">Loading...</div>)}
 				</div>
 
 				<div className="parallax__layer parallax__layer--base group">

@@ -72138,6 +72138,7 @@
 	
 		componentDidMount: function () {
 			this.toke = CollectionStore.addListener(this._onChange);
+	
 			CollectionActions.fetchCollection(parseInt(this.props.params.id));
 		},
 	
@@ -72172,10 +72173,11 @@
 				} else {
 					return this.state.collection.cover_photo;
 				}
-			};
+			}
 		},
 	
 		render: function () {
+			debugger;
 			var title;
 			if (this.state.collection) {
 				title = this.state.collection.title;
@@ -72187,7 +72189,11 @@
 				React.createElement(
 					'div',
 					{ className: 'parallax__layer parallax__layer--back background' },
-					React.createElement('img', { src: this.handleBackgroundImage() })
+					this.state.collection ? React.createElement('img', { src: this.handleBackgroundImage() }) : React.createElement(
+						'div',
+						{ className: 'loader' },
+						'Loading...'
+					)
 				),
 				React.createElement(
 					'div',
@@ -72324,6 +72330,8 @@
 		},
 	
 		render: function () {
+			debugger;
+	
 			var current, collections, username, avatar, email;
 	
 			if (this._userPresent()) {
@@ -72366,7 +72374,11 @@
 				React.createElement(
 					'div',
 					{ className: 'parallax__layer parallax__layer--back background' },
-					React.createElement('img', { src: this.handleBackgroundImage() })
+					this.state.user ? React.createElement('img', { src: this.handleBackgroundImage() }) : React.createElement(
+						'div',
+						{ className: 'loader' },
+						'Loading...'
+					)
 				),
 				React.createElement(
 					'div',

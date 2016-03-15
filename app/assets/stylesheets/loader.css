@@ -58,3 +58,8 @@
     height: 5em;
   }
 }
+
+.background .loader {
+  top: 0px;
+  left: 1%;
+}

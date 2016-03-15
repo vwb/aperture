@@ -120,7 +120,7 @@ tags.length.times do |i|
 end
 
 imageURLs.length.times do |i|
-  user_id = (1..11).to_a.sample
+  user_id = (i+1) % 11
   p = Photo.create!(url: imageURLs[i], user_id: user_id, title: Faker::Book.title)
   p.tag_ids = (1..15).to_a.sample(4)
 end
