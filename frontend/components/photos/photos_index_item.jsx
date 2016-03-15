@@ -28,7 +28,7 @@ var PhotoIndexItem = React.createClass({
 	},
 
 	indexCheck: function(){
-		if (this.props.index){
+		if (this.props.photo){
 			return (
 				<section className="index-detail-item" onClick={this.handleClick}>
 					<span className="index-img-container"> <img src={this.props.photo.user.avatar} /> </span>

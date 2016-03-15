@@ -3,15 +3,15 @@ TASKS FOR TOMORROW:
 ISSUE:
 
 		BUGS::
+			detail -> search by tag -> homescreen formatting fucks up!
+				> react attempts to render only the new photos from the photostore, but this causes masonry to freak the fuck out!
+			turn all tags to lowercase on the backend
 
 			navbar buttons add small descriptions (logout, upload, profile)
 
+
+
 			if list of photos less than a certain amount change width to fill screen
-
-			detail -> search by tag -> homescreen formatting fucks up!
-				> react attempts to render only the new photos from the photostore, but this causes masonry to freak the fuck out!
-
-			turn all tags to lowercase on the backendx
 
 		FEATURES::
 

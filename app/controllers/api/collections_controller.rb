@@ -29,7 +29,7 @@ class Api::CollectionsController < ApplicationController
   def index
 
     if params[:user_id]
-      @collections = Collection.includes(:photos).where(user_id: params[:user_id])
+      @collections = Collection.includes(:photos, photos: :comments).where(user_id: params[:user_id])
 
       if @collections.is_a?(Collection)
         render :show

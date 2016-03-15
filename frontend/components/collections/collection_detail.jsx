@@ -4,6 +4,7 @@ var CollectionActions = require('../../actions/collection_actions');
 var Masonry = require('react-masonry-component');
 var PhotoIndexItem = require('../photos/photos_index_item');
 var PhotoActions = require('../../actions/photo_actions');
+var ModalActions = require('../../actions/modal_actions');
 
 var masonryOptions = {
 	transitionDuration: 0,

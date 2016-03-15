@@ -204,7 +204,7 @@ var PhotoDetail = React.createClass({
 				</div>
 			);
 		} else {
-			return (<div className="loader">Just a minute...</div>);
+			return (<div class="loader">Loading...</div>);
 		}
 	}
 });

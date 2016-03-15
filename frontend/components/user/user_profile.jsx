@@ -48,7 +48,6 @@ var UserProfile = React.createClass({
 
 	generatePhotoItems: function(){
 		if (this._userPresent()){
-
 			return this.state.user.photos.map(function(photo, key){
 				return <PhotoIndexItem 
 								key={key} 

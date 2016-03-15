@@ -145,6 +145,7 @@
 
 	.index-detail-item {
     display: inline-block;
+    color: white;
     z-index: 1;
     position: absolute;
     width: 100%;
@@ -154,6 +155,7 @@
     transition: 1s;
     height: 45px;
     background-image: url(/assets/gradient.png);
+    text-align: left;
     
 
 		.index-img-container {

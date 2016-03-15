@@ -7,6 +7,8 @@ json.array! @users do |user|
 	json.photos user.photos do |photo|
 		json.id photo.id
 		json.url photo.url
+		json.title photo.title
+		json.user photo.user
 	end
 
 	json.collections user.collections do |collection|
