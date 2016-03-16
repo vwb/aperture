@@ -68,13 +68,13 @@
 .header-li > .material-icons {
 	top: 10px;
 	transform: translateY(60%);
-	transition: all .1s;
+	transition: all .25s;
 	color: black;
 }
 
 .header-li:hover {
 	.material-icons {
-		color: gray;
+		color: #23383C;
 	}
 }
 
@@ -201,7 +201,7 @@ header .header-li > i {
 	transform: translateX(-40%);
 	top: 25%;
 	margin: 0 auto;
-	width: 215px;
+	width: 30%;
 }
 
 .search-input-container > .search-input {
