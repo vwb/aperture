@@ -4,7 +4,7 @@ ISSUE:
 
 		BUGS::
 
-			6. easy: turn all tags to lowercase on the backend
+			[X] easy: turn all tags to lowercase on the backend
 
 			[X] detail -> search by tag -> homescreen formatting fucks up!
 						 react attempts to render only the new photos from the photostore, but this causes masonry to freak the fuck out!

@@ -16,7 +16,7 @@ class Tag < ActiveRecord::Base
 
   def self.find_ids(titles)
 
-    # titles = titles.map {|title| title.downcase}
+    titles = titles.map {|title| title.downcase}
 
     results = []
 

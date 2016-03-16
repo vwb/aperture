@@ -1,7 +1,8 @@
 class Api::TagsController < ApplicationController
 
   def create
-    @tag = Tag.new(tag_params)
+    title = tag_params[:title].downcase
+    @tag = Tag.new(title: title)
     @tag.save!
   end
 
