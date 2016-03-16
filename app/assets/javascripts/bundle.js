@@ -72518,7 +72518,7 @@
 	
 		selectCoverImage: function () {
 			var collection = this.props.collection;
-	
+			debugger;
 			if (collection.photos.length > 0) {
 				return collection.photos[0].url;
 			} else if (collection.cover_photo) {

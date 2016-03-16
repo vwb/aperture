@@ -4,9 +4,9 @@ class Api::PhotosController < ApplicationController
 
     if params[:tag]
       #.page(params[:page])
-      @photos = Photo.includes(:comments, :user, :tags).where("tags.title" => params[:tag]).all
+      @photos = Photo.includes(:comments, :user, :tags).where("tags.title" => params[:tag]).all.order(id: :desc)
     else
-      @photos = Photo.includes(:tags, :user, comments: :user).all
+      @photos = Photo.includes(:tags, :user, comments: :user).all.order(id: :desc)
     end
 
     render :index

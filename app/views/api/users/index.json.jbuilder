@@ -15,5 +15,6 @@ json.array! @users do |user|
 		json.title collection.title
 		json.id collection.id
 		json.photos collection.photos
+		json.cover_photo collection.cover_photo
 	end
 end
