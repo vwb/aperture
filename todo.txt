@@ -4,7 +4,6 @@ ISSUE:
 
 		BUGS::
 
-			4. hard: edit form not behaving correctly when editing a photo
 			2. medium: clicking on profile link when scrolled down on index page causes it to remain static
 			6. easy: turn all tags to lowercase on the backend
 
@@ -15,6 +14,7 @@ ISSUE:
 							> error seems to be with passing in data to collection prematurely somewhere (also only seems to occur if logged in... must be connected to an if that will only progress if there is a current user)
 			[X] easy: comment form placeholder when not signed in : "Please sign in to comment"
 			[X] medium: comments are not updated when scrolling through photos
+			[X] hard: edit form not behaving correctly when editing a photo
 				
 
 		FEATURES::

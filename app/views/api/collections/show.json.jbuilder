@@ -2,6 +2,7 @@ json.id @collections.id
 json.user_id @collections.user_id
 json.title @collections.title
 json.cover_photo @collections.cover_photo
+json.user_name @collections.user.username
 
 json.photos @collections.photos do |photo|
 	json.id photo.id

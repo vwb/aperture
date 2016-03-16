@@ -8,7 +8,7 @@
 
 User.create!(email: "test@email.com", password: "password", username: "Vinny");
 User.create!(email: "test2@email.com", password: "password", username: "Jon");
-User.create!(email: "sample@email.com", password: "password", username: "sample")
+User.create!(email: "sample@email.com", password: "password", username: "guest")
 User.create!(email: "test3@email.com", password: "password", username: "Sarah");
 User.create!(email: "test4@email.com", password: "password", username: "Ethan");
 User.create!(email: "test5@email.com", password: "password", username: "Ian");

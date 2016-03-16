@@ -33,6 +33,10 @@ var CollectionDetail = React.createClass({
 		this.setState({collection: col})
 	},
 
+	handleUserClick: function(){
+		this.props.history.push("/users/" + this.state.collection.user_id);
+	},
+
 	generatePhotoItems: function(){
 		if (this.state.collection){
 
@@ -61,8 +65,10 @@ var CollectionDetail = React.createClass({
 
 	render: function() {
 		var title;
+		var username;
 		if (this.state.collection){
 			title = this.state.collection.title;
+			username = "by " + this.state.collection.user_name;
 		}
 
 		return (
@@ -76,7 +82,9 @@ var CollectionDetail = React.createClass({
 					<div className="collection-container">
 
 						<section className="collection-header">
-							<h3 className="styled-header"> {title} </h3>
+							<h3 className="styled-header"> {title} 
+								<span className="header-detail" onClick={this.handleUserClick}> {username} </span> 
+							</h3>
 						</section>
 
 						<section className="collection-body">

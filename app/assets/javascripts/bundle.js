@@ -72164,6 +72164,10 @@
 			this.setState({ collection: col });
 		},
 	
+		handleUserClick: function () {
+			this.props.history.push("/users/" + this.state.collection.user_id);
+		},
+	
 		generatePhotoItems: function () {
 			if (this.state.collection) {
 	
@@ -72191,8 +72195,10 @@
 	
 		render: function () {
 			var title;
+			var username;
 			if (this.state.collection) {
 				title = this.state.collection.title;
+				username = "by " + this.state.collection.user_name;
 			}
 	
 			return React.createElement(
@@ -72221,7 +72227,13 @@
 								{ className: 'styled-header' },
 								' ',
 								title,
-								' '
+								React.createElement(
+									'span',
+									{ className: 'header-detail', onClick: this.handleUserClick },
+									' ',
+									username,
+									' '
+								)
 							)
 						),
 						React.createElement(
