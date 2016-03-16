@@ -69673,6 +69673,15 @@
 			}
 		},
 	
+		componentWillReceiveProps: function (newProps) {
+			if (newProps.photo) {
+				this.setState({
+					comments: newProps.photo.comments,
+					photo: newProps.photo
+				});
+			}
+		},
+	
 		render: function () {
 			return React.createElement(
 				'div',
@@ -69715,6 +69724,12 @@
 	
 		handleClick: function () {
 			this.history.push("/users/" + this.state.comment.user.id);
+		},
+	
+		componentWillReceiveProps: function (newProps) {
+			if (newProps.comment) {
+				this.setState({ comment: newProps.comment });
+			}
 		},
 	
 		content: function () {
@@ -69821,7 +69836,7 @@
 							type: 'text',
 							valueLink: this.linkState("content"),
 							className: 'form-input',
-							placeholder: 'Leave a comment...',
+							placeholder: !this.props.current ? "Please sign in to comment" : "Leave a comment...",
 							disabled: !this.props.current })
 					)
 				)

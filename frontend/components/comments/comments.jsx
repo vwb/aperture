@@ -19,6 +19,15 @@ var Comments = React.createClass({
 		}
 	},
 
+	componentWillReceiveProps: function(newProps){
+		if (newProps.photo){
+			this.setState({
+				comments: newProps.photo.comments,
+				photo: newProps.photo
+			});
+		}
+	},
+
 	render: function() {
 		return (
 			<div className="comment-container">

@@ -15,6 +15,12 @@ var CommentItem = React.createClass({
 		this.history.push("/users/"+this.state.comment.user.id);
 	},
 
+	componentWillReceiveProps: function(newProps){
+		if (newProps.comment){
+			this.setState({comment: newProps.comment})
+		}
+	},
+
 	content: function(){
 		if (this.state.comment){
 			return (
