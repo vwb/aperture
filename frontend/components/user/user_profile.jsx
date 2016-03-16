@@ -8,10 +8,6 @@ var CollectionIndex = require('../collections/collection_index');
 var History = require('react-router').History;
 var ModalActions = require('../../actions/modal_actions');
 
-
-//APP-TODO: possibly refactor the presentation of the photo index 
-//into a nested route that can then switch between the galleries and photos
-
 var masonryOptions = {
 	transitionDuration: 0,
 	itemSelector: ".grid-item"
@@ -158,8 +154,6 @@ var UserProfile = React.createClass({
 
 							<CollectionIndex collections={collections}/>
 						</section>
-
-					{/* USER PHOTOS CAN BE FACTORED OUT */}
 
 						<section className="user-photos">
 							<div className="header-spacer "> 

@@ -41,7 +41,9 @@ var NavBar = React.createClass({
     }
 
     if ($(window).scrollTop() <= 70){
-      this.refs.navbar.className = "navbar-wrapper navbar-header"
+      if (this.routeCheck()){
+        this.refs.navbar.className = "navbar-wrapper navbar-header"
+      }
     }
   },
 
@@ -63,6 +65,14 @@ var NavBar = React.createClass({
       this.refs.navbar.className = "navbar-wrapper navbar-header hide"
     } else {
       this.refs.navbar.className = "navbar-wrapper navbar-header"
+    }
+  },
+
+  routeCheck: function(){
+    if (this.props.pathname.indexOf("users") > -1 || this.props.pathname.indexOf("collections") > -1){
+      return false;
+    } else {
+      return true;
     }
   },
 

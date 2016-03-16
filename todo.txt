@@ -4,7 +4,6 @@ ISSUE:
 
 		BUGS::
 
-			2. medium: clicking on profile link when scrolled down on index page causes it to remain static
 			6. easy: turn all tags to lowercase on the backend
 
 			[X] detail -> search by tag -> homescreen formatting fucks up!
@@ -15,6 +14,7 @@ ISSUE:
 			[X] easy: comment form placeholder when not signed in : "Please sign in to comment"
 			[X] medium: comments are not updated when scrolling through photos
 			[X] hard: edit form not behaving correctly when editing a photo
+			[X] medium: clicking on profile link when scrolled down on index page causes it to remain static
 				
 
 		FEATURES::

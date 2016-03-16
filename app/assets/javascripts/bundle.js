@@ -71850,7 +71850,9 @@
 	    }
 	
 	    if ($(window).scrollTop() <= 70) {
-	      this.refs.navbar.className = "navbar-wrapper navbar-header";
+	      if (this.routeCheck()) {
+	        this.refs.navbar.className = "navbar-wrapper navbar-header";
+	      }
 	    }
 	  },
 	
@@ -71872,6 +71874,14 @@
 	      this.refs.navbar.className = "navbar-wrapper navbar-header hide";
 	    } else {
 	      this.refs.navbar.className = "navbar-wrapper navbar-header";
+	    }
+	  },
+	
+	  routeCheck: function () {
+	    if (this.props.pathname.indexOf("users") > -1 || this.props.pathname.indexOf("collections") > -1) {
+	      return false;
+	    } else {
+	      return true;
 	    }
 	  },
 	
@@ -72270,9 +72280,6 @@
 	var CollectionIndex = __webpack_require__(519);
 	var History = __webpack_require__(159).History;
 	var ModalActions = __webpack_require__(487);
-	
-	//APP-TODO: possibly refactor the presentation of the photo index
-	//into a nested route that can then switch between the galleries and photos
 	
 	var masonryOptions = {
 		transitionDuration: 0,
