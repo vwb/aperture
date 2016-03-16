@@ -131,7 +131,6 @@ var PhotoDetail = React.createClass({
 	},
 
 	closeDetail: function(){
-		debugger;
 
 		this.props.history.goBack()
 

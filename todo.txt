@@ -3,13 +3,19 @@ TASKS FOR TOMORROW:
 ISSUE:
 
 		BUGS::
-		
-			detail -> search by tag -> homescreen formatting fucks up!
+
+			1. easy: comment form placeholder when not signed in : "Please sign in to comment"
+			2. medium: clicking on profile link when scrolled down on index page causes it to remain static
+			3. medium: comments are not updated when scrolling through photos
+			4. hard: edit form not behaving correctly when editing a photo
+			5. medium: clicking on a collection sometimes raises a "avatar not defined" error
+					> rendering collection photos index items before the photos arrive possible
+					> error seems to be with passing in data to collection prematurely somewhere (also only seems to occur if logged in... must be connected to an if that will only progress if there is a current user)
+			6. easy: turn all tags to lowercase on the backend
+
+			[X] detail -> search by tag -> homescreen formatting fucks up!
 				> react attempts to render only the new photos from the photostore, but this causes masonry to freak the fuck out!
 				
-			turn all tags to lowercase on the backend
-
-			if list of photos less than a certain amount change width to fill screen
 
 		FEATURES::
 

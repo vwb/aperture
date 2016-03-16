@@ -15,13 +15,12 @@ var CollectionDetail = React.createClass({
 
 	getInitialState: function(){
 		return {
-			collection: CollectionStore.collection()
+			collection: ""
 		}
 	},
 
 	componentDidMount: function(){
 		this.toke = CollectionStore.addListener(this._onChange);
-
 		CollectionActions.fetchCollection(parseInt(this.props.params.id));
 	},
 
@@ -61,7 +60,6 @@ var CollectionDetail = React.createClass({
 
 
 	render: function() {
-		debugger;
 		var title;
 		if (this.state.collection){
 			title = this.state.collection.title;

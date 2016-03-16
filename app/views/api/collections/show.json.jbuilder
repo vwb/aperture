@@ -1,6 +1,3 @@
-
-
-
 json.id @collections.id
 json.user_id @collections.user_id
 json.title @collections.title

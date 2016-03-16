@@ -34758,7 +34758,6 @@
 		},
 	
 		closeDetail: function () {
-			debugger;
 	
 			this.props.history.goBack();
 		},
@@ -72132,13 +72131,12 @@
 	
 		getInitialState: function () {
 			return {
-				collection: CollectionStore.collection()
+				collection: ""
 			};
 		},
 	
 		componentDidMount: function () {
 			this.toke = CollectionStore.addListener(this._onChange);
-	
 			CollectionActions.fetchCollection(parseInt(this.props.params.id));
 		},
 	
@@ -72177,7 +72175,6 @@
 		},
 	
 		render: function () {
-			debugger;
 			var title;
 			if (this.state.collection) {
 				title = this.state.collection.title;
@@ -72518,7 +72515,6 @@
 	
 		selectCoverImage: function () {
 			var collection = this.props.collection;
-			debugger;
 			if (collection.photos.length > 0) {
 				return collection.photos[0].url;
 			} else if (collection.cover_photo) {
