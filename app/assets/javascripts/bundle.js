@@ -34776,7 +34776,6 @@
 			this._photoPresenceCheck();
 	
 			if (this.havePhoto) {
-	
 				if (this.state.current && this.state.photo.user.id === this.state.current.id) {
 					editCheck = React.createElement(
 						'button',

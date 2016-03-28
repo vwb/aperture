@@ -4,12 +4,10 @@ var Typist = require('react-typist');
 var TypistForm = React.createClass({
 
 	handleFinishedTyping: function(){
-		debugger;
 	},
 
 	handleSubmit: function(e){
 		e.preventDefault();
-		debugger;
 	},
 
 	render: function() {
